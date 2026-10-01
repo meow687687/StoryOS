@@ -11,6 +11,7 @@ import {
 	parseDecisionsMarkdown,
 	parseDump,
 	serializeDecisionsMarkdown,
+	verifyTravelFeasibility,
 	type WorldEntry
 } from './world';
 import { describe, expect, it } from 'vitest';
@@ -306,5 +307,37 @@ describe('reader horizon and accidental spoiler detection', () => {
 		);
 
 		expect(warnings).toHaveLength(0);
+	});
+});
+
+describe('visual world map and travel feasibility verification', () => {
+	const pins: import('./world').MapPin[] = [
+		{ id: 'p1', name: 'Emberhold', type: 'city', x: 10, y: 10 },
+		{ id: 'p2', name: 'High Citadel', type: 'citadel', x: 20, y: 15 },
+		{ id: 'p3', name: 'The Far Outer Barrens', type: 'wilds', x: 95, y: 90 }
+	];
+
+	it('passes realistic overland travel across nearby locations', () => {
+		expect.assertions(1);
+		const journeys: import('./world').JourneyWaypoint[] = [
+			{ id: 'j1', characterId: 'Kael', pinId: 'p1', dayIndex: 1, order: 1 },
+			{ id: 'j2', characterId: 'Kael', pinId: 'p2', dayIndex: 2, order: 2 }
+		];
+
+		const warnings = verifyTravelFeasibility(pins, journeys);
+		expect(warnings).toHaveLength(0);
+	});
+
+	it('flags impossible teleportation across the continent without adequate travel time', () => {
+		expect.assertions(2);
+		// Kael is at Emberhold (10, 10) on Day 1, and at Far Outer Barrens (95, 90) on Day 1
+		const journeys: import('./world').JourneyWaypoint[] = [
+			{ id: 'j1', characterId: 'Kael', pinId: 'p1', dayIndex: 1, order: 1 },
+			{ id: 'j2', characterId: 'Kael', pinId: 'p3', dayIndex: 1, order: 2 }
+		];
+
+		const warnings = verifyTravelFeasibility(pins, journeys);
+		expect(warnings).toHaveLength(1);
+		expect(warnings[0].reason).toContain('Implausible travel speed');
 	});
 });

@@ -710,4 +710,156 @@ export function saveMysteries(nodes: MysteryNode[]): void {
 	}
 }
 
+// --- Visual World Map & Story Map Models ---
+
+export type PinType = 'city' | 'fortress' | 'citadel' | 'landmark' | 'wilds' | 'water';
+
+export interface MapPin {
+	id: string;
+	name: string;
+	type: PinType;
+	x: number; // percentage 0 - 100
+	y: number; // percentage 0 - 100
+	bibleEntryId?: string;
+	description?: string;
+}
+
+export interface JourneyWaypoint {
+	id: string;
+	characterId: string;
+	pinId: string;
+	dayIndex: number;
+	chapterTitle?: string;
+	order: number;
+}
+
+export interface TravelWarning {
+	characterId: string;
+	fromPin: string;
+	toPin: string;
+	distance: number;
+	daysAllowed: number;
+	reason: string;
+}
+
+export interface StoryBeat {
+	id: string;
+	act: string;
+	beatName: string;
+	chapterTitle?: string;
+	order: number;
+	tension: number; // -5 (catastrophe) to +5 (triumph)
+	valueShift: string; // e.g. "Hope ➔ Despair"
+	summary: string;
+}
+
+const MAP_PINS_KEY = 'writers-tool.map_pins.v1';
+const JOURNEYS_KEY = 'writers-tool.journeys.v1';
+const STORY_BEATS_KEY = 'writers-tool.story_beats.v1';
+
+export function verifyTravelFeasibility(
+	pins: MapPin[],
+	journeys: JourneyWaypoint[]
+): TravelWarning[] {
+	const warnings: TravelWarning[] = [];
+	const byCharacter: Record<string, JourneyWaypoint[]> = {};
+
+	for (const j of journeys) {
+		if (!byCharacter[j.characterId]) byCharacter[j.characterId] = [];
+		byCharacter[j.characterId].push(j);
+	}
+
+	for (const [charId, waypoints] of Object.entries(byCharacter)) {
+		waypoints.sort((a, b) => a.order - b.order);
+
+		for (let i = 0; i < waypoints.length - 1; i++) {
+			const curr = waypoints[i];
+			const next = waypoints[i + 1];
+
+			const pin1 = pins.find((p) => p.id === curr.pinId);
+			const pin2 = pins.find((p) => p.id === next.pinId);
+
+			if (pin1 && pin2 && pin1.id !== pin2.id) {
+				const dx = pin2.x - pin1.x;
+				const dy = pin2.y - pin1.y;
+				const distance = Math.round(Math.sqrt(dx * dx + dy * dy));
+				const daysPassed = Math.max(0, next.dayIndex - curr.dayIndex);
+
+				// Max realistic overland travel speed is ~25% map distance per day on horseback/foot
+				const maxDistancePossible = Math.max(25, daysPassed * 25);
+				if (distance > maxDistancePossible) {
+					warnings.push({
+						characterId: charId,
+						fromPin: pin1.name,
+						toPin: pin2.name,
+						distance,
+						daysAllowed: daysPassed,
+						reason: `Implausible travel speed: ${charId} travels ${distance}% across the continent between Day ${curr.dayIndex} and Day ${next.dayIndex} (${daysPassed} day span) without recorded magical transport.`
+					});
+				}
+			}
+		}
+	}
+
+	return warnings;
+}
+
+export function loadMapPins(): MapPin[] {
+	try {
+		if (typeof localStorage === 'undefined') return [];
+		const raw = localStorage.getItem(MAP_PINS_KEY);
+		if (raw) return JSON.parse(raw) as MapPin[];
+	} catch {
+		/* ignore */
+	}
+	return [];
+}
+
+export function saveMapPins(pins: MapPin[]): void {
+	try {
+		localStorage.setItem(MAP_PINS_KEY, JSON.stringify(pins));
+	} catch {
+		/* ignore */
+	}
+}
+
+export function loadJourneys(): JourneyWaypoint[] {
+	try {
+		if (typeof localStorage === 'undefined') return [];
+		const raw = localStorage.getItem(JOURNEYS_KEY);
+		if (raw) return JSON.parse(raw) as JourneyWaypoint[];
+	} catch {
+		/* ignore */
+	}
+	return [];
+}
+
+export function saveJourneys(journeys: JourneyWaypoint[]): void {
+	try {
+		localStorage.setItem(JOURNEYS_KEY, JSON.stringify(journeys));
+	} catch {
+		/* ignore */
+	}
+}
+
+export function loadStoryBeats(): StoryBeat[] {
+	try {
+		if (typeof localStorage === 'undefined') return [];
+		const raw = localStorage.getItem(STORY_BEATS_KEY);
+		if (raw) return JSON.parse(raw) as StoryBeat[];
+	} catch {
+		/* ignore */
+	}
+	return [];
+}
+
+export function saveStoryBeats(beats: StoryBeat[]): void {
+	try {
+		localStorage.setItem(STORY_BEATS_KEY, JSON.stringify(beats));
+	} catch {
+		/* ignore */
+	}
+}
+
+
 

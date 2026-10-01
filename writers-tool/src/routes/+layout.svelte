@@ -68,6 +68,17 @@
 			Mysteries
 		</a>
 		<a
+			href="/maps"
+			class="flex min-h-[44px] items-center gap-1.5 rounded px-3 text-[15px] font-medium transition-colors duration-200 hover:bg-black/5 hover:text-[#9a3412]"
+		>
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+				<line x1="8" y1="2" x2="8" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+				<line x1="16" y1="6" x2="16" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+			</svg>
+			Maps
+		</a>
+		<a
 			href="/bible"
 			class="flex min-h-[44px] items-center gap-1.5 rounded px-3 text-[15px] font-medium transition-colors duration-200 hover:bg-black/5 hover:text-[#9a3412]"
 		>
