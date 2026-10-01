@@ -43,6 +43,16 @@
 			Editor
 		</a>
 		<a
+			href="/timeline"
+			class="flex min-h-[44px] items-center gap-1.5 rounded px-3 text-[15px] font-medium transition-colors duration-200 hover:bg-black/5 hover:text-[#9a3412]"
+		>
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+				<path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+			</svg>
+			Timeline
+		</a>
+		<a
 			href="/bible"
 			class="flex min-h-[44px] items-center gap-1.5 rounded px-3 text-[15px] font-medium transition-colors duration-200 hover:bg-black/5 hover:text-[#9a3412]"
 		>

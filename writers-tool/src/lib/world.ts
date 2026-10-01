@@ -388,3 +388,215 @@ export function saveDecisions(decisions: Decision[]): void {
 		/* ignore */
 	}
 }
+
+// --- Temporal State & Story Event Ledger ---
+
+export interface DisclosedSecret {
+	id: string;
+	fact: string;
+	disclosedAtOrder: number;
+	disclosedToCharacterIds: string[];
+	isPublicToReader: boolean;
+}
+
+export interface StateMutation {
+	id: string;
+	characterId: string;
+	type: 'injury' | 'relationship' | 'belief' | 'item_acquired' | 'item_lost' | 'healed';
+	description: string;
+	targetCharacterId?: string;
+	polarity?: 'allied' | 'hostile' | 'neutral' | 'suspicious';
+	trustDelta?: number;
+}
+
+export interface StoryEvent {
+	id: string;
+	chapterId?: string;
+	sceneTitle: string;
+	order: number;
+	inStoryTime: string;
+	locationId?: string;
+	locationName?: string;
+	participantIds: string[];
+	disclosures: DisclosedSecret[];
+	mutations: StateMutation[];
+	status: CanonStatus;
+}
+
+export interface CharacterState {
+	characterId: string;
+	atEventOrder: number;
+	knownSecrets: DisclosedSecret[];
+	activeInjuries: string[];
+	itemsHeld: string[];
+	beliefs: string[];
+	relationships: Record<string, { polarity: string; trust: number }>;
+}
+
+export interface KnowledgeLeakWarning {
+	characterId: string;
+	characterName: string;
+	secretFact: string;
+	reason: string;
+}
+
+const EVENTS_KEY = 'writers-tool.events.v1';
+
+export function computeCharacterState(
+	characterId: string,
+	events: StoryEvent[],
+	atOrder?: number
+): CharacterState {
+	const canonEvents = events
+		.filter((e) => !e.status || e.status === 'canon')
+		.filter((e) => atOrder === undefined || e.order <= atOrder)
+		.sort((a, b) => a.order - b.order);
+
+	const state: CharacterState = {
+		characterId,
+		atEventOrder: atOrder ?? (canonEvents[canonEvents.length - 1]?.order ?? 0),
+		knownSecrets: [],
+		activeInjuries: [],
+		itemsHeld: [],
+		beliefs: [],
+		relationships: {}
+	};
+
+	for (const ev of canonEvents) {
+		// Knowledge Disclosures
+		for (const d of ev.disclosures ?? []) {
+			if (d.disclosedToCharacterIds?.includes(characterId)) {
+				if (!state.knownSecrets.some((s) => s.id === d.id)) {
+					state.knownSecrets.push(d);
+				}
+			}
+		}
+
+		// Mutations
+		for (const m of ev.mutations ?? []) {
+			if (m.characterId !== characterId) continue;
+
+			if (m.type === 'injury') {
+				if (!state.activeInjuries.includes(m.description)) {
+					state.activeInjuries.push(m.description);
+				}
+			} else if (m.type === 'healed') {
+				state.activeInjuries = state.activeInjuries.filter((inj) => inj !== m.description);
+			} else if (m.type === 'item_acquired') {
+				if (!state.itemsHeld.includes(m.description)) {
+					state.itemsHeld.push(m.description);
+				}
+			} else if (m.type === 'item_lost') {
+				state.itemsHeld = state.itemsHeld.filter((it) => it !== m.description);
+			} else if (m.type === 'belief') {
+				if (!state.beliefs.includes(m.description)) {
+					state.beliefs.push(m.description);
+				}
+			} else if (m.type === 'relationship' && m.targetCharacterId) {
+				const existing = state.relationships[m.targetCharacterId] ?? {
+					polarity: 'neutral',
+					trust: 50
+				};
+				const newTrust = Math.max(0, Math.min(100, existing.trust + (m.trustDelta ?? 0)));
+				state.relationships[m.targetCharacterId] = {
+					polarity: m.polarity ?? existing.polarity,
+					trust: newTrust
+				};
+			}
+		}
+	}
+
+	return state;
+}
+
+/**
+ * Detects if the chapter prose references facts that the character cannot know yet.
+ */
+export function detectKnowledgeLeaks(
+	events: StoryEvent[],
+	currentOrder: number,
+	characterId: string,
+	chapterText: string,
+	characters: WorldEntry[]
+): KnowledgeLeakWarning[] {
+	if (!chapterText.trim() || !characterId) return [];
+	const warnings: KnowledgeLeakWarning[] = [];
+	const lower = chapterText.toLowerCase();
+
+	const characterObj = characters.find((c) => c.id === characterId || c.name === characterId);
+	const characterName = characterObj?.name ?? characterId;
+
+	// Collect all canon secrets across all events
+	const allCanonEvents = events
+		.filter((e) => !e.status || e.status === 'canon')
+		.sort((a, b) => a.order - b.order);
+
+	const allSecrets: DisclosedSecret[] = [];
+	for (const ev of allCanonEvents) {
+		for (const d of ev.disclosures ?? []) {
+			allSecrets.push(d);
+		}
+	}
+
+	for (const secret of allSecrets) {
+		// Significant keywords from the secret (exclude stopwords)
+		const secretWords = secret.fact
+			.toLowerCase()
+			.replace(/[^a-z\s']/g, ' ')
+			.split(/\s+/)
+			.filter(
+				(w) =>
+					w.length > 3 &&
+					!['that', 'this', 'with', 'from', 'they', 'them', 'have', 'were', 'about'].includes(w)
+			);
+
+		if (secretWords.length < 2) continue;
+
+		const matchCount = secretWords.filter((w) => lower.includes(w)).length;
+		// If at least 2 distinct significant words of the secret are mentioned in the prose
+		if (matchCount >= 2 && matchCount >= Math.min(2, secretWords.length)) {
+			// Case 1: Secret has not happened yet chronologically (anachronism)
+			if (secret.disclosedAtOrder > currentOrder) {
+				warnings.push({
+					characterId,
+					characterName,
+					secretFact: secret.fact,
+					reason: `Chronological leak: "${secret.fact}" is not revealed until Event ${secret.disclosedAtOrder}, but is mentioned in Event ${currentOrder}.`
+				});
+			} else {
+				// Case 2: Secret has happened in the world, but characterId was never told!
+				const wasDisclosedToChar = secret.disclosedToCharacterIds?.includes(characterId);
+				if (!wasDisclosedToChar) {
+					warnings.push({
+						characterId,
+						characterName,
+						secretFact: secret.fact,
+						reason: `Knowledge leak: ${characterName} was never disclosed the secret: "${secret.fact}".`
+					});
+				}
+			}
+		}
+	}
+
+	return warnings;
+}
+
+export function loadEvents(): StoryEvent[] {
+	try {
+		if (typeof localStorage === 'undefined') return [];
+		const raw = localStorage.getItem(EVENTS_KEY);
+		if (raw) return JSON.parse(raw) as StoryEvent[];
+	} catch {
+		/* ignore */
+	}
+	return [];
+}
+
+export function saveEvents(events: StoryEvent[]): void {
+	try {
+		localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+	} catch {
+		/* ignore */
+	}
+}
+

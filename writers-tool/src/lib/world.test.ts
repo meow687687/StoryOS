@@ -1,7 +1,9 @@
 import {
 	canonOnly,
 	checkContradictions,
+	computeCharacterState,
 	detectKind,
+	detectKnowledgeLeaks,
 	extractRules,
 	findEntityMentions,
 	linkedEntities,
@@ -137,5 +139,120 @@ describe('decisions ledger serialization', () => {
 		expect(parsed[0].id).toBe('D1');
 		expect(parsed[0].topic).toBe('Sister identity');
 		expect(parsed[0].status).toBe('locked');
+	});
+});
+
+describe('temporal state and knowledge tracking', () => {
+	const sampleEvents: import('./world').StoryEvent[] = [
+		{
+			id: 'ev1',
+			sceneTitle: 'Chapter 1: The Arrival',
+			order: 1,
+			inStoryTime: 'Day 1, Morning',
+			participantIds: ['c_kael'],
+			disclosures: [
+				{
+					id: 'sec1',
+					fact: 'The ancient signet ring belongs to the high treason guild',
+					disclosedAtOrder: 1,
+					disclosedToCharacterIds: ['c_kael'],
+					isPublicToReader: true
+				}
+			],
+			mutations: [
+				{
+					id: 'm1',
+					characterId: 'c_kael',
+					type: 'injury',
+					description: 'Burn scar across right forearm'
+				},
+				{
+					id: 'm2',
+					characterId: 'c_kael',
+					type: 'relationship',
+					targetCharacterId: 'c_mira',
+					polarity: 'suspicious',
+					trustDelta: -20,
+					description: 'Discovered Mira lurking near the council chamber'
+				}
+			],
+			status: 'canon'
+		},
+		{
+			id: 'ev2',
+			sceneTitle: 'Chapter 2: The Ambush',
+			order: 2,
+			inStoryTime: 'Day 2, Night',
+			participantIds: ['c_kael', 'c_lucan'],
+			disclosures: [
+				{
+					id: 'sec2',
+					fact: 'Lord Vane poisoned the royal reservoir with nightshade',
+					disclosedAtOrder: 2,
+					disclosedToCharacterIds: ['c_kael'], // Only Kael was told by the dying guard!
+					isPublicToReader: true
+				}
+			],
+			mutations: [
+				{
+					id: 'm3',
+					characterId: 'c_kael',
+					type: 'healed',
+					description: 'Burn scar across right forearm'
+				}
+			],
+			status: 'canon'
+		}
+	];
+
+	it('computes character state at specific timeline order', () => {
+		expect.assertions(4);
+		// State at event 1
+		const stateAt1 = computeCharacterState('c_kael', sampleEvents, 1);
+		expect(stateAt1.activeInjuries).toContain('Burn scar across right forearm');
+		expect(stateAt1.knownSecrets).toHaveLength(1);
+		expect(stateAt1.relationships['c_mira']?.polarity).toBe('suspicious');
+
+		// State at event 2 (healed injury)
+		const stateAt2 = computeCharacterState('c_kael', sampleEvents, 2);
+		expect(stateAt2.activeInjuries).toHaveLength(0);
+	});
+
+	it('detects chronological leaks when referencing future secrets', () => {
+		expect.assertions(2);
+		const characters: import('./world').WorldEntry[] = [
+			{ id: 'c_kael', name: 'Kael', kind: 'character', text: '' }
+		];
+
+		// Writing scene 1: Kael mentions poisoned reservoir, which isn't revealed until scene 2!
+		const warnings = detectKnowledgeLeaks(
+			sampleEvents,
+			1,
+			'c_kael',
+			'Kael whispered that Lord Vane poisoned the royal reservoir with dark nightshade.',
+			characters
+		);
+
+		expect(warnings).toHaveLength(1);
+		expect(warnings[0].reason).toContain('Chronological leak');
+	});
+
+	it('detects knowledge leaks when a character speaks of secrets never disclosed to them', () => {
+		expect.assertions(2);
+		const characters: import('./world').WorldEntry[] = [
+			{ id: 'c_lucan', name: 'Lucan', kind: 'character', text: '' }
+		];
+
+		// Lucan is in scene 2, but only Kael was told about Lord Vane poisoning the reservoir!
+		const warnings = detectKnowledgeLeaks(
+			sampleEvents,
+			2,
+			'c_lucan',
+			'Lucan laughed, revealing that Lord Vane poisoned the royal reservoir.',
+			characters
+		);
+
+		expect(warnings).toHaveLength(1);
+		expect(warnings[0].reason).toContain('Knowledge leak: Lucan was never disclosed');
 	});
 });

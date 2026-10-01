@@ -13,20 +13,25 @@
 	import StoryContextHUD from '$lib/StoryContextHUD.svelte';
 	import {
 		checkContradictions,
+		detectKnowledgeLeaks,
 		linkedEntities,
 		loadBible,
 		loadChapters,
 		loadDecisions,
+		loadEvents,
 		saveChapters,
 		saveDecisions,
+		saveEvents,
 		type Chapter,
 		type Decision,
+		type StoryEvent,
 		type WorldEntry
 	} from '$lib/world';
 
 	let bible: WorldEntry[] = $state([]);
 	let chapters: Chapter[] = $state([]);
 	let decisions: Decision[] = $state([]);
+	let events: StoryEvent[] = $state([]);
 	let activeId = $state<string | null>(null);
 	let cfg: AIConfig = $state({ provider: 'ollama', apiKey: '', model: DEFAULT_OLLAMA_MODEL });
 	let ollama = $state({ running: false, models: [] as string[] });
@@ -46,10 +51,15 @@
 	let quickDecisionAnswer = $state('');
 	let showQuickDecisionForm = $state(false);
 
+	// Quick Disclosure commit to Event Ledger
+	let quickSecretText = $state('');
+	let showQuickDisclosureForm = $state(false);
+
 	$effect(() => {
 		bible = loadBible();
 		chapters = loadChapters();
 		decisions = loadDecisions();
+		events = loadEvents();
 		cfg = loadAIConfig();
 
 		if (!chapters.length) {
@@ -81,6 +91,17 @@
 	const active = $derived(chapters.find((c) => c.id === activeId) ?? chapters[0]);
 	const contradictions = $derived(active ? checkContradictions(bible, active.text) : []);
 	const linked = $derived(active ? linkedEntities(bible, active.text) : []);
+
+	const activeEvent = $derived(
+		events.find((e) => e.chapterId === active?.id || e.sceneTitle === active?.title)
+	);
+	const activeOrder = $derived(
+		activeEvent?.order ?? (chapters.findIndex((c) => c.id === active?.id) + 1)
+	);
+
+	const knowledgeLeaks = $derived(
+		active ? detectKnowledgeLeaks(events, activeOrder, active.pov || '', active.text, bible) : []
+	);
 
 	const aiReady = $derived(
 		cfg.provider === 'local'
@@ -166,6 +187,40 @@
 		quickDecisionTopic = '';
 		quickDecisionAnswer = '';
 		showQuickDecisionForm = false;
+	}
+
+	function commitQuickDisclosure() {
+		if (!quickSecretText.trim() || !active) return;
+		const nextSecId = `sec${Date.now().toString(36)}`;
+		const disclosure: import('$lib/world').DisclosedSecret = {
+			id: nextSecId,
+			fact: quickSecretText.trim(),
+			disclosedAtOrder: activeOrder,
+			disclosedToCharacterIds: active.pov ? [active.pov] : [],
+			isPublicToReader: true
+		};
+
+		const existingEv = events.find(
+			(e) => e.chapterId === active.id || e.sceneTitle === active.title
+		);
+		if (existingEv) {
+			existingEv.disclosures = [...(existingEv.disclosures ?? []), disclosure];
+		} else {
+			events.push({
+				id: `ev${Date.now().toString(36)}`,
+				chapterId: active.id,
+				sceneTitle: active.title,
+				order: activeOrder,
+				inStoryTime: `Day ${activeOrder}`,
+				participantIds: active.pov ? [active.pov] : [],
+				disclosures: [disclosure],
+				mutations: [],
+				status: 'canon'
+			});
+		}
+		saveEvents(events);
+		quickSecretText = '';
+		showQuickDisclosureForm = false;
 	}
 
 	function saveKey() {
@@ -305,12 +360,20 @@
 							</button>
 						</div>
 
-						<button
-							class="cursor-pointer rounded bg-[#292524] px-2.5 py-1 text-xs font-medium text-white hover:bg-black"
-							onclick={() => (showQuickDecisionForm = !showQuickDecisionForm)}
-						>
-							{showQuickDecisionForm ? 'Cancel' : '+ Lock Decision to Ledger'}
-						</button>
+						<div class="flex items-center gap-1.5">
+							<button
+								class="cursor-pointer rounded bg-[#292524] px-2.5 py-1 text-xs font-medium text-white hover:bg-black"
+								onclick={() => (showQuickDecisionForm = !showQuickDecisionForm)}
+							>
+								{showQuickDecisionForm ? 'Cancel' : '+ Lock Decision'}
+							</button>
+							<button
+								class="cursor-pointer rounded border border-[#9a3412] px-2.5 py-1 text-xs font-medium text-[#9a3412] hover:bg-[#9a3412]/10"
+								onclick={() => (showQuickDisclosureForm = !showQuickDisclosureForm)}
+							>
+								{showQuickDisclosureForm ? 'Cancel' : '+ Log Secret to Timeline'}
+							</button>
+						</div>
 					</div>
 
 					{#if showQuickDecisionForm}
@@ -339,6 +402,25 @@
 						</div>
 					{/if}
 
+					{#if showQuickDisclosureForm}
+						<div class="my-3 rounded-lg border border-[#e7e0d3] bg-white p-3 shadow-xs">
+							<h4 class="text-xs font-bold text-[#1c1917]">Commit Secret to Event #{activeOrder}</h4>
+							<div class="mt-2 flex gap-2">
+								<input
+									bind:value={quickSecretText}
+									placeholder="Secret revealed in this scene (e.g. Kael is carrying the black stone)"
+									class="flex-1 rounded border border-[#e7e0d3] px-2 py-1 text-xs"
+								/>
+								<button
+									class="cursor-pointer rounded bg-[#9a3412] px-3 py-1 text-xs font-medium text-white hover:bg-[#7c2d12]"
+									onclick={commitQuickDisclosure}
+								>
+									Log to Event
+								</button>
+							</div>
+						</div>
+					{/if}
+
 					{#if error}
 						<p class="mt-3 text-xs text-rose-700">{error}</p>
 					{/if}
@@ -357,37 +439,62 @@
 			<!-- Collapsible Story Context HUD -->
 			<StoryContextHUD chapter={active} {bible} ontouch={touch} />
 
-			<!-- Offline Contradictions & Fast Warning Box -->
+			<!-- Continuity Radar Box -->
 			<section
-				aria-label="Local Contradictions"
+				aria-label="Continuity Radar"
 				class="rounded-xl border border-[#e7e0d3] bg-white p-4 shadow-xs"
 			>
 				<div class="flex items-center justify-between">
 					<h3 class="text-xs font-bold tracking-wider text-[#78716c] uppercase">
-						Continuity Radar ({contradictions.length})
+						Continuity Radar ({contradictions.length + knowledgeLeaks.length})
 					</h3>
 					<span
-						class="h-2 w-2 rounded-full {contradictions.length ? 'bg-rose-500' : 'bg-emerald-500'}"
+						class="h-2 w-2 rounded-full {contradictions.length || knowledgeLeaks.length ? 'bg-rose-500' : 'bg-emerald-500'}"
 					></span>
 				</div>
 
-				{#if !contradictions.length}
-					<p class="mt-2 text-xs leading-relaxed text-stone-500">
-						No canon violations detected in current text.
-					</p>
-				{:else}
-					<ul class="mt-2 space-y-2 text-xs">
-						{#each contradictions as c (c.entryId + c.reason)}
-							<li class="rounded-md border border-rose-200 bg-rose-50/50 p-2 text-rose-900">
-								<div class="font-bold">{c.entryName}</div>
-								<div class="mt-0.5 text-[11px] text-rose-700">{c.reason}</div>
-							</li>
+				<!-- Knowledge Leaks Section -->
+				{#if knowledgeLeaks.length > 0}
+					<div class="mt-2 space-y-1.5">
+						<span class="text-[11px] font-bold text-rose-800 uppercase tracking-wide">
+							⚠️ Knowledge Leaks ({knowledgeLeaks.length})
+						</span>
+						{#each knowledgeLeaks as leak}
+							<div class="rounded-md border border-rose-300 bg-rose-50/80 p-2 text-xs text-rose-900 leading-tight">
+								<strong>{leak.characterName}:</strong> {leak.reason}
+							</div>
 						{/each}
-					</ul>
+					</div>
 				{/if}
 
-				<div class="mt-3 border-t border-stone-100 pt-2 text-[11px] text-stone-500">
-					Active entities: {linked.map((e) => e.name).join(', ') || 'None mentioned yet'}
+				<!-- Magic Rule Contradictions -->
+				{#if contradictions.length > 0}
+					<div class="mt-2 space-y-1.5">
+						<span class="text-[11px] font-bold text-rose-800 uppercase tracking-wide">
+							🛡️ Magic Rule Conflicts ({contradictions.length})
+						</span>
+						<ul class="space-y-1 text-xs">
+							{#each contradictions as c (c.entryId + c.reason)}
+								<li class="rounded-md border border-rose-200 bg-rose-50/50 p-2 text-rose-900 leading-tight">
+									<div class="font-bold">{c.entryName}</div>
+									<div class="mt-0.5 text-[11px] text-rose-700">{c.reason}</div>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+
+				{#if !contradictions.length && !knowledgeLeaks.length}
+					<p class="mt-2 text-xs leading-relaxed text-stone-500">
+						No canon contradictions or knowledge leaks detected in current text.
+					</p>
+				{/if}
+
+				<div class="mt-3 flex items-center justify-between border-t border-stone-100 pt-2 text-[11px] text-stone-500">
+					<span>Linked: {linked.map((e) => e.name).join(', ') || 'None'}</span>
+					<a href="/timeline" class="font-medium text-[#9a3412] underline hover:text-[#7c2d12]">
+						Timeline View →
+					</a>
 				</div>
 			</section>
 
