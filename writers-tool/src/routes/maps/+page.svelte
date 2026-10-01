@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		loadBible,
 		loadChapters,
@@ -144,7 +145,7 @@
 		}
 	];
 
-	$effect(() => {
+	onMount(() => {
 		bible = loadBible();
 		chapters = loadChapters();
 		pins = loadMapPins();

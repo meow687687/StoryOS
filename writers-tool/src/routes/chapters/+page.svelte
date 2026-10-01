@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy, onMount } from 'svelte';
 	import {
 		aiDraftHelp,
 		aiInterrogate,
@@ -25,8 +26,11 @@
 		saveDecisions,
 		saveEvents,
 		type Chapter,
+		type Contradiction,
 		type Decision,
+		type KnowledgeLeakWarning,
 		type MysteryNode,
+		type AccidentalSpoilerWarning,
 		type StoryEvent,
 		type WorldEntry
 	} from '$lib/world';
@@ -60,7 +64,99 @@
 	let quickSecretText = $state('');
 	let showQuickDisclosureForm = $state(false);
 
-	$effect(() => {
+	// Debounced background diagnostics
+	let contradictions = $state<Contradiction[]>([]);
+	let linked = $state<WorldEntry[]>([]);
+	let knowledgeLeaks = $state<KnowledgeLeakWarning[]>([]);
+	let accidentalSpoilers = $state<AccidentalSpoilerWarning[]>([]);
+
+	let analysisTimer: ReturnType<typeof setTimeout> | null = null;
+	let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+	const active = $derived(chapters.find((c) => c.id === activeId) ?? chapters[0]);
+
+	const activeEvent = $derived(
+		events.find((e) => e.chapterId === active?.id || e.sceneTitle === active?.title)
+	);
+	const activeOrder = $derived(
+		activeEvent?.order ?? (chapters.findIndex((c) => c.id === active?.id) + 1)
+	);
+
+	const readerClues = $derived(
+		mysteries.filter(
+			(m) => m.type === 'clue' && (m.status === 'planted' || m.status === 'discovered')
+		)
+	);
+
+	const aiReady = $derived(
+		cfg.provider === 'local'
+			? false
+			: cfg.provider === 'ollama'
+				? ollama.running
+				: Boolean(cfg.apiKey)
+	);
+
+	function runAnalysis() {
+		if (!active) {
+			contradictions = [];
+			linked = [];
+			knowledgeLeaks = [];
+			accidentalSpoilers = [];
+			return;
+		}
+		contradictions = checkContradictions(bible, active.text);
+		linked = linkedEntities(bible, active.text);
+		knowledgeLeaks = detectKnowledgeLeaks(events, activeOrder, active.pov || '', active.text, bible);
+		accidentalSpoilers = readerMode ? detectAccidentalSpoilers(mysteries, activeOrder, active.text) : [];
+	}
+
+	function scheduleAnalysis() {
+		if (analysisTimer) clearTimeout(analysisTimer);
+		analysisTimer = setTimeout(() => {
+			runAnalysis();
+			analysisTimer = null;
+		}, 350);
+	}
+
+	function scheduleSave() {
+		if (saveTimer) clearTimeout(saveTimer);
+		saveTimer = setTimeout(() => {
+			if (active) {
+				active.updatedAt = new Date().toISOString();
+			}
+			saveChapters(chapters);
+			saveTimer = null;
+		}, 800);
+	}
+
+	function flushSave() {
+		if (saveTimer) {
+			clearTimeout(saveTimer);
+			if (active) {
+				active.updatedAt = new Date().toISOString();
+			}
+			saveChapters(chapters);
+			saveTimer = null;
+		}
+	}
+
+	function touch() {
+		scheduleSave();
+		scheduleAnalysis();
+	}
+
+	function selectChapter(id: string) {
+		flushSave();
+		activeId = id;
+		setTimeout(runAnalysis, 10);
+	}
+
+	function toggleReaderMode() {
+		readerMode = !readerMode;
+		runAnalysis();
+	}
+
+	onMount(() => {
 		bible = loadBible();
 		chapters = loadChapters();
 		decisions = loadDecisions();
@@ -85,6 +181,7 @@
 		}
 
 		if (!activeId && chapters.length) activeId = chapters[0].id;
+		runAnalysis();
 
 		ollamaStatus().then((s) => {
 			ollama = s;
@@ -92,46 +189,20 @@
 				cfg.model = s.models.includes(DEFAULT_OLLAMA_MODEL) ? DEFAULT_OLLAMA_MODEL : s.models[0];
 			}
 		});
+
+		const handleBeforeUnload = () => flushSave();
+		window.addEventListener('beforeunload', handleBeforeUnload);
+
+		return () => {
+			window.removeEventListener('beforeunload', handleBeforeUnload);
+			flushSave();
+		};
 	});
 
-	const active = $derived(chapters.find((c) => c.id === activeId) ?? chapters[0]);
-	const contradictions = $derived(active ? checkContradictions(bible, active.text) : []);
-	const linked = $derived(active ? linkedEntities(bible, active.text) : []);
-
-	const activeEvent = $derived(
-		events.find((e) => e.chapterId === active?.id || e.sceneTitle === active?.title)
-	);
-	const activeOrder = $derived(
-		activeEvent?.order ?? (chapters.findIndex((c) => c.id === active?.id) + 1)
-	);
-
-	const knowledgeLeaks = $derived(
-		active ? detectKnowledgeLeaks(events, activeOrder, active.pov || '', active.text, bible) : []
-	);
-
-	const accidentalSpoilers = $derived(
-		readerMode && active ? detectAccidentalSpoilers(mysteries, activeOrder, active.text) : []
-	);
-
-	const readerClues = $derived(
-		mysteries.filter(
-			(m) => m.type === 'clue' && (m.status === 'planted' || m.status === 'discovered')
-		)
-	);
-
-	const aiReady = $derived(
-		cfg.provider === 'local'
-			? false
-			: cfg.provider === 'ollama'
-				? ollama.running
-				: Boolean(cfg.apiKey)
-	);
-
-	function touch() {
-		if (!active) return;
-		active.updatedAt = new Date().toISOString();
-		saveChapters(chapters);
-	}
+	onDestroy(() => {
+		if (analysisTimer) clearTimeout(analysisTimer);
+		flushSave();
+	});
 
 	function newChapter() {
 		const nextNum = chapters.length + 1;
@@ -281,7 +352,7 @@
 				class="flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors {readerMode
 					? 'border-purple-600 bg-purple-50 text-purple-900 shadow-xs'
 					: 'border-[#e7e0d3] bg-white text-[#57534e] hover:bg-stone-50'}"
-				onclick={() => (readerMode = !readerMode)}
+				onclick={toggleReaderMode}
 				title="Toggle Reader Perspective Mode (masks unrevealed secrets and scans for premature reveals)"
 			>
 				<span>{readerMode ? '👁️ Reader Mode (ON)' : '👁️ Author Omniscient'}</span>
@@ -318,7 +389,7 @@
 			activeId
 				? 'bg-[#292524] text-white shadow-xs'
 				: 'text-[#57534e] hover:bg-stone-100 hover:text-[#1c1917]'}"
-			onclick={() => (activeId = c.id)}
+			onclick={() => selectChapter(c.id)}
 		>
 			<span>{c.title}</span>
 			{#if c.act}

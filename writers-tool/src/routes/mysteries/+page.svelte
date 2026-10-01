@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		loadChapters,
 		loadMysteries,
@@ -83,7 +84,7 @@
 		}
 	];
 
-	$effect(() => {
+	onMount(() => {
 		chapters = loadChapters();
 		nodes = loadMysteries();
 		if (!nodes.length) {

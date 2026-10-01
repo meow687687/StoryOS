@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		loadDecisions,
 		parseDecisionsMarkdown,
@@ -63,7 +64,7 @@
 - Status: locked
 `;
 
-	$effect(() => {
+	onMount(() => {
 		decisions = loadDecisions();
 		if (!decisions.length) {
 			decisions = parseDecisionsMarkdown(DEMO_DECISIONS_SAMPLE);

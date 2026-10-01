@@ -202,23 +202,56 @@ export function checkContradictions(entries: WorldEntry[], chapterText: string):
 	return out;
 }
 
-/** Find all mentions of world entries in the text (by name or aliases). */
-export function findEntityMentions(entries: WorldEntry[], text: string): EntityMention[] {
-	if (!text.trim() || !entries.length) return [];
-	const mentions: EntityMention[] = [];
-	const lower = text.toLowerCase();
+/** Fast zero-allocation word counter avoiding string array splitting */
+export function countWords(text: string): number {
+	if (!text) return 0;
+	let count = 0;
+	let inWord = false;
+	for (let i = 0; i < text.length; i++) {
+		const code = text.charCodeAt(i);
+		if (code <= 32 || code === 160) {
+			inWord = false;
+		} else if (!inWord) {
+			inWord = true;
+			count++;
+		}
+	}
+	return count;
+}
 
-	// Collect all targets with their entry, sorted by name length descending
-	const targets: { name: string; entry: WorldEntry }[] = [];
+interface CachedEntityTarget {
+	name: string;
+	targetLower: string;
+	entry: WorldEntry;
+}
+
+let lastEntriesRef: WorldEntry[] | null = null;
+let cachedTargets: CachedEntityTarget[] = [];
+
+function getEntityTargets(entries: WorldEntry[]): CachedEntityTarget[] {
+	if (entries === lastEntriesRef) return cachedTargets;
+	lastEntriesRef = entries;
+	const targets: CachedEntityTarget[] = [];
 	for (const entry of entries) {
 		const names = [entry.name, ...(entry.aliases ?? [])].filter(
 			(n) => n && n.trim().length >= 2
 		);
 		for (const name of names) {
-			targets.push({ name: name.trim(), entry });
+			const trimmed = name.trim();
+			targets.push({ name: trimmed, targetLower: trimmed.toLowerCase(), entry });
 		}
 	}
 	targets.sort((a, b) => b.name.length - a.name.length);
+	cachedTargets = targets;
+	return cachedTargets;
+}
+
+/** Find all mentions of world entries in the text (by name or aliases). */
+export function findEntityMentions(entries: WorldEntry[], text: string): EntityMention[] {
+	if (!text.trim() || !entries.length) return [];
+	const mentions: EntityMention[] = [];
+	const lower = text.toLowerCase();
+	const targets = getEntityTargets(entries);
 
 	// Track occupied character ranges [start, end) to avoid double-matching substrings
 	const occupied: [number, number][] = [];
@@ -226,8 +259,7 @@ export function findEntityMentions(entries: WorldEntry[], text: string): EntityM
 		return occupied.some(([s, e]) => Math.max(start, s) < Math.min(end, e));
 	};
 
-	for (const { name, entry } of targets) {
-		const targetLower = name.toLowerCase();
+	for (const { name, targetLower, entry } of targets) {
 		let pos = 0;
 		while ((pos = lower.indexOf(targetLower, pos)) !== -1) {
 			const end = pos + targetLower.length;

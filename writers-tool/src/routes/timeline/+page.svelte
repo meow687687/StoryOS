@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import CanonBadge from '$lib/CanonBadge.svelte';
 	import {
 		computeCharacterState,
@@ -96,7 +97,7 @@
 		}
 	];
 
-	$effect(() => {
+	onMount(() => {
 		bible = loadBible();
 		chapters = loadChapters();
 		events = loadEvents();
@@ -130,10 +131,11 @@
 	const allLeaks = $derived.by(() => {
 		const leaks: { chapterTitle: string; leaks: import('$lib/world').KnowledgeLeakWarning[] }[] =
 			[];
+		const defaultChar = characters[0] ?? 'Kael';
 		for (const ch of chapters) {
 			const activeEvent = events.find((e) => e.chapterId === ch.id || e.sceneTitle === ch.title);
 			const order = activeEvent ? activeEvent.order : 1;
-			const pov = ch.pov || selectedCharacterId;
+			const pov = ch.pov || defaultChar;
 			const chapterLeaks = detectKnowledgeLeaks(events, order, pov, ch.text, bible);
 			if (chapterLeaks.length > 0) {
 				leaks.push({ chapterTitle: ch.title, leaks: chapterLeaks });

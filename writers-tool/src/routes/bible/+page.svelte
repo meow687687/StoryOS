@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { loadAIConfig, ollamaStatus, organizeWithAI } from '$lib/ai';
 	import CanonBadge from '$lib/CanonBadge.svelte';
 	import {
@@ -19,7 +20,7 @@
 	let ollamaRunning = $state(false);
 	let aiModel = $state('');
 
-	$effect(() => {
+	onMount(() => {
 		bible = loadBible();
 		const cfg = loadAIConfig();
 		aiModel = cfg.model;

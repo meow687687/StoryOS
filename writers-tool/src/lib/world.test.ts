@@ -2,6 +2,7 @@ import {
 	canonOnly,
 	checkContradictions,
 	computeCharacterState,
+	countWords,
 	detectAccidentalSpoilers,
 	detectKind,
 	detectKnowledgeLeaks,
@@ -339,5 +340,21 @@ describe('visual world map and travel feasibility verification', () => {
 		const warnings = verifyTravelFeasibility(pins, journeys);
 		expect(warnings).toHaveLength(1);
 		expect(warnings[0].reason).toContain('Implausible travel speed');
+	});
+});
+
+describe('countWords (zero-allocation word counter)', () => {
+	it('handles empty and whitespace-only strings', () => {
+		expect.assertions(3);
+		expect(countWords('')).toBe(0);
+		expect(countWords('   ')).toBe(0);
+		expect(countWords('\n\t  \r')).toBe(0);
+	});
+
+	it('accurately counts multi-line text with mixed spacing', () => {
+		expect.assertions(3);
+		expect(countWords('The quick brown fox')).toBe(4);
+		expect(countWords('   Leading   and   trailing   ')).toBe(3);
+		expect(countWords('Chapter 1\n\nThe embers in the hearth hissed.')).toBe(8);
 	});
 });

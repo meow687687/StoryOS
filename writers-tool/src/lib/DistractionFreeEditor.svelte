@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { onDestroy, onMount } from 'svelte';
 	import CanonBadge from './CanonBadge.svelte';
-	import { findEntityMentions, type WorldEntry } from './world';
+	import { countWords, findEntityMentions, type EntityMention, type WorldEntry } from './world';
 
 	let {
 		text = $bindable(),
@@ -19,13 +20,14 @@
 	let autocompleteQuery = $state<string | null>(null);
 	let autocompleteIndex = $state(0);
 
-	const words = $derived(text.trim() ? text.trim().split(/\s+/).length : 0);
+	const words = $derived(countWords(text));
 	const readingTimeMinutes = $derived(Math.ceil(words / 220));
 
-	// Ambient entity detections in current text
-	const detectedMentions = $derived.by(() => {
+	let detectedMentions = $state<EntityMention[]>([]);
+	let mentionsTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function updateMentions() {
 		const mentions = findEntityMentions(bible, text);
-		// Deduplicate by entryId
 		const seen = new Set<string>();
 		const unique: typeof mentions = [];
 		for (const m of mentions) {
@@ -34,7 +36,23 @@
 				unique.push(m);
 			}
 		}
-		return unique;
+		detectedMentions = unique;
+	}
+
+	function scheduleMentionsUpdate() {
+		if (mentionsTimer) clearTimeout(mentionsTimer);
+		mentionsTimer = setTimeout(() => {
+			updateMentions();
+			mentionsTimer = null;
+		}, 300);
+	}
+
+	onMount(() => {
+		updateMentions();
+	});
+
+	onDestroy(() => {
+		if (mentionsTimer) clearTimeout(mentionsTimer);
 	});
 
 	// Autocomplete candidates when user types @
@@ -51,6 +69,7 @@
 	function handleInput(e: Event) {
 		ontouch();
 		checkAutocomplete();
+		scheduleMentionsUpdate();
 	}
 
 	function checkAutocomplete() {
