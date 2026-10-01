@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@theme {
+	--font-display: 'Cormorant Garamond', Georgia, serif;
+	--font-manuscript: 'Libre Baskerville', Georgia, serif;
+	--font-ui: 'Inter', system-ui, sans-serif;
+
+	--color-parchment: #faf7f2;
+	--color-ink: #1c1917;
+	--color-ink-soft: #57534e;
+	--color-ember: #9a3412;
+	--color-ember-deep: #7c2d12;
+	--color-rule: #e7e0d3;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	background-color: var(--color-parchment);
+	color: var(--color-ink);
+	font-family: var(--font-ui);
+	font-size: 16px;
+	line-height: 1.625;
+}
+
+/* Visible keyboard focus everywhere (ux: focus-states, CRITICAL) */
+:where(a, button, input, select, textarea, summary):focus-visible {
+	outline: 2px solid var(--color-ember);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/* Manuscript surfaces: serif, relaxed measure (ux: line-height + line-length) */
+.manuscript {
+	font-family: var(--font-manuscript);
+	line-height: 1.75;
+	max-width: 72ch;
+}
+
+.font-display {
+	font-family: var(--font-display);
+}
+
+/* Respect reduced motion (ux: reduced-motion, HIGH) */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+}

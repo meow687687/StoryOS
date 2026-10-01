@@ -1,0 +1,3 @@
+# Sample Dump (messy, deliberate gaps)
+
+ok so main guy is kael, he's like a ex soldier turned smuggler i think, mid 30s, cunning quote unquote. there's a city behra or beira?? walled city on a river. magic exists but costs memories, that's important, you forget stuff when you use it. kael needs to get medicine for his sister?? or is it his daughter, hmm, actually sister mira, she's sick with lung curse. he takes a job to smuggle something across the river wall, a girl? a package? the package whispers. then guards chase, then he hides in the tannery district. the merchant who hired him betrays him i think. ending — he gives up a memory of his mother to save mira? not sure.
