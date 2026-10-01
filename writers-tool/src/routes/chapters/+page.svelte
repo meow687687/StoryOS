@@ -13,17 +13,20 @@
 	import StoryContextHUD from '$lib/StoryContextHUD.svelte';
 	import {
 		checkContradictions,
+		detectAccidentalSpoilers,
 		detectKnowledgeLeaks,
 		linkedEntities,
 		loadBible,
 		loadChapters,
 		loadDecisions,
 		loadEvents,
+		loadMysteries,
 		saveChapters,
 		saveDecisions,
 		saveEvents,
 		type Chapter,
 		type Decision,
+		type MysteryNode,
 		type StoryEvent,
 		type WorldEntry
 	} from '$lib/world';
@@ -32,7 +35,9 @@
 	let chapters: Chapter[] = $state([]);
 	let decisions: Decision[] = $state([]);
 	let events: StoryEvent[] = $state([]);
+	let mysteries: MysteryNode[] = $state([]);
 	let activeId = $state<string | null>(null);
+	let readerMode = $state(false);
 	let cfg: AIConfig = $state({ provider: 'ollama', apiKey: '', model: DEFAULT_OLLAMA_MODEL });
 	let ollama = $state({ running: false, models: [] as string[] });
 
@@ -60,6 +65,7 @@
 		chapters = loadChapters();
 		decisions = loadDecisions();
 		events = loadEvents();
+		mysteries = loadMysteries();
 		cfg = loadAIConfig();
 
 		if (!chapters.length) {
@@ -101,6 +107,16 @@
 
 	const knowledgeLeaks = $derived(
 		active ? detectKnowledgeLeaks(events, activeOrder, active.pov || '', active.text, bible) : []
+	);
+
+	const accidentalSpoilers = $derived(
+		readerMode && active ? detectAccidentalSpoilers(mysteries, activeOrder, active.text) : []
+	);
+
+	const readerClues = $derived(
+		mysteries.filter(
+			(m) => m.type === 'clue' && (m.status === 'planted' || m.status === 'discovered')
+		)
 	);
 
 	const aiReady = $derived(
@@ -260,7 +276,16 @@
 			</p>
 		</div>
 
-		<div class="flex items-center gap-2">
+		<div class="flex flex-wrap items-center gap-2">
+			<button
+				class="flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors {readerMode
+					? 'border-purple-600 bg-purple-50 text-purple-900 shadow-xs'
+					: 'border-[#e7e0d3] bg-white text-[#57534e] hover:bg-stone-50'}"
+				onclick={() => (readerMode = !readerMode)}
+				title="Toggle Reader Perspective Mode (masks unrevealed secrets and scans for premature reveals)"
+			>
+				<span>{readerMode ? '👁️ Reader Mode (ON)' : '👁️ Author Omniscient'}</span>
+			</button>
 			<button
 				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#9a3412] bg-[#9a3412]/5 px-3 py-1.5 text-xs font-semibold text-[#9a3412] hover:bg-[#9a3412]/10"
 				onclick={runSocraticInterrogation}
@@ -446,12 +471,28 @@
 			>
 				<div class="flex items-center justify-between">
 					<h3 class="text-xs font-bold tracking-wider text-[#78716c] uppercase">
-						Continuity Radar ({contradictions.length + knowledgeLeaks.length})
+						Continuity Radar ({contradictions.length + knowledgeLeaks.length + accidentalSpoilers.length})
 					</h3>
 					<span
-						class="h-2 w-2 rounded-full {contradictions.length || knowledgeLeaks.length ? 'bg-rose-500' : 'bg-emerald-500'}"
+						class="h-2 w-2 rounded-full {contradictions.length || knowledgeLeaks.length || accidentalSpoilers.length
+							? 'bg-rose-500'
+							: 'bg-emerald-500'}"
 					></span>
 				</div>
+
+				<!-- Accidental Spoilers (Reader Perspective Mode) -->
+				{#if accidentalSpoilers.length > 0}
+					<div class="mt-2 space-y-1.5">
+						<span class="text-[11px] font-bold text-purple-900 uppercase tracking-wide">
+							🚨 Accidental Spoiler Alert ({accidentalSpoilers.length})
+						</span>
+						{#each accidentalSpoilers as sp}
+							<div class="rounded-md border border-purple-300 bg-purple-50/90 p-2 text-xs text-purple-950 leading-tight">
+								<strong>{sp.nodeTitle}:</strong> {sp.reason}
+							</div>
+						{/each}
+					</div>
+				{/if}
 
 				<!-- Knowledge Leaks Section -->
 				{#if knowledgeLeaks.length > 0}
@@ -484,17 +525,41 @@
 					</div>
 				{/if}
 
-				{#if !contradictions.length && !knowledgeLeaks.length}
+				{#if !contradictions.length && !knowledgeLeaks.length && !accidentalSpoilers.length}
 					<p class="mt-2 text-xs leading-relaxed text-stone-500">
-						No canon contradictions or knowledge leaks detected in current text.
+						No canon contradictions, knowledge leaks, or accidental spoilers detected.
 					</p>
+				{/if}
+
+				<!-- Reader Clue Horizon when Reader Mode is Active -->
+				{#if readerMode}
+					<div class="mt-3 border-t border-purple-200/60 pt-2 text-[11px]">
+						<span class="font-bold text-purple-900 uppercase text-[10px]">
+							Reader Horizon (Clues Observed: {readerClues.length}):
+						</span>
+						{#if !readerClues.length}
+							<p class="mt-1 text-stone-400 italic">No clues planted in story yet.</p>
+						{:else}
+							<ul class="mt-1 space-y-0.5 text-purple-950">
+								{#each readerClues as rc}
+									<li>🔍 {rc.title}</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
 				{/if}
 
 				<div class="mt-3 flex items-center justify-between border-t border-stone-100 pt-2 text-[11px] text-stone-500">
 					<span>Linked: {linked.map((e) => e.name).join(', ') || 'None'}</span>
-					<a href="/timeline" class="font-medium text-[#9a3412] underline hover:text-[#7c2d12]">
-						Timeline View →
-					</a>
+					<div class="flex gap-2">
+						<a href="/timeline" class="font-medium text-[#9a3412] underline hover:text-[#7c2d12]">
+							Timeline
+						</a>
+						<span>·</span>
+						<a href="/mysteries" class="font-medium text-[#9a3412] underline hover:text-[#7c2d12]">
+							Mysteries
+						</a>
+					</div>
 				</div>
 			</section>
 

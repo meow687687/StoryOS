@@ -53,6 +53,21 @@
 			Timeline
 		</a>
 		<a
+			href="/mysteries"
+			class="flex min-h-[44px] items-center gap-1.5 rounded px-3 text-[15px] font-medium transition-colors duration-200 hover:bg-black/5 hover:text-[#9a3412]"
+		>
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path
+					d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3m.08 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+			Mysteries
+		</a>
+		<a
 			href="/bible"
 			class="flex min-h-[44px] items-center gap-1.5 rounded px-3 text-[15px] font-medium transition-colors duration-200 hover:bg-black/5 hover:text-[#9a3412]"
 		>

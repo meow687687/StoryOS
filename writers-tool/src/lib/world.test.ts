@@ -2,6 +2,7 @@ import {
 	canonOnly,
 	checkContradictions,
 	computeCharacterState,
+	detectAccidentalSpoilers,
 	detectKind,
 	detectKnowledgeLeaks,
 	extractRules,
@@ -254,5 +255,56 @@ describe('temporal state and knowledge tracking', () => {
 
 		expect(warnings).toHaveLength(1);
 		expect(warnings[0].reason).toContain('Knowledge leak: Lucan was never disclosed');
+	});
+});
+
+describe('reader horizon and accidental spoiler detection', () => {
+	const sampleMysteries: import('./world').MysteryNode[] = [
+		{
+			id: 'm1',
+			type: 'mystery',
+			title: 'The Queen Secret Poisoner',
+			description: 'Who slipped the weeping hemlock into the Queen cup?',
+			status: 'planted',
+			connectedTo: ['rev1'],
+			x: 100,
+			y: 100
+		},
+		{
+			id: 'rev1',
+			type: 'reveal',
+			title: 'Archmage Solis poisoned the Queen cup with weeping hemlock',
+			description: 'Solis orchestrated the assassination to ignite the civil war',
+			status: 'unplanted',
+			revealOrder: 4, // Planned for Chapter 4
+			connectedTo: [],
+			x: 300,
+			y: 100
+		}
+	];
+
+	it('flags premature reveals in earlier chapters as accidental spoilers', () => {
+		expect.assertions(2);
+		// Author accidentally writes the reveal in Chapter 1
+		const warnings = detectAccidentalSpoilers(
+			sampleMysteries,
+			1,
+			'Kael realized that Archmage Solis poisoned the Queen cup with weeping hemlock.'
+		);
+
+		expect(warnings).toHaveLength(1);
+		expect(warnings[0].reason).toContain('Accidental spoiler');
+	});
+
+	it('allows the reveal in the intended chapter without warnings', () => {
+		expect.assertions(1);
+		// When drafting Chapter 4 (the planned chapter)
+		const warnings = detectAccidentalSpoilers(
+			sampleMysteries,
+			4,
+			'Kael shouted that Archmage Solis poisoned the Queen cup with weeping hemlock!'
+		);
+
+		expect(warnings).toHaveLength(0);
 	});
 });

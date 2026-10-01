@@ -600,3 +600,114 @@ export function saveEvents(events: StoryEvent[]): void {
 	}
 }
 
+// --- Mystery & Foreshadowing Board & Reader Horizon ---
+
+export type MysteryNodeType = 'mystery' | 'clue' | 'red_herring' | 'reveal' | 'consequence';
+export type MysteryNodeStatus =
+	| 'unplanted'
+	| 'planted'
+	| 'discovered'
+	| 'revealed'
+	| 'resolved';
+
+export interface MysteryNode {
+	id: string;
+	type: MysteryNodeType;
+	title: string;
+	description: string;
+	status: MysteryNodeStatus;
+	chapterId?: string;
+	revealOrder?: number;
+	manuscriptQuote?: string;
+	connectedTo: string[]; // Connected Node IDs
+	x: number;
+	y: number;
+}
+
+export interface AccidentalSpoilerWarning {
+	nodeId: string;
+	nodeTitle: string;
+	reason: string;
+}
+
+const MYSTERIES_KEY = 'writers-tool.mysteries.v1';
+
+export function detectAccidentalSpoilers(
+	mysteries: MysteryNode[],
+	currentChapterOrder: number,
+	chapterText: string
+): AccidentalSpoilerWarning[] {
+	if (!chapterText.trim() || !mysteries.length) return [];
+	const warnings: AccidentalSpoilerWarning[] = [];
+	const lower = chapterText.toLowerCase();
+
+	// Check reveals or confidential twist nodes with a planned revealOrder
+	const sensitiveNodes = mysteries.filter(
+		(m) =>
+			m.type === 'reveal' ||
+			(m.revealOrder !== undefined && m.status !== 'revealed' && m.status !== 'resolved')
+	);
+
+	for (const node of sensitiveNodes) {
+		const targetWords = (node.title + ' ' + node.description)
+			.toLowerCase()
+			.replace(/[^a-z\s']/g, ' ')
+			.split(/\s+/)
+			.filter(
+				(w) =>
+					w.length > 3 &&
+					![
+						'that',
+						'this',
+						'with',
+						'from',
+						'they',
+						'them',
+						'have',
+						'were',
+						'about',
+						'what',
+						'where'
+					].includes(w)
+			);
+
+		if (targetWords.length < 2) continue;
+
+		const matchCount = targetWords.filter((w) => lower.includes(w)).length;
+		// If at least 2 distinct significant words of the confidential reveal appear in draft text
+		if (matchCount >= 2 && matchCount >= Math.min(2, targetWords.length)) {
+			// Check if this reveal is scheduled for a future chapter
+			const plannedOrder = node.revealOrder ?? 999;
+			if (plannedOrder > currentChapterOrder) {
+				warnings.push({
+					nodeId: node.id,
+					nodeTitle: node.title,
+					reason: `Accidental spoiler: "${node.title}" is a reader secret scheduled for Chapter ${node.revealOrder ?? 'future'}, but appears prematurely in this draft.`
+				});
+			}
+		}
+	}
+
+	return warnings;
+}
+
+export function loadMysteries(): MysteryNode[] {
+	try {
+		if (typeof localStorage === 'undefined') return [];
+		const raw = localStorage.getItem(MYSTERIES_KEY);
+		if (raw) return JSON.parse(raw) as MysteryNode[];
+	} catch {
+		/* ignore */
+	}
+	return [];
+}
+
+export function saveMysteries(nodes: MysteryNode[]): void {
+	try {
+		localStorage.setItem(MYSTERIES_KEY, JSON.stringify(nodes));
+	} catch {
+		/* ignore */
+	}
+}
+
+
