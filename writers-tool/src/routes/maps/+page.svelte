@@ -194,18 +194,18 @@
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
 			<div class="flex items-center gap-3">
-				<h1 class="font-display text-4xl font-semibold tracking-tight text-[var(--theme-text)]">
+				<h1 class="font-display text-4xl font-extrabold tracking-tight text-[var(--theme-text)]">
 					Maps & Structural Story Canvas
 				</h1>
 				<button
 					type="button"
-					class="cursor-pointer rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)] transition-colors"
+					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Tips' : '💡 Maps Tips'}
 				</button>
 			</div>
-			<p class="mt-1 text-sm text-[var(--theme-text-muted)]">
+			<p class="mt-1 font-mono text-xs text-[var(--theme-text-muted)]">
 				Visual geography, character travel-time verification, and dramatic narrative beat tension curves.
 			</p>
 		</div>
@@ -214,24 +214,24 @@
 		<div class="flex items-center gap-2">
 			<a
 				href="/guide"
-				class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-text)] shadow-xs hover:border-[var(--theme-border-strong)]"
+				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 			>
 				📖 Manual
 			</a>
-			<div class="flex rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] p-1 shadow-xs">
+			<div class="flex rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-1 shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 				<button
-					class="cursor-pointer rounded-md px-3.5 py-1.5 text-xs font-semibold transition-colors {activeTab ===
+					class="cursor-pointer rounded-xs px-3.5 py-1.5 text-xs font-bold transition-all {activeTab ===
 					'world'
-						? 'bg-[var(--theme-accent)] text-[var(--theme-accent-fg)] shadow-xs'
+						? 'neo-btn-primary shadow-none'
 						: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 					onclick={() => (activeTab = 'world')}
 				>
 					🗺️ Visual World Map
 				</button>
 				<button
-					class="cursor-pointer rounded-md px-3.5 py-1.5 text-xs font-semibold transition-colors {activeTab ===
+					class="cursor-pointer rounded-xs px-3.5 py-1.5 text-xs font-bold transition-all {activeTab ===
 					'story'
-						? 'bg-[var(--theme-accent)] text-[var(--theme-accent-fg)] shadow-xs'
+						? 'neo-btn-primary shadow-none'
 						: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 					onclick={() => (activeTab = 'story')}
 				>
@@ -242,22 +242,22 @@
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] shadow-xs animate-in fade-in duration-200">
+		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
 			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
-				<span>Maps & Structural Story Canvas Tips</span>
-				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80">Full Documentation →</a>
+				<span class="font-mono text-xs uppercase tracking-wider">Maps & Structural Story Canvas Tips</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Full Documentation →</a>
 			</div>
 			<div class="mt-2 grid gap-3 sm:grid-cols-3">
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Click-to-Drop Geography</span>
+					<span class="font-bold text-[var(--theme-text)]">Click-to-Drop Geography</span>
 					<p class="mt-0.5 text-[11px]">Click anywhere on the World Map parchment canvas to drop cities, citadels, wilds, or water ports with exact coordinates.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Travel Feasibility Radar</span>
+					<span class="font-bold text-[var(--theme-text)]">Travel Feasibility Radar</span>
 					<p class="mt-0.5 text-[11px]">Logging character waypoints tracks journeys across in-story days. If a hero moves faster than medieval horses allow, a red speed warning triggers.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Tension Curves (-5 to +5)</span>
+					<span class="font-bold text-[var(--theme-text)]">Tension Curves (-5 to +5)</span>
 					<p class="mt-0.5 text-[11px]">In Story Map mode, map your beats across Acts I, II, and III. The live spline chart visualizes emotional voltage and prevents mid-book sag.</p>
 				</div>
 			</div>
@@ -269,16 +269,16 @@
 	<!-- Travel Warnings Banner -->
 	{#if travelWarnings.length > 0}
 		<div
-			class="mt-6 max-w-6xl rounded-xl border border-rose-400 bg-rose-500/10 p-4 shadow-xs"
+			class="mt-6 max-w-6xl rounded-xs border-2 border-rose-500 bg-rose-500/10 p-4 shadow-[3px_3px_0px_var(--theme-shadow-hard)]"
 			role="alert"
 		>
-			<div class="flex items-center gap-2 font-bold text-rose-600 dark:text-rose-400">
+			<div class="flex items-center gap-2 font-mono text-sm font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 				<span>⚠️</span>
 				<span>Travel Speed Contradiction Detected!</span>
 			</div>
 			<div class="mt-2 space-y-1">
 				{#each travelWarnings as tw}
-					<div class="text-xs text-rose-700 dark:text-rose-300">
+					<div class="font-mono text-xs text-rose-600 dark:text-rose-400">
 						• {tw.reason}
 					</div>
 				{/each}
@@ -287,31 +287,31 @@
 	{/if}
 
 	<!-- Map Toolbar -->
-	<div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--theme-border)] pb-3">
+	<div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-[var(--theme-border-strong)] pb-3">
 		<div class="flex items-center gap-3 text-xs">
-			<span class="font-semibold text-[var(--theme-text-muted)]">Character Journey Path:</span>
+			<span class="font-mono font-bold text-[var(--theme-text-muted)] uppercase">Character Journey Path:</span>
 			<select
 				bind:value={selectedCharacterRoute}
-				class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2.5 py-1 text-xs font-medium text-[var(--theme-text)] focus:outline-hidden"
+				class="neo-input !py-1 text-xs font-mono font-bold"
 			>
 				<option value="all">All Journeys</option>
 				{#each charactersWithJourneys as ch}
 					<option value={ch}>{ch}'s Route</option>
 				{/each}
 			</select>
-			<span class="text-[var(--theme-text-muted)]">·</span>
-			<span class="text-[var(--theme-text-muted)]">Click anywhere on the map to drop a new location pin.</span>
+			<span class="text-[var(--theme-text-muted)] font-bold">·</span>
+			<span class="font-mono text-xs text-[var(--theme-text-muted)]">Click anywhere on the map to drop a new location pin.</span>
 		</div>
 
 		<div class="flex items-center gap-2">
 			<button
-				class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:border-[var(--theme-border-strong)]"
+				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 				onclick={() => (showAddWaypointModal = true)}
 			>
 				+ Log Character Waypoint
 			</button>
 			<button
-				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-3 py-1.5 text-xs font-medium text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+				class="neo-btn-primary !px-3 !py-1.5 text-xs font-bold"
 				onclick={() => {
 					newPinX = 50;
 					newPinY = 50;
@@ -325,19 +325,19 @@
 
 	{#if pins.length === 0}
 		<!-- Empty World Map State -->
-		<div class="mt-8 rounded-2xl border-2 border-dashed border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-12 text-center">
-			<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-surface)] text-2xl shadow-xs">
+		<div class="mt-8 neo-box-sm !border-dashed p-12 text-center">
+			<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-2xl shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 				🗺️
 			</div>
-			<h3 class="font-display mt-4 text-xl font-bold text-[var(--theme-text)]">
+			<h3 class="font-display mt-4 text-xl font-bold tracking-tight text-[var(--theme-text)]">
 				World Map Canvas is Empty
 			</h3>
-			<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)]">
+			<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)] font-mono">
 				Establish your realms, mountain citadels, river ports, and barrens. Log character travel journeys to catch unrealistic teleportation across chapters.
 			</p>
 			<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 				<button
-					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+					class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
 					onclick={() => {
 						newPinX = 50;
 						newPinY = 50;
@@ -347,7 +347,7 @@
 					+ Drop First Location Pin
 				</button>
 				<button
-					class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-xs font-semibold text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] shadow-xs"
+					class="neo-btn !px-4 !py-2 text-xs font-bold"
 					onclick={handleLoadSample}
 				>
 					✨ Load Sample Story (The Ashen Vow)
@@ -359,8 +359,8 @@
 		<div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
 			<!-- The Visual Map Surface -->
 			<div
-				class="relative aspect-8/5 w-full cursor-crosshair overflow-hidden rounded-2xl border-4 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] shadow-md select-none"
-				style="background-image: radial-gradient(var(--theme-border) 1.5px, transparent 1.5px); background-size: 24px 24px;"
+				class="relative aspect-8/5 w-full cursor-crosshair overflow-hidden neo-box !p-0 select-none"
+				style="background-image: radial-gradient(var(--theme-border-strong) 1.5px, transparent 1.5px); background-size: 24px 24px;"
 				onclick={handleMapClick}
 				onkeydown={(e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
@@ -372,10 +372,10 @@
 				aria-label="Interactive World Map Canvas. Click to drop a pin."
 			>
 				<!-- Compass Rose -->
-				<div class="pointer-events-none absolute top-4 right-4 text-[var(--theme-text-muted)]/60 font-serif text-xs">
-					<div class="text-center font-bold">N</div>
+				<div class="pointer-events-none absolute top-4 right-4 text-[var(--theme-text-muted)] font-mono font-bold text-xs bg-[var(--theme-surface)]/80 border border-[var(--theme-border-strong)] p-1.5 rounded-xs shadow-[1px_1px_0px_var(--theme-shadow-hard)]">
+					<div class="text-center">N</div>
 					<div class="flex items-center gap-2"><span>W</span> <span>+</span> <span>E</span></div>
-					<div class="text-center font-bold">S</div>
+					<div class="text-center">S</div>
 				</div>
 
 				<!-- SVG Route Connectors Overlay -->
@@ -387,7 +387,7 @@
 							stroke="var(--theme-accent)"
 							stroke-width="3"
 							stroke-dasharray="6 4"
-							class="opacity-75"
+							class="opacity-90"
 						/>
 					{/if}
 				</svg>
@@ -395,7 +395,7 @@
 				<!-- Render Map Pins -->
 				{#each pins as pin (pin.id)}
 					<div
-						class="absolute -translate-x-1/2 -translate-y-1/2 transition-transform hover:scale-125"
+						class="absolute -translate-x-1/2 -translate-y-1/2 transition-transform hover:scale-110"
 						style="left: {pin.x}%; top: {pin.y}%;"
 					>
 						<button
@@ -408,12 +408,12 @@
 							title="{pin.name} ({pin.type})"
 						>
 							<span
-								class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-sm shadow-md transition-shadow group-hover:shadow-lg"
+								class="flex h-8 w-8 items-center justify-center rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-sm shadow-[2px_2px_0px_var(--theme-shadow-hard)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
 							>
 								{getPinTypeIcon(pin.type)}
 							</span>
 							<span
-								class="mt-1 rounded bg-[var(--theme-surface)]/90 border border-[var(--theme-border)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--theme-text)] shadow-xs backdrop-blur-xs whitespace-nowrap"
+								class="mt-1 rounded-xs bg-[var(--theme-surface)] border-2 border-[var(--theme-border-strong)] px-1.5 py-0.5 text-[10px] font-mono font-bold text-[var(--theme-text)] shadow-[1px_1px_0px_var(--theme-shadow-hard)] whitespace-nowrap"
 							>
 								{pin.name}
 							</span>
@@ -424,12 +424,12 @@
 
 			<!-- Location Inspector Sidebar -->
 			<aside class="space-y-4">
-				<section class="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-xs">
-					<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+				<section class="neo-box p-4">
+					<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Location Dossier
 					</h3>
 					{#if !selectedPin}
-						<p class="mt-2 text-xs text-[var(--theme-text-muted)] italic">
+						<p class="mt-2 text-xs text-[var(--theme-text-muted)] italic font-mono">
 							Click on any location pin on the map to inspect lore, terrain, and recorded visits.
 						</p>
 					{:else}
@@ -437,16 +437,16 @@
 							<div class="flex items-start justify-between gap-2">
 								<div>
 									<span
-										class="rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-0.5 text-[10px] font-semibold text-[var(--theme-text-muted)] capitalize"
+										class="neo-badge font-mono text-[10px] font-bold uppercase"
 									>
 										{selectedPin.type}
 									</span>
-									<h4 class="font-display mt-1 text-lg font-bold text-[var(--theme-text)]">
+									<h4 class="font-display mt-2 text-lg font-bold tracking-tight text-[var(--theme-text)]">
 										{selectedPin.name}
 									</h4>
 								</div>
 								<button
-									class="cursor-pointer text-xs text-[var(--theme-text-muted)] hover:text-rose-500"
+									class="neo-btn !px-2 !py-0.5 text-[11px] font-bold text-rose-600 dark:text-rose-400"
 									onclick={() => deletePin(selectedPin!.id)}
 								>
 									Delete
@@ -457,19 +457,19 @@
 								{selectedPin.description || 'No detailed lore recorded yet for this location.'}
 							</p>
 
-							<div class="mt-3 border-t border-[var(--theme-border)] pt-2 text-[11px] text-[var(--theme-text-muted)] font-mono">
+							<div class="mt-3 border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px] text-[var(--theme-text-muted)] font-mono">
 								Coordinates: {selectedPin.x}%, {selectedPin.y}%
 							</div>
 
 							<!-- Recorded Character Visits -->
-							<div class="mt-4 border-t border-[var(--theme-border)] pt-3">
-								<span class="text-[10px] font-bold text-[var(--theme-text-muted)] uppercase tracking-wider">
+							<div class="mt-4 border-t-2 border-[var(--theme-border-strong)] pt-3">
+								<span class="font-mono text-[10px] font-bold text-[var(--theme-text-muted)] uppercase tracking-wider">
 									Recorded Visits ({journeys.filter((j) => j.pinId === selectedPin!.id).length}):
 								</span>
-								<ul class="mt-1 space-y-1 text-xs">
+								<ul class="mt-2 space-y-1.5 text-xs">
 									{#each journeys.filter((j) => j.pinId === selectedPin!.id) as j}
-										<li class="flex items-center justify-between text-[var(--theme-text)]">
-											<span class="font-medium">{j.characterId}</span>
+										<li class="flex items-center justify-between rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-1.5 text-[var(--theme-text)] font-mono text-[11px]">
+											<span class="font-bold">{j.characterId}</span>
 											<span class="text-[10px] text-[var(--theme-text-muted)]">Day {j.dayIndex} ({j.chapterTitle ?? 'Story'})</span>
 										</li>
 									{/each}
@@ -480,19 +480,19 @@
 				</section>
 
 				<!-- Waypoint Journey Log -->
-				<section class="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 shadow-xs">
-					<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+				<section class="neo-box-sm bg-[var(--theme-surface-subtle)] p-4">
+					<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Waypoint Timeline ({activeWaypoints.length})
 					</h3>
 					<div class="mt-2 space-y-1.5 max-h-56 overflow-y-auto pr-1">
 						{#each activeWaypoints as wp}
 							{@const p = pins.find((pin) => pin.id === wp.pinId)}
-							<div class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-xs">
-								<div class="flex items-center justify-between font-semibold text-[var(--theme-text)]">
+							<div class="rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-2 text-xs">
+								<div class="flex items-center justify-between font-bold text-[var(--theme-text)] font-mono">
 									<span>{wp.characterId}</span>
 									<span class="text-[10px] text-[var(--theme-text-muted)]">Day {wp.dayIndex}</span>
 								</div>
-								<div class="mt-0.5 text-[var(--theme-text-muted)]">
+								<div class="mt-0.5 text-[var(--theme-text-muted)] font-mono text-[11px]">
 									➔ {p?.name ?? 'Unknown pin'} ({wp.chapterTitle ?? 'Story'})
 								</div>
 							</div>
@@ -505,18 +505,18 @@
 {:else}
 	<!-- STORY MAP & DRAMATIC TENSION CURVE VIEW -->
 	<div class="mt-6 space-y-6">
-		<div class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--theme-border)] pb-3">
+		<div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[var(--theme-border-strong)] pb-3">
 			<div>
-				<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">
+				<h2 class="font-display text-xl font-bold tracking-tight text-[var(--theme-text)]">
 					Dramatic Pacing & Tension Curve
 				</h2>
-				<p class="text-xs text-[var(--theme-text-muted)]">
+				<p class="font-mono text-xs text-[var(--theme-text-muted)]">
 					Visualizes emotional voltage from catastrophe (-5) to triumph (+5) across sequential story beats.
 				</p>
 			</div>
 
 			<button
-				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+				class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
 				onclick={() => (showAddBeatModal = true)}
 			>
 				+ Log Story Beat
@@ -525,25 +525,25 @@
 
 		{#if beats.length === 0}
 			<!-- Empty Story Map State -->
-			<div class="rounded-2xl border-2 border-dashed border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-12 text-center">
-				<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-surface)] text-2xl shadow-xs">
+			<div class="neo-box-sm !border-dashed p-12 text-center">
+				<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-2xl shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 					📈
 				</div>
-				<h3 class="font-display mt-4 text-xl font-bold text-[var(--theme-text)]">
+				<h3 class="font-display mt-4 text-xl font-bold tracking-tight text-[var(--theme-text)]">
 					Story Pacing Map is Empty
 				</h3>
-				<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)]">
+				<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)] font-mono">
 					Chart the dramatic voltage of your plot. Track where hope rises and catastrophe strikes across Acts I, II, and III.
 				</p>
 				<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 					<button
-						class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+						class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
 						onclick={() => (showAddBeatModal = true)}
 					>
 						+ Log First Story Beat
 					</button>
 					<button
-						class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-xs font-semibold text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] shadow-xs"
+						class="neo-btn !px-4 !py-2 text-xs font-bold"
 						onclick={handleLoadSample}
 					>
 						✨ Load Sample Story (The Ashen Vow)
@@ -552,10 +552,10 @@
 			</div>
 		{:else}
 			<!-- Dramatic Tension Visual Graph -->
-			<div class="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-sm">
-				<div class="flex items-center justify-between text-xs font-bold text-[var(--theme-text-muted)] border-b border-[var(--theme-border)] pb-2">
-					<span>HIGH TENSION (+5 Climax / Triumph)</span>
-					<span>LOW TENSION (-5 Dark Night of Soul)</span>
+			<div class="neo-box p-6">
+				<div class="flex items-center justify-between font-mono text-xs font-bold text-[var(--theme-text-muted)] border-b-2 border-[var(--theme-border-strong)] pb-2">
+					<span class="text-emerald-600 dark:text-emerald-400">HIGH TENSION (+5 Climax / Triumph)</span>
+					<span class="text-rose-600 dark:text-rose-400">LOW TENSION (-5 Dark Night of Soul)</span>
 				</div>
 
 				<!-- Tension Curve SVG Visualization -->
@@ -567,8 +567,8 @@
 							y1="120"
 							x2="800"
 							y2="120"
-							stroke="var(--theme-border)"
-							stroke-width="1.5"
+							stroke="var(--theme-border-strong)"
+							stroke-width="2"
 							stroke-dasharray="4 4"
 						/>
 
@@ -581,7 +581,7 @@
 								d="M {pathData}"
 								fill="none"
 								stroke="var(--theme-accent)"
-								stroke-width="3"
+								stroke-width="4"
 								class="transition-all"
 							/>
 						{/if}
@@ -592,12 +592,13 @@
 							{@const cx = beats.length > 1 ? idx * step : 400}
 							{@const cy = 120 - b.tension * 20}
 							<g class="cursor-pointer group">
-								<circle
-									{cx}
-									{cy}
-									r="6"
+								<rect
+									x={cx - 6}
+									y={cy - 6}
+									width="12"
+									height="12"
 									fill="var(--theme-accent)"
-									stroke="var(--theme-surface)"
+									stroke="var(--theme-border-strong)"
 									stroke-width="2"
 									class="transition-transform group-hover:scale-150"
 								/>
@@ -607,6 +608,7 @@
 									text-anchor="middle"
 									font-size="10"
 									font-weight="bold"
+									font-family="monospace"
 									fill="var(--theme-text)"
 								>
 									{b.beatName}
@@ -616,7 +618,7 @@
 					</svg>
 				</div>
 
-				<div class="mt-4 flex justify-between text-[11px] text-[var(--theme-text-muted)] font-mono">
+				<div class="mt-4 flex justify-between text-[11px] text-[var(--theme-text-muted)] font-mono font-bold">
 					<span>Beginning (Act I)</span>
 					<span>Midpoint Climax</span>
 					<span>Resolution (Act III)</span>
@@ -627,20 +629,20 @@
 			<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
 				{#each beats as beat (beat.id)}
 					<article
-						class="flex flex-col justify-between rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-xs"
+						class="flex flex-col justify-between neo-box p-4 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
 					>
 						<div>
 							<div class="flex items-start justify-between gap-2">
 								<span
-									class="rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-0.5 text-[10px] font-bold text-[var(--theme-text-muted)] uppercase"
+									class="neo-badge font-mono text-[10px] font-bold"
 								>
 									{beat.act}
 								</span>
 								<button
-									class="cursor-pointer text-[var(--theme-text-muted)] hover:text-rose-500 text-xs"
+									class="neo-btn flex h-6 w-6 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
 									onclick={() => deleteBeat(beat.id)}
 								>
-									×
+									✕
 								</button>
 							</div>
 
@@ -648,7 +650,7 @@
 								{beat.beatName}
 							</h3>
 							{#if beat.chapterTitle}
-								<div class="text-[11px] font-medium text-[var(--theme-text-muted)]">{beat.chapterTitle}</div>
+								<div class="font-mono text-[11px] font-bold text-[var(--theme-text-muted)]">{beat.chapterTitle}</div>
 							{/if}
 
 							<p class="manuscript mt-2 text-xs leading-relaxed text-[var(--theme-text-muted)]">
@@ -656,15 +658,15 @@
 							</p>
 						</div>
 
-						<div class="mt-4 border-t border-[var(--theme-border)] pt-2 text-[11px]">
+						<div class="mt-4 border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px] font-mono">
 							<div class="flex items-center justify-between">
-								<span class="font-semibold text-[var(--theme-text-muted)]">Value Shift:</span>
-								<span class="font-mono text-[var(--theme-accent)]">{beat.valueShift}</span>
+								<span class="font-bold text-[var(--theme-text-muted)]">Value Shift:</span>
+								<span class="font-bold text-[var(--theme-accent)]">{beat.valueShift}</span>
 							</div>
 							<div class="mt-1 flex items-center justify-between">
-								<span class="font-semibold text-[var(--theme-text-muted)]">Tension Charge:</span>
+								<span class="font-bold text-[var(--theme-text-muted)]">Tension Charge:</span>
 								<span
-									class="font-bold {beat.tension > 0
+									class="font-extrabold {beat.tension > 0
 										? 'text-emerald-600 dark:text-emerald-400'
 										: beat.tension < 0
 											? 'text-rose-600 dark:text-rose-400'
@@ -684,33 +686,33 @@
 <!-- Add Pin Modal -->
 {#if showAddPinModal}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-md rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-xl">
-			<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">Add Location Pin</h2>
+		<div class="w-full max-w-md neo-box-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-6">
+			<h2 class="font-display text-xl font-bold tracking-tight text-[var(--theme-text)]">Add Location Pin</h2>
 			<div class="mt-4 space-y-3 text-xs">
 				<div>
-					<label for="pin-name" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="pin-name" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Location Name
 					</label>
 					<input
 						id="pin-name"
 						bind:value={newPinName}
 						placeholder="e.g. Iron Gate Fortress"
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					/>
 				</div>
 
 				<div class="grid grid-cols-2 gap-2">
 					<div>
-						<label for="pin-type" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="pin-type" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Type
 						</label>
 						<select
 							id="pin-type"
 							bind:value={newPinType}
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
+							class="neo-input mt-1 w-full text-xs font-mono font-bold"
 						>
 							<option value="city">🏛️ City</option>
 							<option value="citadel">🏰 Citadel</option>
@@ -722,17 +724,17 @@
 					</div>
 
 					<div>
-						<span class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<span class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Coordinates
 						</span>
-						<div class="mt-1 flex items-center gap-1 font-mono text-[var(--theme-text)] p-2 border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] rounded">
+						<div class="mt-1 flex items-center gap-1 font-mono text-[var(--theme-text)] p-2 border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] rounded-xs">
 							X: {newPinX}%, Y: {newPinY}%
 						</div>
 					</div>
 				</div>
 
 				<div>
-					<label for="pin-desc" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="pin-desc" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Lore / Description
 					</label>
 					<textarea
@@ -740,20 +742,20 @@
 						bind:value={newPinDesc}
 						rows={2}
 						placeholder="Atmospheric details, garrison size, historical notes..."
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					></textarea>
 				</div>
 			</div>
 
-			<div class="mt-5 flex justify-end gap-2">
+			<div class="mt-5 flex justify-end gap-2 border-t-2 border-[var(--theme-border-strong)] pt-4">
 				<button
-					class="cursor-pointer rounded-lg border border-[var(--theme-border)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]"
+					class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 					onclick={() => (showAddPinModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90"
+					class="neo-btn-primary !px-4 !py-1.5 text-xs font-bold"
 					onclick={addPin}
 				>
 					Save Pin
@@ -766,32 +768,32 @@
 <!-- Add Waypoint Modal -->
 {#if showAddWaypointModal}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-md rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-xl">
-			<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">Log Character Waypoint</h2>
+		<div class="w-full max-w-md neo-box-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-6">
+			<h2 class="font-display text-xl font-bold tracking-tight text-[var(--theme-text)]">Log Character Waypoint</h2>
 			<div class="mt-4 space-y-3 text-xs">
 				<div>
-					<label for="wp-char" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="wp-char" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Character Name
 					</label>
 					<input
 						id="wp-char"
 						bind:value={newWpChar}
 						placeholder="e.g. Kael"
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					/>
 				</div>
 
 				<div>
-					<label for="wp-pin" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="wp-pin" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Location Pin
 					</label>
 					<select
 						id="wp-pin"
 						bind:value={newWpPinId}
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
+						class="neo-input mt-1 w-full text-xs font-mono font-bold"
 					>
 						<option value="">Select location pin...</option>
 						{#each pins as p}
@@ -801,27 +803,27 @@
 				</div>
 
 				<div>
-					<label for="wp-day" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="wp-day" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						In-Story Day Number
 					</label>
 					<input
 						id="wp-day"
 						type="number"
 						bind:value={newWpDay}
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs font-mono"
 					/>
 				</div>
 			</div>
 
-			<div class="mt-5 flex justify-end gap-2">
+			<div class="mt-5 flex justify-end gap-2 border-t-2 border-[var(--theme-border-strong)] pt-4">
 				<button
-					class="cursor-pointer rounded-lg border border-[var(--theme-border)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]"
+					class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 					onclick={() => (showAddWaypointModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90"
+					class="neo-btn-primary !px-4 !py-1.5 text-xs font-bold"
 					onclick={addWaypoint}
 				>
 					Log Waypoint
@@ -834,21 +836,21 @@
 <!-- Add Story Beat Modal -->
 {#if showAddBeatModal}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-md rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-xl">
-			<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">Log Story Beat</h2>
+		<div class="w-full max-w-md neo-box-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-6">
+			<h2 class="font-display text-xl font-bold tracking-tight text-[var(--theme-text)]">Log Story Beat</h2>
 			<div class="mt-4 space-y-3 text-xs">
 				<div class="grid grid-cols-2 gap-2">
 					<div>
-						<label for="beat-act" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="beat-act" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Act
 						</label>
 						<select
 							id="beat-act"
 							bind:value={newBeatAct}
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
+							class="neo-input mt-1 w-full text-xs font-mono font-bold"
 						>
 							<option value="Act I">Act I</option>
 							<option value="Act II-A">Act II-A</option>
@@ -858,7 +860,7 @@
 					</div>
 
 					<div>
-						<label for="beat-tension" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="beat-tension" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Tension Voltage (-5 to +5)
 						</label>
 						<input
@@ -867,37 +869,37 @@
 							min="-5"
 							max="5"
 							bind:value={newBeatTension}
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] font-mono focus:outline-hidden focus:border-[var(--theme-accent)]"
+							class="neo-input mt-1 w-full text-xs font-mono font-bold"
 						/>
 					</div>
 				</div>
 
 				<div>
-					<label for="beat-name" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="beat-name" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Beat Name
 					</label>
 					<input
 						id="beat-name"
 						bind:value={newBeatName}
 						placeholder="e.g. Midpoint Climax or The Dark Night"
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					/>
 				</div>
 
 				<div>
-					<label for="beat-shift" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="beat-shift" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Dramatic Value Shift
 					</label>
 					<input
 						id="beat-shift"
 						bind:value={newBeatShift}
 						placeholder="e.g. Hope ➔ Catastrophe"
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					/>
 				</div>
 
 				<div>
-					<label for="beat-summary" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="beat-summary" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Beat Summary
 					</label>
 					<textarea
@@ -905,20 +907,20 @@
 						bind:value={newBeatSummary}
 						rows={2}
 						placeholder="What happens in this dramatic turning point?"
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					></textarea>
 				</div>
 			</div>
 
-			<div class="mt-5 flex justify-end gap-2">
+			<div class="mt-5 flex justify-end gap-2 border-t-2 border-[var(--theme-border-strong)] pt-4">
 				<button
-					class="cursor-pointer rounded-lg border border-[var(--theme-border)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]"
+					class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 					onclick={() => (showAddBeatModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90"
+					class="neo-btn-primary !px-4 !py-1.5 text-xs font-bold"
 					onclick={addStoryBeat}
 				>
 					Record Beat

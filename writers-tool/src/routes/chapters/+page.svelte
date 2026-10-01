@@ -324,25 +324,25 @@
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
 			<div class="flex items-center gap-3">
-				<h1 class="font-display text-4xl font-semibold tracking-tight text-[var(--theme-text)]">
+				<h1 class="font-display text-4xl font-extrabold tracking-tight text-[var(--theme-text)]">
 					Manuscript Editor
 				</h1>
 				<button
 					type="button"
-					class="cursor-pointer rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)] transition-colors"
+					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Guide' : '💡 Tips & Shortcuts'}
 				</button>
 			</div>
-			<p class="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--theme-text-muted)]">
+			<p class="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--theme-text-muted)]">
 				<span>{bible.length} bible entries</span>
 				<span>·</span>
 				<span>{decisions.filter((d) => d.status === 'locked').length} locked decisions</span>
 				<span>·</span>
-				<span class="inline-flex items-center gap-1.5">
+				<span class="inline-flex items-center gap-1.5 font-bold">
 					<span
-						class="inline-block h-2 w-2 rounded-full"
+						class="inline-block h-2.5 w-2.5 rounded-xs border border-[var(--theme-border-strong)]"
 						class:bg-emerald-500={cfg.provider === 'ollama' && ollama.running}
 						class:bg-stone-400={!(cfg.provider === 'ollama' && ollama.running)}
 					></span>
@@ -359,16 +359,16 @@
 
 		<div class="flex flex-wrap items-center gap-2">
 			<button
-				class="flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors {readerMode
-					? 'border-purple-500 bg-purple-500/10 text-purple-600 dark:text-purple-300 shadow-xs'
-					: 'border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text-muted)] hover:border-[var(--theme-border-strong)]'}"
+				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold {readerMode
+					? '!bg-purple-600 !text-white'
+					: ''}"
 				onclick={toggleReaderMode}
 				title="Toggle Reader Perspective Mode (masks unrevealed secrets and scans for premature reveals)"
 			>
-				<span>{readerMode ? '👁️ Reader Mode (ON)' : '👁️ Author Omniscient'}</span>
+				<span>{readerMode ? '👁️ Reader Mode [ACTIVE]' : '👁️ Author Omniscient'}</span>
 			</button>
 			<button
-				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[var(--theme-accent)] bg-[var(--theme-accent-subtle)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-accent)] hover:opacity-90"
+				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[var(--theme-accent)]"
 				onclick={runSocraticInterrogation}
 				disabled={busy || !active?.text.trim()}
 				title="Run Socratic interrogation on motivations, plot holes, and pacing"
@@ -377,7 +377,7 @@
 				{busy && activeTab === 'interrogate' ? 'Challenging…' : 'Socratic Interrogation'}
 			</button>
 			<button
-				class="flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--theme-accent)] px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:opacity-90 disabled:opacity-40"
+				class="neo-btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold disabled:opacity-40"
 				onclick={runContinuityCheck}
 				disabled={busy || !active?.text.trim()}
 				title="Run continuity & magic rule contradiction check"
@@ -389,22 +389,22 @@
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] shadow-xs animate-in fade-in duration-200">
+		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
 			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
-				<span>Editor Quick Reference & Keyboard Accelerators</span>
-				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80">Open Full Guide →</a>
+				<span class="font-mono text-xs uppercase tracking-wider">Editor Quick Reference & Keyboard Accelerators</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Open Full Guide →</a>
 			</div>
 			<div class="mt-2 grid gap-3 sm:grid-cols-3">
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">@ Autocomplete</span>
-					<p class="mt-0.5 text-[11px]">Type <kbd class="font-mono rounded bg-black/10 px-1 py-0.5">@</kbd> anywhere to insert characters, magic laws, and places from your Bible.</p>
+					<span class="font-bold text-[var(--theme-text)]">@ Autocomplete</span>
+					<p class="mt-0.5 text-[11px]">Type <kbd class="font-mono font-bold rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface)] px-1 py-0.5">@</kbd> anywhere to insert characters, magic laws, and places from your Bible.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Reader Perspective Mode</span>
+					<span class="font-bold text-[var(--theme-text)]">Reader Perspective Mode</span>
 					<p class="mt-0.5 text-[11px]">Masks future secrets and catches accidental spoilers before readers discover clues naturally.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Socratic AI Interrogator</span>
+					<span class="font-bold text-[var(--theme-text)]">Socratic AI Interrogator</span>
 					<p class="mt-0.5 text-[11px]">Challenges causality and character motivation without ever ghostwriting your prose.</p>
 				</div>
 			</div>
@@ -412,26 +412,26 @@
 	{/if}
 </header>
 
-<!-- Chapter Selector Tabs -->
-<div class="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[var(--theme-border)] pb-2">
-	{#each chapters as c (c.id)}
+<!-- Chapter Selector Tabs: Manuscript Binder Rail -->
+<div class="mt-4 flex flex-wrap items-center gap-2 border-b-2 border-[var(--theme-border-strong)] pb-3">
+	{#each chapters as c, idx (c.id)}
 		<button
 			role="tab"
 			aria-selected={c.id === activeId}
-			class="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors {c.id ===
-			activeId
-				? 'bg-[var(--theme-accent)] text-white shadow-xs font-semibold'
-				: 'text-[var(--theme-text-muted)] hover:bg-[var(--theme-surface-subtle)] hover:text-[var(--theme-text)]'}"
+			class="{c.id === activeId
+				? 'neo-btn-primary !px-3 !py-1.5 text-xs font-bold'
+				: 'neo-btn !px-3 !py-1.5 text-xs font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 			onclick={() => selectChapter(c.id)}
 		>
+			<span class="font-mono opacity-80 mr-0.5">#{idx + 1}</span>
 			<span>{c.title}</span>
 			{#if c.act}
-				<span class="text-[10px] opacity-75">({c.act})</span>
+				<span class="font-mono text-[10px] opacity-80">[{c.act}]</span>
 			{/if}
 		</button>
 	{/each}
 	<button
-		class="flex cursor-pointer items-center rounded-md border border-dashed border-[var(--theme-border)] px-3 py-1.5 text-xs text-[var(--theme-text-muted)] hover:border-[var(--theme-border-strong)] hover:text-[var(--theme-text)]"
+		class="neo-btn !border-dashed !px-3 !py-1.5 text-xs font-mono font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
 		onclick={newChapter}
 	>
 		+ new scene
@@ -463,41 +463,41 @@
 			<!-- Interrogation & Analysis Panel -->
 			{#if interrogationReport || continuityReport || error}
 				<section
-					class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-xs"
+					class="mt-4 neo-box p-5"
 					aria-label="Editorial Debrief"
 				>
-					<div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--theme-border)] pb-3">
+					<div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[var(--theme-border-strong)] pb-3">
 						<div class="flex items-center gap-2">
 							<button
-								class="cursor-pointer text-xs font-bold uppercase tracking-wider {activeTab ===
+								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider {activeTab ===
 								'interrogate'
 									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
-									: 'text-[var(--theme-text-faint)] hover:text-[var(--theme-text)]'}"
+									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'interrogate')}
 							>
 								Socratic Interrogator
 							</button>
-							<span class="text-[var(--theme-text-faint)]">|</span>
+							<span class="text-[var(--theme-text-faint)] font-bold">|</span>
 							<button
-								class="cursor-pointer text-xs font-bold uppercase tracking-wider {activeTab ===
+								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider {activeTab ===
 								'continuity'
 									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
-									: 'text-[var(--theme-text-faint)] hover:text-[var(--theme-text)]'}"
+									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'continuity')}
 							>
 								Continuity & Lore Checker
 							</button>
 						</div>
 
-						<div class="flex items-center gap-1.5">
+						<div class="flex items-center gap-2">
 							<button
-								class="cursor-pointer rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1 text-xs font-medium text-[var(--theme-text)] hover:border-[var(--theme-border-strong)]"
+								class="neo-btn !px-2.5 !py-1 text-xs font-bold"
 								onclick={() => (showQuickDecisionForm = !showQuickDecisionForm)}
 							>
 								{showQuickDecisionForm ? 'Cancel' : '+ Lock Decision'}
 							</button>
 							<button
-								class="cursor-pointer rounded border border-[var(--theme-accent)] bg-[var(--theme-accent-subtle)] px-2.5 py-1 text-xs font-medium text-[var(--theme-accent)] hover:opacity-90"
+								class="neo-btn !px-2.5 !py-1 text-xs font-bold text-[var(--theme-accent)]"
 								onclick={() => (showQuickDisclosureForm = !showQuickDisclosureForm)}
 							>
 								{showQuickDisclosureForm ? 'Cancel' : '+ Log Secret to Timeline'}
@@ -506,23 +506,23 @@
 					</div>
 
 					{#if showQuickDecisionForm}
-						<div class="my-3 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-3 shadow-xs">
-							<h4 class="text-xs font-bold text-[var(--theme-text)]">Commit Answer to decisions.md</h4>
+						<div class="my-3 neo-box-sm bg-[var(--theme-surface-subtle)] p-3">
+							<h4 class="text-xs font-bold font-mono text-[var(--theme-text)] uppercase tracking-wide">Commit Answer to decisions.md</h4>
 							<div class="mt-2 grid gap-2 sm:grid-cols-2">
 								<input
 									bind:value={quickDecisionTopic}
 									placeholder="Topic (e.g. Why Kael trusts Mira)"
-									class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2 py-1 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)]"
+									class="neo-input text-xs"
 								/>
 								<input
 									bind:value={quickDecisionAnswer}
 									placeholder="Your decision (e.g. She holds the signet ring)"
-									class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2 py-1 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)]"
+									class="neo-input text-xs"
 								/>
 							</div>
 							<div class="mt-2 flex justify-end">
 								<button
-									class="cursor-pointer rounded bg-[var(--theme-accent)] px-3 py-1 text-xs font-medium text-white hover:opacity-90"
+									class="neo-btn-primary px-3 py-1 text-xs font-bold"
 									onclick={commitQuickDecision}
 								>
 									Lock as Canon
@@ -532,16 +532,16 @@
 					{/if}
 
 					{#if showQuickDisclosureForm}
-						<div class="my-3 rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-3 shadow-xs">
-							<h4 class="text-xs font-bold text-[var(--theme-text)]">Commit Secret to Event #{activeOrder}</h4>
+						<div class="my-3 neo-box-sm bg-[var(--theme-surface-subtle)] p-3">
+							<h4 class="text-xs font-bold font-mono text-[var(--theme-text)] uppercase tracking-wide">Commit Secret to Event #{activeOrder}</h4>
 							<div class="mt-2 flex gap-2">
 								<input
 									bind:value={quickSecretText}
 									placeholder="Secret revealed in this scene (e.g. Kael is carrying the black stone)"
-									class="flex-1 rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2 py-1 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)]"
+									class="neo-input flex-1 text-xs"
 								/>
 								<button
-									class="cursor-pointer rounded bg-[var(--theme-accent)] px-3 py-1 text-xs font-medium text-white hover:opacity-90"
+									class="neo-btn-primary px-3 py-1 text-xs font-bold"
 									onclick={commitQuickDisclosure}
 								>
 									Log to Event
@@ -551,7 +551,7 @@
 					{/if}
 
 					{#if error}
-						<p class="mt-3 text-xs text-rose-500">{error}</p>
+						<p class="mt-3 text-xs font-bold text-rose-500 font-mono">{error}</p>
 					{/if}
 
 					<div class="manuscript mt-3 text-sm leading-relaxed text-[var(--theme-text)] whitespace-pre-wrap">
@@ -571,14 +571,14 @@
 			<!-- Continuity Radar Box -->
 			<section
 				aria-label="Continuity Radar"
-				class="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-xs"
+				class="neo-box p-4"
 			>
 				<div class="flex items-center justify-between">
-					<h3 class="text-xs font-bold tracking-wider text-[var(--theme-text-muted)] uppercase">
+					<h3 class="text-xs font-bold font-mono tracking-wider text-[var(--theme-text-muted)] uppercase">
 						Continuity Radar ({contradictions.length + knowledgeLeaks.length + accidentalSpoilers.length})
 					</h3>
 					<span
-						class="h-2 w-2 rounded-full {contradictions.length || knowledgeLeaks.length || accidentalSpoilers.length
+						class="h-2.5 w-2.5 rounded-xs border border-[var(--theme-border-strong)] {contradictions.length || knowledgeLeaks.length || accidentalSpoilers.length
 							? 'bg-rose-500 animate-pulse'
 							: 'bg-emerald-500'}"
 					></span>
@@ -586,12 +586,12 @@
 
 				<!-- Accidental Spoilers (Reader Perspective Mode) -->
 				{#if accidentalSpoilers.length > 0}
-					<div class="mt-2 space-y-1.5">
-						<span class="text-[11px] font-bold text-purple-500 uppercase tracking-wide">
+					<div class="mt-3 space-y-1.5">
+						<span class="text-[11px] font-bold font-mono text-purple-600 dark:text-purple-400 uppercase tracking-wide">
 							🚨 Accidental Spoiler Alert ({accidentalSpoilers.length})
 						</span>
 						{#each accidentalSpoilers as sp}
-							<div class="rounded-md border border-purple-500/30 bg-purple-500/10 p-2 text-xs text-[var(--theme-text)] leading-tight">
+							<div class="rounded-xs border-2 border-purple-500 bg-purple-500/10 p-2 text-xs text-[var(--theme-text)] leading-tight shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 								<strong>{sp.nodeTitle}:</strong> {sp.reason}
 							</div>
 						{/each}
@@ -600,12 +600,12 @@
 
 				<!-- Knowledge Leaks Section -->
 				{#if knowledgeLeaks.length > 0}
-					<div class="mt-2 space-y-1.5">
-						<span class="text-[11px] font-bold text-rose-500 uppercase tracking-wide">
+					<div class="mt-3 space-y-1.5">
+						<span class="text-[11px] font-bold font-mono text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 							⚠️ Knowledge Leaks ({knowledgeLeaks.length})
 						</span>
 						{#each knowledgeLeaks as leak}
-							<div class="rounded-md border border-rose-500/30 bg-rose-500/10 p-2 text-xs text-[var(--theme-text)] leading-tight">
+							<div class="rounded-xs border-2 border-rose-500 bg-rose-500/10 p-2 text-xs text-[var(--theme-text)] leading-tight shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 								<strong>{leak.characterName}:</strong> {leak.reason}
 							</div>
 						{/each}
@@ -614,13 +614,13 @@
 
 				<!-- Magic Rule Contradictions -->
 				{#if contradictions.length > 0}
-					<div class="mt-2 space-y-1.5">
-						<span class="text-[11px] font-bold text-rose-500 uppercase tracking-wide">
+					<div class="mt-3 space-y-1.5">
+						<span class="text-[11px] font-bold font-mono text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 							🛡️ Magic Rule Conflicts ({contradictions.length})
 						</span>
-						<ul class="space-y-1 text-xs">
+						<ul class="space-y-1.5 text-xs">
 							{#each contradictions as c (c.entryId + c.reason)}
-								<li class="rounded-md border border-rose-500/30 bg-rose-500/10 p-2 text-[var(--theme-text)] leading-tight">
+								<li class="rounded-xs border-2 border-rose-500 bg-rose-500/10 p-2 text-[var(--theme-text)] leading-tight shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 									<div class="font-bold">{c.entryName}</div>
 									<div class="mt-0.5 text-[11px] opacity-80">{c.reason}</div>
 								</li>
@@ -630,21 +630,21 @@
 				{/if}
 
 				{#if !contradictions.length && !knowledgeLeaks.length && !accidentalSpoilers.length}
-					<p class="mt-2 text-xs leading-relaxed text-[var(--theme-text-muted)]">
+					<p class="mt-2 text-xs leading-relaxed text-[var(--theme-text-muted)] font-mono">
 						No canon contradictions, knowledge leaks, or accidental spoilers detected.
 					</p>
 				{/if}
 
 				<!-- Reader Clue Horizon when Reader Mode is Active -->
 				{#if readerMode}
-					<div class="mt-3 border-t border-[var(--theme-border)] pt-2 text-[11px]">
-						<span class="font-bold text-purple-500 uppercase text-[10px]">
+					<div class="mt-3 border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px]">
+						<span class="font-bold font-mono text-purple-600 dark:text-purple-400 uppercase text-[10px]">
 							Reader Horizon (Clues Observed: {readerClues.length}):
 						</span>
 						{#if !readerClues.length}
-							<p class="mt-1 text-[var(--theme-text-faint)] italic">No clues planted in story yet.</p>
+							<p class="mt-1 text-[var(--theme-text-faint)] italic font-mono">No clues planted in story yet.</p>
 						{:else}
-							<ul class="mt-1 space-y-0.5 text-[var(--theme-text)]">
+							<ul class="mt-1 space-y-0.5 text-[var(--theme-text)] font-mono">
 								{#each readerClues as rc}
 									<li>🔍 {rc.title}</li>
 								{/each}
@@ -653,14 +653,14 @@
 					</div>
 				{/if}
 
-				<div class="mt-3 flex items-center justify-between border-t border-stone-100 pt-2 text-[11px] text-stone-500">
-					<span>Linked: {linked.map((e) => e.name).join(', ') || 'None'}</span>
-					<div class="flex gap-2">
-						<a href="/timeline" class="font-medium text-[#9a3412] underline hover:text-[#7c2d12]">
+				<div class="mt-3 flex items-center justify-between border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px] text-[var(--theme-text-muted)] font-mono">
+					<span class="truncate max-w-[170px]" title={linked.map((e) => e.name).join(', ')}>Linked: {linked.map((e) => e.name).join(', ') || 'None'}</span>
+					<div class="flex gap-2 font-bold">
+						<a href="/timeline" class="text-[var(--theme-accent)] hover:underline">
 							Timeline
 						</a>
 						<span>·</span>
-						<a href="/mysteries" class="font-medium text-[#9a3412] underline hover:text-[#7c2d12]">
+						<a href="/mysteries" class="text-[var(--theme-accent)] hover:underline">
 							Mysteries
 						</a>
 					</div>
@@ -668,17 +668,17 @@
 			</section>
 
 			<!-- AI Provider Settings Drawer -->
-			<details class="rounded-xl border border-[#e7e0d3] bg-[#faf7f2]/80 p-3 text-xs">
-				<summary class="cursor-pointer font-semibold text-[#57534e] hover:text-[#1c1917]">
+			<details class="neo-box-sm bg-[var(--theme-surface-subtle)] p-3 text-xs">
+				<summary class="cursor-pointer font-bold font-mono text-[var(--theme-text)] hover:text-[var(--theme-accent)]">
 					AI Settings ({cfg.provider})
 				</summary>
 				<div class="mt-3 space-y-2">
 					<label class="block">
-						<span class="text-[11px] font-medium text-stone-600">Provider</span>
+						<span class="text-[11px] font-bold font-mono text-[var(--theme-text-muted)] uppercase">Provider</span>
 						<select
 							bind:value={cfg.provider}
 							onchange={saveKey}
-							class="mt-1 w-full rounded border border-[#e7e0d3] bg-white px-2 py-1 text-xs"
+							class="neo-input mt-1 w-full text-xs"
 						>
 							<option value="ollama">Ollama (Local Private AI)</option>
 							<option value="openai">OpenAI</option>
@@ -689,11 +689,11 @@
 
 					{#if cfg.provider === 'ollama'}
 						<label class="block">
-							<span class="text-[11px] font-medium text-stone-600">Model</span>
+							<span class="text-[11px] font-bold font-mono text-[var(--theme-text-muted)] uppercase">Model</span>
 							<select
 								bind:value={cfg.model}
 								onchange={saveKey}
-								class="mt-1 w-full rounded border border-[#e7e0d3] bg-white px-2 py-1 text-xs"
+								class="neo-input mt-1 w-full text-xs"
 							>
 								{#each ollama.models as m}
 									<option value={m}>{m}</option>
@@ -704,20 +704,20 @@
 							</select>
 						</label>
 						<button
-							class="cursor-pointer underline text-[11px] text-stone-600"
+							class="neo-btn !px-2 !py-1 text-[11px] font-bold font-mono mt-1"
 							onclick={refreshOllama}
 						>
 							Refresh Ollama Models
 						</button>
 					{:else if cfg.provider !== 'local'}
 						<label class="block">
-							<span class="text-[11px] font-medium text-stone-600">API Key</span>
+							<span class="text-[11px] font-bold font-mono text-[var(--theme-text-muted)] uppercase">API Key</span>
 							<input
 								type="password"
 								bind:value={cfg.apiKey}
 								onchange={saveKey}
 								placeholder="sk-…"
-								class="mt-1 w-full rounded border border-[#e7e0d3] bg-white px-2 py-1 text-xs"
+								class="neo-input mt-1 w-full text-xs"
 							/>
 						</label>
 					{/if}

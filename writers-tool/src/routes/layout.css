@@ -1,27 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
 /* ==========================================================================
-   Story OS Theme Variables & Palette Definitions
+   Story OS Theme Variables & Neobrutalism Palette Definitions
    ========================================================================== */
 
 :root,
 [data-theme='parchment'] {
 	--theme-bg: #faf7f2;
 	--theme-surface: #ffffff;
-	--theme-surface-subtle: #f5f0e6;
+	--theme-surface-subtle: #f5efe2;
 	--theme-surface-card: #ffffff;
-	--theme-border: #e7e0d3;
-	--theme-border-strong: #d3c7b2;
+	--theme-border: #1c1917;
+	--theme-border-strong: #1c1917;
 	--theme-text: #1c1917;
-	--theme-text-muted: #57534e;
+	--theme-text-muted: #44403c;
 	--theme-text-faint: #78716c;
 	--theme-accent: #9a3412;
+	--theme-accent-fg: #ffffff;
 	--theme-accent-hover: #7c2d12;
-	--theme-accent-subtle: #fff7ed;
-	--theme-header-bg: rgba(250, 247, 242, 0.95);
-	--theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+	--theme-accent-subtle: #ffedd5;
+	--theme-header-bg: #faf7f2;
+	--theme-shadow-hard: #1c1917;
 	color-scheme: light;
 }
 
@@ -30,16 +31,17 @@
 	--theme-surface: #2a2a37;
 	--theme-surface-subtle: #22222e;
 	--theme-surface-card: #252535;
-	--theme-border: #363646;
-	--theme-border-strong: #54546d;
+	--theme-border: #54546d;
+	--theme-border-strong: #727169;
 	--theme-text: #dcd7ba;
 	--theme-text-muted: #c8c093;
 	--theme-text-faint: #727169;
 	--theme-accent: #e46876;
+	--theme-accent-fg: #1f1f28;
 	--theme-accent-hover: #ff5d62;
-	--theme-accent-subtle: rgba(228, 104, 118, 0.15);
-	--theme-header-bg: rgba(31, 31, 40, 0.95);
-	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+	--theme-accent-subtle: rgba(228, 104, 118, 0.2);
+	--theme-header-bg: #1f1f28;
+	--theme-shadow-hard: #0d0c0c;
 	color-scheme: dark;
 }
 
@@ -48,16 +50,17 @@
 	--theme-surface: #222020;
 	--theme-surface-subtle: #1c1a1a;
 	--theme-surface-card: #282525;
-	--theme-border: #3a3636;
-	--theme-border-strong: #554f4f;
+	--theme-border: #554f4f;
+	--theme-border-strong: #7a7774;
 	--theme-text: #c5c9c5;
 	--theme-text-muted: #a6a69c;
 	--theme-text-faint: #7a7774;
 	--theme-accent: #c4746e;
+	--theme-accent-fg: #181616;
 	--theme-accent-hover: #e67e80;
-	--theme-accent-subtle: rgba(196, 116, 110, 0.15);
-	--theme-header-bg: rgba(24, 22, 22, 0.95);
-	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+	--theme-accent-subtle: rgba(196, 116, 110, 0.2);
+	--theme-header-bg: #181616;
+	--theme-shadow-hard: #080808;
 	color-scheme: dark;
 }
 
@@ -66,16 +69,17 @@
 	--theme-surface: #343f44;
 	--theme-surface-subtle: #2b3339;
 	--theme-surface-card: #3a474d;
-	--theme-border: #475258;
-	--theme-border-strong: #5c6a72;
+	--theme-border: #5c6a72;
+	--theme-border-strong: #7fbbb3;
 	--theme-text: #d3c6aa;
-	--theme-text-muted: #9da9a0;
+	--theme-text-muted: #a7b8a8;
 	--theme-text-faint: #7fbbb3;
 	--theme-accent: #a7c080;
+	--theme-accent-fg: #2d353b;
 	--theme-accent-hover: #83c092;
-	--theme-accent-subtle: rgba(167, 192, 128, 0.15);
-	--theme-header-bg: rgba(45, 53, 59, 0.95);
-	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+	--theme-accent-subtle: rgba(167, 192, 128, 0.2);
+	--theme-header-bg: #2d353b;
+	--theme-shadow-hard: #1e2326;
 	color-scheme: dark;
 }
 
@@ -84,16 +88,17 @@
 	--theme-surface: #f4f0d9;
 	--theme-surface-subtle: #ebe5c8;
 	--theme-surface-card: #f8f4df;
-	--theme-border: #ded8b8;
-	--theme-border-strong: #bdba9c;
-	--theme-text: #5c6a72;
-	--theme-text-muted: #708089;
-	--theme-text-faint: #939f91;
+	--theme-border: #2d353b;
+	--theme-border-strong: #2d353b;
+	--theme-text: #2d353b;
+	--theme-text-muted: #4f5b66;
+	--theme-text-faint: #708089;
 	--theme-accent: #8da101;
+	--theme-accent-fg: #ffffff;
 	--theme-accent-hover: #6a7a00;
-	--theme-accent-subtle: rgba(141, 161, 1, 0.15);
-	--theme-header-bg: rgba(253, 246, 227, 0.95);
-	--theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+	--theme-accent-subtle: rgba(141, 161, 1, 0.2);
+	--theme-header-bg: #fdf6e3;
+	--theme-shadow-hard: #2d353b;
 	color-scheme: light;
 }
 
@@ -102,16 +107,17 @@
 	--theme-surface: #181825;
 	--theme-surface-subtle: #11111b;
 	--theme-surface-card: #242438;
-	--theme-border: #313244;
-	--theme-border-strong: #45475a;
+	--theme-border: #45475a;
+	--theme-border-strong: #6c7086;
 	--theme-text: #cdd6f4;
 	--theme-text-muted: #a6adc8;
 	--theme-text-faint: #6c7086;
 	--theme-accent: #cba6f7;
+	--theme-accent-fg: #1e1e2e;
 	--theme-accent-hover: #f5c2e7;
-	--theme-accent-subtle: rgba(203, 166, 247, 0.15);
-	--theme-header-bg: rgba(30, 30, 46, 0.95);
-	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.35);
+	--theme-accent-subtle: rgba(203, 166, 247, 0.2);
+	--theme-header-bg: #1e1e2e;
+	--theme-shadow-hard: #0a0a0f;
 	color-scheme: dark;
 }
 
@@ -120,16 +126,17 @@
 	--theme-surface: #ffffff;
 	--theme-surface-subtle: #e6e9ef;
 	--theme-surface-card: #ffffff;
-	--theme-border: #ccd0da;
-	--theme-border-strong: #bcc0cc;
+	--theme-border: #4c4f69;
+	--theme-border-strong: #4c4f69;
 	--theme-text: #4c4f69;
-	--theme-text-muted: #6c6f85;
-	--theme-text-faint: #9ca0b0;
+	--theme-text-muted: #5c5f77;
+	--theme-text-faint: #6c6f85;
 	--theme-accent: #8839ef;
+	--theme-accent-fg: #ffffff;
 	--theme-accent-hover: #7287fd;
-	--theme-accent-subtle: rgba(136, 57, 239, 0.15);
-	--theme-header-bg: rgba(239, 241, 245, 0.95);
-	--theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+	--theme-accent-subtle: rgba(136, 57, 239, 0.2);
+	--theme-header-bg: #eff1f5;
+	--theme-shadow-hard: #4c4f69;
 	color-scheme: light;
 }
 
@@ -138,23 +145,25 @@
 	--theme-surface: #1d2021;
 	--theme-surface-subtle: #18191a;
 	--theme-surface-card: #32302f;
-	--theme-border: #3c3836;
-	--theme-border-strong: #504945;
+	--theme-border: #504945;
+	--theme-border-strong: #7c6f64;
 	--theme-text: #ebdbb2;
 	--theme-text-muted: #d5c4a1;
-	--theme-text-faint: #928374;
+	--theme-text-faint: #a89984;
 	--theme-accent: #fe8019;
+	--theme-accent-fg: #282828;
 	--theme-accent-hover: #fabd2f;
-	--theme-accent-subtle: rgba(254, 128, 25, 0.15);
-	--theme-header-bg: rgba(40, 40, 40, 0.95);
-	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+	--theme-accent-subtle: rgba(254, 128, 25, 0.2);
+	--theme-header-bg: #282828;
+	--theme-shadow-hard: #141617;
 	color-scheme: dark;
 }
 
 @theme {
-	--font-display: 'Cormorant Garamond', Georgia, serif;
+	--font-display: 'Space Grotesk', system-ui, sans-serif;
 	--font-manuscript: 'Libre Baskerville', Georgia, serif;
-	--font-ui: 'Inter', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', monospace;
+	--font-ui: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
 
 html {
@@ -167,9 +176,9 @@ body {
 	background-color: var(--theme-bg);
 	color: var(--theme-text);
 	font-family: var(--font-ui);
-	font-size: 16px;
-	line-height: 1.625;
-	transition: background-color 0.2s ease, color 0.2s ease;
+	font-size: 15px;
+	line-height: 1.6;
+	transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 /* Accessible focus outline */
@@ -182,13 +191,107 @@ body {
 /* Manuscript typography */
 .manuscript {
 	font-family: var(--font-manuscript);
-	line-height: 1.75;
+	line-height: 1.8;
 	max-width: 72ch;
 	color: var(--theme-text);
 }
 
 .font-display {
 	font-family: var(--font-display);
+}
+
+.font-mono {
+	font-family: var(--font-mono);
+}
+
+/* ==========================================================================
+   Neobrutalism Design System Classes & Utilities
+   ========================================================================== */
+
+/* Hard-shadow box containers */
+.neo-box {
+	border: 2px solid var(--theme-border-strong);
+	background-color: var(--theme-surface);
+	box-shadow: 3px 3px 0px var(--theme-shadow-hard);
+}
+
+.neo-box-sm {
+	border: 2px solid var(--theme-border-strong);
+	background-color: var(--theme-surface);
+	box-shadow: 2px 2px 0px var(--theme-shadow-hard);
+}
+
+.neo-box-lg {
+	border: 3px solid var(--theme-border-strong);
+	background-color: var(--theme-surface);
+	box-shadow: 5px 5px 0px var(--theme-shadow-hard);
+}
+
+/* Tactile physical buttons with click physics */
+.neo-btn {
+	border: 2px solid var(--theme-border-strong);
+	background-color: var(--theme-surface);
+	color: var(--theme-text);
+	box-shadow: 3px 3px 0px var(--theme-shadow-hard);
+	font-weight: 700;
+	transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
+	cursor: pointer;
+	user-select: none;
+}
+
+.neo-btn:hover:not(:disabled) {
+	transform: translate(-1px, -1px);
+	box-shadow: 4px 4px 0px var(--theme-shadow-hard);
+}
+
+.neo-btn:active:not(:disabled) {
+	transform: translate(2px, 2px);
+	box-shadow: 0px 0px 0px var(--theme-shadow-hard);
+}
+
+.neo-btn-primary {
+	border: 2px solid var(--theme-border-strong);
+	background-color: var(--theme-accent);
+	color: var(--theme-accent-fg);
+	box-shadow: 3px 3px 0px var(--theme-shadow-hard);
+	font-weight: 700;
+	transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.12s ease;
+	cursor: pointer;
+	user-select: none;
+}
+
+.neo-btn-primary:hover:not(:disabled) {
+	transform: translate(-1px, -1px);
+	box-shadow: 4px 4px 0px var(--theme-shadow-hard);
+	opacity: 0.95;
+}
+
+.neo-btn-primary:active:not(:disabled) {
+	transform: translate(2px, 2px);
+	box-shadow: 0px 0px 0px var(--theme-shadow-hard);
+}
+
+/* Neobrutalist form inputs */
+.neo-input {
+	border: 2px solid var(--theme-border-strong);
+	background-color: var(--theme-surface);
+	color: var(--theme-text);
+	box-shadow: 2px 2px 0px var(--theme-shadow-hard);
+	transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.neo-input:focus {
+	outline: none;
+	border-color: var(--theme-accent);
+	box-shadow: 3px 3px 0px var(--theme-accent);
+}
+
+/* Neobrutalist badge / sticker */
+.neo-badge {
+	border: 1.5px solid var(--theme-border-strong);
+	box-shadow: 1.5px 1.5px 0px var(--theme-shadow-hard);
+	font-family: var(--font-mono);
+	font-weight: 700;
 }
 
 /* Semantic utility classes */
@@ -213,15 +316,6 @@ body {
 
 .theme-text-faint {
 	color: var(--theme-text-faint);
-}
-
-.theme-btn-accent {
-	background-color: var(--theme-accent);
-	color: #ffffff;
-}
-
-.theme-btn-accent:hover {
-	background-color: var(--theme-accent-hover);
 }
 
 /* Respect reduced motion */

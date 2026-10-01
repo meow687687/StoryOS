@@ -41,10 +41,10 @@
 </script>
 
 <span
-	class="inline-flex items-center gap-1 rounded-full border font-mono font-medium tracking-wide uppercase {config.bg} {size ===
+	class="inline-flex items-center gap-1 rounded-md border-[1.5px] border-[var(--theme-border-strong)] font-mono font-bold tracking-wider uppercase shadow-[1.5px_1.5px_0px_var(--theme-shadow-hard)] {config.bg} {size ===
 	'sm'
 		? 'px-1.5 py-0.5 text-[10px]'
-		: 'px-2 py-0.5 text-xs'}"
+		: 'px-2 py-0.5 text-[11px]'}"
 	title="Lifecycle status: {config.label}"
 >
 	<span aria-hidden="true">{config.icon}</span>

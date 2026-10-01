@@ -147,18 +147,18 @@
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
 			<div class="flex items-center gap-3">
-				<h1 class="font-display text-4xl font-semibold tracking-tight text-[var(--theme-text)]">
+				<h1 class="font-display text-4xl font-extrabold tracking-tight text-[var(--theme-text)]">
 					Mystery & Foreshadowing Board
 				</h1>
 				<button
 					type="button"
-					class="cursor-pointer rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)] transition-colors"
+					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Tips' : '💡 Mystery Board Tips'}
 				</button>
 			</div>
-			<p class="mt-1 text-sm text-[var(--theme-text-muted)]">
+			<p class="mt-1 font-mono text-xs text-[var(--theme-text-muted)]">
 				Detective corkboard connecting Mysteries ➔ Clues ➔ Red Herrings ➔ Reveals ➔ Consequences.
 				Tracks what has been planted, what remains shrouded, and guards against accidental spoilers.
 			</p>
@@ -167,12 +167,12 @@
 		<div class="flex items-center gap-2">
 			<a
 				href="/guide"
-				class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-text)] shadow-xs hover:border-[var(--theme-border-strong)]"
+				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 			>
 				📖 Manual
 			</a>
 			<button
-				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+				class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
 				onclick={() => (showNewNodeModal = true)}
 			>
 				+ Add Node to Board
@@ -181,22 +181,22 @@
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] shadow-xs animate-in fade-in duration-200">
+		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
 			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
-				<span>Mystery & Foreshadowing Board Quick Tips</span>
-				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80">Full Documentation →</a>
+				<span class="font-mono text-xs uppercase tracking-wider">Mystery & Foreshadowing Board Quick Tips</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Full Documentation →</a>
 			</div>
 			<div class="mt-2 grid gap-3 sm:grid-cols-3">
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">The Mystery Pipeline</span>
+					<span class="font-bold text-[var(--theme-text)]">The Mystery Pipeline</span>
 					<p class="mt-0.5 text-[11px]">Connect core mysteries to evidence clues, misleading red herrings, eventual dramatic reveals, and downstream consequences.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Lifecycle Statuses</span>
+					<span class="font-bold text-[var(--theme-text)]">Lifecycle Statuses</span>
 					<p class="mt-0.5 text-[11px]">Click any node's status pill to cycle: <em>Unplanted ➔ Planted ➔ Discovered ➔ Revealed ➔ Resolved</em> as manuscript events unfold.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Accidental Spoilers</span>
+					<span class="font-bold text-[var(--theme-text)]">Accidental Spoilers</span>
 					<p class="mt-0.5 text-[11px]">Reveal order tags tie to planned chapters. The Reader Perspective Mode flags anytime a clue reveals its payoff prematurely.</p>
 				</div>
 			</div>
@@ -205,13 +205,13 @@
 </header>
 
 <!-- Filter & Legend Bar -->
-<div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--theme-border)] pb-3">
+<div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-[var(--theme-border-strong)] pb-3">
 	<!-- Filter by Mystery Thread -->
 	<div class="flex items-center gap-2 text-xs">
-		<span class="font-semibold text-[var(--theme-text-muted)]">Thread:</span>
+		<span class="font-mono font-bold text-[var(--theme-text-muted)] uppercase">Thread:</span>
 		<select
 			bind:value={selectedFilter}
-			class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2.5 py-1 text-xs font-medium text-[var(--theme-text)] focus:outline-hidden"
+			class="neo-input !py-1 text-xs font-mono font-bold"
 		>
 			<option value="all">All Threads ({nodes.length} nodes)</option>
 			{#each mysteriesList as m}
@@ -224,9 +224,9 @@
 	<div class="flex flex-wrap items-center gap-2 text-[11px]">
 		{#each ['mystery', 'clue', 'red_herring', 'reveal', 'consequence'] as t}
 			{@const badge = getNodeBadge(t as MysteryNodeType)}
-			<span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 {badge.bg}">
+			<span class="inline-flex items-center gap-1 rounded-xs border-2 border-[var(--theme-border-strong)] px-2 py-0.5 font-mono font-bold text-[10px] {badge.bg} shadow-[1.5px_1.5px_0px_var(--theme-shadow-hard)]">
 				<span>{badge.icon}</span>
-				<span class="font-semibold">{badge.label}</span>
+				<span>{badge.label}</span>
 			</span>
 		{/each}
 	</div>
@@ -234,19 +234,19 @@
 
 {#if nodes.length === 0}
 	<!-- Empty State -->
-	<div class="mt-8 rounded-2xl border-2 border-dashed border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-12 text-center">
-		<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-surface)] text-2xl shadow-xs">
+	<div class="mt-8 neo-box-sm !border-dashed p-12 text-center">
+		<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-2xl shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 			📌
 		</div>
-		<h3 class="font-display mt-4 text-xl font-bold text-[var(--theme-text)]">
+		<h3 class="font-display mt-4 text-xl font-bold tracking-tight text-[var(--theme-text)]">
 			Mystery Corkboard is Empty
 		</h3>
-		<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)]">
+		<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)] font-mono">
 			Plot your plot twists, hidden daggers, poisoned cups, and false leads. Connect them visually so your readers never catch an unearned reveal.
 		</p>
 		<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 			<button
-				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+				class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
 				onclick={() => {
 					newType = 'mystery';
 					showNewNodeModal = true;
@@ -255,7 +255,7 @@
 				+ Add First Mystery
 			</button>
 			<button
-				class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-xs font-semibold text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] shadow-xs"
+				class="neo-btn !px-4 !py-2 text-xs font-bold"
 				onclick={handleLoadSample}
 			>
 				✨ Load Sample Story (The Ashen Vow)
@@ -265,40 +265,40 @@
 {:else}
 	<!-- Corkboard Visual Canvas -->
 	<div
-		class="relative mt-6 min-h-[500px] w-full rounded-2xl border-4 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-6 shadow-inner"
-		style="background-image: radial-gradient(var(--theme-border) 1.5px, transparent 1.5px); background-size: 24px 24px;"
+		class="relative mt-6 min-h-[500px] w-full neo-box !p-6 bg-[var(--theme-surface-subtle)]"
+		style="background-image: radial-gradient(var(--theme-border-strong) 1.5px, transparent 1.5px); background-size: 24px 24px;"
 	>
 		<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each filteredNodes as node (node.id)}
 				{@const typeBadge = getNodeBadge(node.type)}
 				{@const statusBadge = getStatusBadge(node.status)}
 				<article
-					class="relative flex flex-col justify-between rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg"
+					class="relative flex flex-col justify-between neo-box p-4 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
 				>
 					<!-- Pushpin Graphic -->
-					<div class="absolute -top-2.5 left-1/2 -translate-x-1/2">
-						<div class="h-4 w-4 rounded-full border border-[var(--theme-border-strong)] bg-[var(--theme-accent)] shadow-sm"></div>
+					<div class="absolute -top-3 left-1/2 -translate-x-1/2">
+						<div class="h-4 w-4 rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-accent)] shadow-[1px_1px_0px_var(--theme-shadow-hard)]"></div>
 					</div>
 
 					<div>
 						<div class="flex items-start justify-between gap-2 pt-1">
 							<span
-								class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider {typeBadge.bg}"
+								class="inline-flex items-center gap-1 rounded-xs border-2 border-[var(--theme-border-strong)] px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider {typeBadge.bg} shadow-[1px_1px_0px_var(--theme-shadow-hard)]"
 							>
 								<span>{typeBadge.icon}</span>
 								{typeBadge.label}
 							</span>
 
 							<button
-								class="cursor-pointer text-[var(--theme-text-muted)] hover:text-rose-500 p-0.5 text-xs"
+								class="neo-btn flex h-6 w-6 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
 								onclick={() => deleteNode(node.id)}
 								aria-label="Remove node"
 							>
-								×
+								✕
 							</button>
 						</div>
 
-						<h3 class="font-display mt-2 text-base font-bold text-[var(--theme-text)] leading-snug">
+						<h3 class="font-display mt-3 text-base font-bold text-[var(--theme-text)] leading-snug">
 							{node.title}
 						</h3>
 
@@ -307,17 +307,17 @@
 						</p>
 
 						{#if node.manuscriptQuote}
-							<blockquote class="mt-2 border-l-2 border-[var(--theme-accent)] pl-2 text-[11px] italic text-[var(--theme-text-muted)]">
+							<blockquote class="mt-2 border-l-2 border-[var(--theme-accent)] pl-2 text-[11px] italic text-[var(--theme-text-muted)] font-mono">
 								“{node.manuscriptQuote}”
 							</blockquote>
 						{/if}
 					</div>
 
 					<!-- Footer with Status and Connectors -->
-					<div class="mt-4 border-t border-[var(--theme-border)] pt-2 text-[11px]">
+					<div class="mt-4 border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px]">
 						<div class="flex items-center justify-between">
 							<button
-								class="cursor-pointer rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {statusBadge.bg}"
+								class="cursor-pointer rounded-xs border-2 border-[var(--theme-border-strong)] px-2 py-0.5 text-[10px] font-mono font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px] {statusBadge.bg} shadow-[1px_1px_0px_var(--theme-shadow-hard)]"
 								onclick={() => cycleStatus(node.id)}
 								title="Click to cycle status (Unplanted ➔ Planted ➔ Discovered ➔ Revealed ➔ Resolved)"
 							>
@@ -325,16 +325,16 @@
 							</button>
 
 							{#if node.revealOrder}
-								<span class="font-mono text-[10px] font-semibold text-[var(--theme-accent)]">
-									Ch. {node.revealOrder}
+								<span class="font-mono text-[10px] font-bold text-[var(--theme-accent)]">
+									[Ch. {node.revealOrder}]
 								</span>
 							{/if}
 						</div>
 
 						{#if node.connectedTo.length > 0}
-							<div class="mt-2 text-[10px] text-[var(--theme-text-muted)]">
+							<div class="mt-2 text-[10px] text-[var(--theme-text-muted)] font-mono">
 								➔ Leads to:
-								<span class="font-medium text-[var(--theme-text)]">
+								<span class="font-bold text-[var(--theme-text)]">
 									{node.connectedTo
 										.map((id) => nodes.find((n) => n.id === id)?.title ?? id)
 										.join(', ')}
@@ -351,21 +351,21 @@
 <!-- Add Node Modal -->
 {#if showNewNodeModal}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-lg rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-xl">
-			<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">Add Detective Corkboard Node</h2>
+		<div class="w-full max-w-lg neo-box-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-6">
+			<h2 class="font-display text-xl font-bold tracking-tight text-[var(--theme-text)]">Add Detective Corkboard Node</h2>
 			<div class="mt-4 space-y-3 text-xs">
 				<div class="grid gap-3 sm:grid-cols-2">
 					<div>
-						<label for="node-type" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="node-type" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Node Type
 						</label>
 						<select
 							id="node-type"
 							bind:value={newType}
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
+							class="neo-input mt-1 w-full text-xs font-mono font-bold"
 						>
 							<option value="mystery">❓ Mystery</option>
 							<option value="clue">🔍 Clue</option>
@@ -376,13 +376,13 @@
 					</div>
 
 					<div>
-						<label for="node-status" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="node-status" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Status
 						</label>
 						<select
 							id="node-status"
 							bind:value={newStatus}
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
+							class="neo-input mt-1 w-full text-xs font-mono font-bold"
 						>
 							<option value="unplanted">Unplanted</option>
 							<option value="planted">Planted</option>
@@ -394,19 +394,19 @@
 				</div>
 
 				<div>
-					<label for="node-title" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="node-title" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Title / Element Name
 					</label>
 					<input
 						id="node-title"
 						bind:value={newTitle}
 						placeholder="e.g. The Queen's Poisoner or Vial of Hemlock"
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					/>
 				</div>
 
 				<div>
-					<label for="node-desc" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+					<label for="node-desc" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Description
 					</label>
 					<textarea
@@ -414,19 +414,19 @@
 						bind:value={newDesc}
 						rows={2}
 						placeholder="Explain the clue, reveal, or consequence..."
-						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+						class="neo-input mt-1 w-full text-xs"
 					></textarea>
 				</div>
 
 				<div class="grid gap-3 sm:grid-cols-2">
 					<div>
-						<label for="node-parent" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="node-parent" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Connect to Existing Node
 						</label>
 						<select
 							id="node-parent"
 							bind:value={newConnectToId}
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
+							class="neo-input mt-1 w-full text-xs font-mono"
 						>
 							<option value="">None (Root Node)</option>
 							{#each nodes as n}
@@ -436,7 +436,7 @@
 					</div>
 
 					<div>
-						<label for="node-order" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
+						<label for="node-order" class="block font-mono font-bold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Planned Reveal Chapter (for Reveals)
 						</label>
 						<input
@@ -444,21 +444,21 @@
 							type="number"
 							bind:value={newRevealOrder}
 							placeholder="e.g. 4"
-							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
+							class="neo-input mt-1 w-full text-xs font-mono"
 						/>
 					</div>
 				</div>
 			</div>
 
-			<div class="mt-5 flex justify-end gap-2">
+			<div class="mt-5 flex justify-end gap-2 border-t-2 border-[var(--theme-border-strong)] pt-4">
 				<button
-					class="cursor-pointer rounded-lg border border-[var(--theme-border)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]"
+					class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 					onclick={() => (showNewNodeModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90"
+					class="neo-btn-primary !px-4 !py-1.5 text-xs font-bold"
 					onclick={addNode}
 				>
 					Pin to Board

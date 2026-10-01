@@ -208,18 +208,18 @@
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
 			<div class="flex items-center gap-3">
-				<h1 class="font-display text-4xl font-semibold tracking-tight text-[var(--theme-text)]">
+				<h1 class="font-display text-4xl font-extrabold tracking-tight text-[var(--theme-text)]">
 					Timeline & Continuity Engine
 				</h1>
 				<button
 					type="button"
-					class="cursor-pointer rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)] transition-colors"
+					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Guide' : '💡 Timeline Tips'}
 				</button>
 			</div>
-			<p class="mt-1 text-sm text-[var(--theme-text-muted)]">
+			<p class="mt-1 font-mono text-xs text-[var(--theme-text-muted)]">
 				Track chronological sequences, character state evolution, and prevent accidental knowledge
 				leaks across chapters.
 			</p>
@@ -228,7 +228,7 @@
 		<div class="flex items-center gap-2">
 			<a
 				href="/guide"
-				class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-text)] shadow-xs hover:border-[var(--theme-border-strong)]"
+				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
 			>
 				📖 Manual
 			</a>
@@ -236,22 +236,22 @@
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] shadow-xs animate-in fade-in duration-200">
+		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
 			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
-				<span>Timeline & Continuity Engine Guide</span>
-				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80">Full Documentation →</a>
+				<span class="font-mono text-xs uppercase tracking-wider">Timeline & Continuity Engine Guide</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Full Documentation →</a>
 			</div>
 			<div class="mt-2 grid gap-3 sm:grid-cols-3">
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Time-Travel Scrubber</span>
+					<span class="font-bold text-[var(--theme-text)]">Time-Travel Scrubber</span>
 					<p class="mt-0.5 text-[11px]">Select any character and scrub the event dropdown to inspect their exact injuries, held items, and secrets known at that narrative moment.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">Knowledge Leak Radar</span>
+					<span class="font-bold text-[var(--theme-text)]">Knowledge Leak Radar</span>
 					<p class="mt-0.5 text-[11px]">Automatically flags when a POV character mentions secrets they were never told, or references future events before they happened.</p>
 				</div>
 				<div>
-					<span class="font-semibold text-[var(--theme-text)]">State Mutations</span>
+					<span class="font-bold text-[var(--theme-text)]">State Mutations</span>
 					<p class="mt-0.5 text-[11px]">Log injuries gained, relics acquired, and relationship trust changes that dynamically recalculate downstream states.</p>
 				</div>
 			</div>
@@ -262,19 +262,19 @@
 <!-- Global Knowledge Leak Alert Banner -->
 {#if allLeaks.length > 0}
 	<div
-		class="mt-6 max-w-6xl rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 shadow-xs"
+		class="mt-6 max-w-6xl rounded-xs border-2 border-rose-500 bg-rose-500/10 p-4 shadow-[3px_3px_0px_var(--theme-shadow-hard)]"
 		role="alert"
 	>
-		<div class="flex items-center gap-2 font-bold text-rose-500">
+		<div class="flex items-center gap-2 font-mono text-sm font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 			<span>⚠️</span>
 			<span>Continuity Alert: {allLeaks.flatMap((l) => l.leaks).length} Knowledge Leak(s) Detected</span>
 		</div>
-		<div class="mt-2 space-y-2">
+		<div class="mt-3 space-y-2">
 			{#each allLeaks as item}
-				<div class="rounded-lg bg-[var(--theme-surface)] p-3 text-xs border border-rose-500/20 text-[var(--theme-text)]">
-					<div class="font-bold text-[var(--theme-text)]">{item.chapterTitle}</div>
+				<div class="neo-box-sm bg-[var(--theme-surface)] p-3 text-xs text-[var(--theme-text)]">
+					<div class="font-bold font-mono text-[var(--theme-text)] uppercase">{item.chapterTitle}</div>
 					{#each item.leaks as leak}
-						<div class="mt-1 text-rose-500">
+						<div class="mt-1 font-mono text-xs text-rose-600 dark:text-rose-400">
 							• {leak.reason}
 						</div>
 					{/each}
@@ -286,23 +286,23 @@
 
 <!-- Character State Time-Travel Inspector -->
 <section
-	class="mt-6 max-w-6xl rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-xs"
+	class="mt-6 max-w-6xl neo-box p-5"
 	aria-label="Character State Inspector"
 >
-	<div class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--theme-border)] pb-3">
+	<div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[var(--theme-border-strong)] pb-3">
 		<div class="flex items-center gap-2">
-			<span class="text-lg">⏳</span>
-			<h2 class="font-display text-base font-bold text-[var(--theme-text)]">
+			<span class="text-xl">⏳</span>
+			<h2 class="font-display text-base font-bold tracking-tight text-[var(--theme-text)]">
 				Character State Time-Travel Inspector
 			</h2>
 		</div>
 
 		<div class="flex flex-wrap items-center gap-3">
-			<label class="flex items-center gap-1.5 text-xs font-semibold text-[var(--theme-text-muted)]">
+			<label class="flex items-center gap-1.5 font-mono text-xs font-bold text-[var(--theme-text-muted)] uppercase">
 				Character:
 				<select
 					bind:value={selectedCharacterId}
-					class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-1 text-xs font-medium text-[var(--theme-text)] focus:outline-hidden"
+					class="neo-input !py-1 text-xs"
 				>
 					{#if !characters.length}
 						<option value="">No characters yet</option>
@@ -313,11 +313,11 @@
 				</select>
 			</label>
 
-			<label class="flex items-center gap-1.5 text-xs font-semibold text-[var(--theme-text-muted)]">
+			<label class="flex items-center gap-1.5 font-mono text-xs font-bold text-[var(--theme-text-muted)] uppercase">
 				At Story Event:
 				<select
 					bind:value={selectedEventOrder}
-					class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-1 text-xs font-medium text-[var(--theme-text)] focus:outline-hidden"
+					class="neo-input !py-1 text-xs"
 				>
 					{#if !events.length}
 						<option value={1}>Event 1 (Genesis)</option>
@@ -333,16 +333,16 @@
 	{#if computedState}
 		<div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			<!-- Known Secrets -->
-			<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] p-3 shadow-xs">
-				<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+			<div class="neo-box-sm p-3">
+				<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 					Known Secrets ({computedState.knownSecrets.length})
 				</h3>
 				{#if !computedState.knownSecrets.length}
-					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic">No secrets disclosed yet.</p>
+					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic font-mono">No secrets disclosed yet.</p>
 				{:else}
 					<ul class="mt-2 space-y-1.5 text-xs text-[var(--theme-text)]">
 						{#each computedState.knownSecrets as s}
-							<li class="rounded bg-[var(--theme-surface-subtle)] p-1.5 border border-[var(--theme-border)] leading-relaxed">
+							<li class="rounded-xs bg-[var(--theme-surface-subtle)] p-2 border border-[var(--theme-border-strong)] leading-relaxed font-mono text-[11px]">
 								🔒 {s.fact}
 							</li>
 						{/each}
@@ -351,16 +351,16 @@
 			</div>
 
 			<!-- Active Injuries -->
-			<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] p-3 shadow-xs">
-				<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+			<div class="neo-box-sm p-3">
+				<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 					Active Injuries ({computedState.activeInjuries.length})
 				</h3>
 				{#if !computedState.activeInjuries.length}
-					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic">Unharmed / healthy.</p>
+					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic font-mono">Unharmed / healthy.</p>
 				{:else}
-					<ul class="mt-2 space-y-1.5 text-xs text-rose-500">
+					<ul class="mt-2 space-y-1.5 text-xs">
 						{#each computedState.activeInjuries as inj}
-							<li class="rounded bg-rose-500/10 p-1.5 border border-rose-500/20">
+							<li class="rounded-xs bg-rose-500/10 p-2 border-2 border-rose-500 text-rose-600 dark:text-rose-400 font-bold font-mono text-[11px]">
 								🩹 {inj}
 							</li>
 						{/each}
@@ -369,16 +369,16 @@
 			</div>
 
 			<!-- Held Items & Relics -->
-			<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] p-3 shadow-xs">
-				<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+			<div class="neo-box-sm p-3">
+				<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 					Inventory & Relics ({computedState.itemsHeld.length})
 				</h3>
 				{#if !computedState.itemsHeld.length}
-					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic">No specific items tracked.</p>
+					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic font-mono">No specific items tracked.</p>
 				{:else}
 					<ul class="mt-2 space-y-1.5 text-xs text-[var(--theme-text)]">
 						{#each computedState.itemsHeld as it}
-							<li class="rounded bg-[var(--theme-surface-subtle)] p-1.5 border border-[var(--theme-border)]">
+							<li class="rounded-xs bg-[var(--theme-surface-subtle)] p-2 border border-[var(--theme-border-strong)] font-mono text-[11px]">
 								🗡️ {it}
 							</li>
 						{/each}
@@ -387,28 +387,28 @@
 			</div>
 
 			<!-- Relationships & Trust -->
-			<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] p-3 shadow-xs">
-				<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+			<div class="neo-box-sm p-3">
+				<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 					Relationships ({Object.keys(computedState.relationships).length})
 				</h3>
 				{#if !Object.keys(computedState.relationships).length}
-					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic">Neutral to all characters.</p>
+					<p class="mt-2 text-xs text-[var(--theme-text-faint)] italic font-mono">Neutral to all characters.</p>
 				{:else}
 					<ul class="mt-2 space-y-2 text-xs">
 						{#each Object.entries(computedState.relationships) as [target, rel]}
-							<li class="rounded bg-[var(--theme-surface-subtle)] p-2 border border-[var(--theme-border)]">
-								<div class="flex items-center justify-between font-semibold">
+							<li class="rounded-xs bg-[var(--theme-surface-subtle)] p-2 border border-[var(--theme-border-strong)]">
+								<div class="flex items-center justify-between font-bold">
 									<span>{target}</span>
-									<span class="capitalize text-[11px] text-[var(--theme-accent)]">{rel.polarity}</span>
+									<span class="capitalize font-mono text-[11px] text-[var(--theme-accent)]">[{rel.polarity}]</span>
 								</div>
 								<div class="mt-1 flex items-center gap-2">
-									<div class="h-1.5 w-full rounded-full bg-[var(--theme-border)] overflow-hidden">
+									<div class="h-2 w-full rounded-xs bg-[var(--theme-surface)] border border-[var(--theme-border-strong)] overflow-hidden">
 										<div
 											class="h-full bg-[var(--theme-accent)]"
 											style="width: {rel.trust}%"
 										></div>
 									</div>
-									<span class="text-[10px] text-[var(--theme-text-faint)] font-mono">{rel.trust}%</span>
+									<span class="text-[10px] text-[var(--theme-text-muted)] font-mono font-bold">{rel.trust}%</span>
 								</div>
 							</li>
 						{/each}
@@ -421,23 +421,23 @@
 
 <!-- Chronological Story Event Ledger -->
 <section class="mt-8 max-w-6xl" aria-label="Event Ledger">
-	<div class="flex items-center justify-between border-b border-[var(--theme-border)] pb-2">
-		<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">
+	<div class="flex items-center justify-between border-b-2 border-[var(--theme-border-strong)] pb-2">
+		<h2 class="font-display text-xl font-extrabold tracking-tight text-[var(--theme-text)]">
 			Chronological Event Ledger ({events.length})
 		</h2>
 	</div>
 
 	{#if events.length === 0}
-		<div class="my-6 rounded-2xl border border-dashed border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-8 text-center max-w-2xl mx-auto space-y-3">
+		<div class="my-6 neo-box-sm !border-dashed p-8 text-center max-w-2xl mx-auto space-y-3">
 			<div class="text-3xl">⏳</div>
 			<h3 class="font-display text-lg font-bold text-[var(--theme-text)]">Your Timeline is Empty</h3>
-			<p class="text-xs text-[var(--theme-text-muted)] leading-relaxed">
+			<p class="text-xs text-[var(--theme-text-muted)] leading-relaxed font-mono">
 				Log sequential story scenes below to track character states, physical injuries, acquired inventory items, and dynamic relationship shifts across narrative time.
 			</p>
 			<div class="flex items-center justify-center gap-2.5 pt-1">
 				<a
 					href="/guide"
-					class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3.5 py-1.5 text-xs font-semibold text-[var(--theme-text)] shadow-xs hover:border-[var(--theme-border-strong)]"
+					class="neo-btn !px-3.5 !py-1.5 text-xs font-bold"
 				>
 					✨ Load Sample Story
 				</a>
@@ -446,41 +446,41 @@
 	{/if}
 
 	<!-- Add Event Quick Form -->
-	<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-xs">
-		<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+	<div class="mt-4 neo-box p-4">
+		<h3 class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 			Log New Narrative Event
 		</h3>
-		<div class="mt-2 grid gap-3 sm:grid-cols-3">
+		<div class="mt-3 grid gap-3 sm:grid-cols-3">
 			<input
 				bind:value={newSceneTitle}
 				placeholder="Scene title (e.g. The Siege)"
-				class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
+				class="neo-input text-xs"
 			/>
 			<input
 				bind:value={newInStoryTime}
 				placeholder="In-story time (e.g. Day 3, Dawn)"
-				class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
+				class="neo-input text-xs font-mono"
 			/>
 			<input
 				bind:value={newLocation}
 				placeholder="Location (e.g. Ashen Fortress)"
-				class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
+				class="neo-input text-xs"
 			/>
 			<input
 				bind:value={newParticipantId}
 				placeholder="Lead Character / Participant (e.g. Lucan)"
 				list="characters-list"
-				class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
+				class="neo-input text-xs"
 			/>
 			<input
 				bind:value={newSecretText}
 				placeholder="Secret Disclosed (e.g. The King is alive)"
-				class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden sm:col-span-2"
+				class="neo-input text-xs sm:col-span-2"
 			/>
 			<div class="flex gap-2 sm:col-span-3">
 				<select
 					bind:value={newMutationType}
-					class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-1.5 text-xs text-[var(--theme-text)]"
+					class="neo-input text-xs font-mono font-bold"
 				>
 					<option value="injury">Injury</option>
 					<option value="item_acquired">Acquired Item</option>
@@ -489,10 +489,10 @@
 				<input
 					bind:value={newMutationDesc}
 					placeholder="State Mutation description (e.g. Broken left shoulder)"
-					class="flex-1 rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
+					class="neo-input flex-1 text-xs"
 				/>
 				<button
-					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-white shadow-xs hover:opacity-90 disabled:opacity-40"
+					class="neo-btn-primary px-4 py-1.5 text-xs font-bold disabled:opacity-40"
 					onclick={addEvent}
 					disabled={!newSceneTitle.trim()}
 				>
@@ -511,19 +511,16 @@
 	<div class="mt-6 space-y-4">
 		{#each events as ev (ev.id)}
 			<article
-				class="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-xs transition-shadow hover:shadow-sm"
+				class="neo-box p-5 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
 			>
 				<div class="flex items-start justify-between gap-3">
 					<div>
-						<div class="flex items-center gap-2">
-							<span class="font-mono text-xs font-bold text-[var(--theme-accent)]">Event #{ev.order}</span>
-							<span class="text-xs text-[var(--theme-text-faint)]">·</span>
-							<span class="rounded bg-[var(--theme-surface-subtle)] px-2 py-0.5 text-xs font-medium text-[var(--theme-text)]">
+						<div class="flex flex-wrap items-center gap-2">
+							<span class="neo-badge font-mono text-xs font-bold text-[var(--theme-accent)]">Event #{ev.order}</span>
+							<span class="rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] px-2 py-0.5 font-mono text-xs font-bold text-[var(--theme-text)]">
 								{ev.inStoryTime}
 							</span>
-							<span class="text-xs text-[var(--theme-text-faint)]">·</span>
-							<span class="text-xs text-[var(--theme-text-muted)]">📍 {ev.locationName || 'Unknown place'}</span>
-							<span class="text-xs text-[var(--theme-text-faint)]">·</span>
+							<span class="font-mono text-xs text-[var(--theme-text-muted)]">📍 {ev.locationName || 'Unknown place'}</span>
 							<button
 								class="cursor-pointer"
 								onclick={() => toggleEventStatus(ev.id)}
@@ -532,27 +529,27 @@
 								<CanonBadge status={ev.status} size="sm" />
 							</button>
 						</div>
-						<h3 class="font-display mt-2 text-xl font-bold text-[var(--theme-text)]">{ev.sceneTitle}</h3>
+						<h3 class="font-display mt-2 text-xl font-bold tracking-tight text-[var(--theme-text)]">{ev.sceneTitle}</h3>
 					</div>
 
 					<button
-						class="cursor-pointer text-[var(--theme-text-faint)] hover:text-rose-500 text-sm p-1"
+						class="neo-btn flex h-7 w-7 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
 						onclick={() => removeEvent(ev.id)}
 						aria-label="Remove event"
 					>
-						×
+						✕
 					</button>
 				</div>
 
-				<div class="mt-3 grid gap-3 text-xs sm:grid-cols-3 border-t border-[var(--theme-border)] pt-3">
+				<div class="mt-4 grid gap-3 text-xs sm:grid-cols-3 border-t-2 border-[var(--theme-border-strong)] pt-3">
 					<!-- Participants -->
 					<div>
-						<span class="font-semibold text-[var(--theme-text-muted)] uppercase tracking-wider text-[10px]">
+						<span class="font-mono font-bold text-[var(--theme-text-muted)] uppercase tracking-wider text-[10px]">
 							Participants:
 						</span>
-						<div class="mt-1 flex flex-wrap gap-1">
+						<div class="mt-1.5 flex flex-wrap gap-1">
 							{#each ev.participantIds as p}
-								<span class="rounded bg-[var(--theme-surface-subtle)] px-2 py-0.5 text-[var(--theme-text)] font-medium">
+								<span class="neo-badge font-mono text-[11px] font-bold">
 									{p}
 								</span>
 							{/each}
@@ -561,17 +558,17 @@
 
 					<!-- Secrets Disclosed -->
 					<div>
-						<span class="font-semibold text-[var(--theme-text-muted)] uppercase tracking-wider text-[10px]">
+						<span class="font-mono font-bold text-[var(--theme-text-muted)] uppercase tracking-wider text-[10px]">
 							Secrets Disclosed:
 						</span>
 						{#if !ev.disclosures?.length}
-							<div class="mt-1 text-[var(--theme-text-faint)] italic">None in this scene</div>
+							<div class="mt-1.5 text-[var(--theme-text-faint)] italic font-mono text-[11px]">None in this scene</div>
 						{:else}
-							<ul class="mt-1 space-y-1">
+							<ul class="mt-1.5 space-y-1">
 								{#each ev.disclosures as d}
-									<li class="text-[var(--theme-text)]">
+									<li class="rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-1.5 text-[var(--theme-text)] font-mono text-[11px]">
 										🔒 <strong>{d.fact}</strong>
-										<span class="text-[10px] text-[var(--theme-text-faint)]">
+										<span class="block text-[10px] text-[var(--theme-text-muted)]">
 											(told to: {d.disclosedToCharacterIds.join(', ')})
 										</span>
 									</li>
@@ -582,17 +579,17 @@
 
 					<!-- State Mutations -->
 					<div>
-						<span class="font-semibold text-[var(--theme-text-muted)] uppercase tracking-wider text-[10px]">
+						<span class="font-mono font-bold text-[var(--theme-text-muted)] uppercase tracking-wider text-[10px]">
 							State Mutations:
 						</span>
 						{#if !ev.mutations?.length}
-							<div class="mt-1 text-[var(--theme-text-faint)] italic">None in this scene</div>
+							<div class="mt-1.5 text-[var(--theme-text-faint)] italic font-mono text-[11px]">None in this scene</div>
 						{:else}
-							<ul class="mt-1 space-y-1">
+							<ul class="mt-1.5 space-y-1">
 								{#each ev.mutations as m}
-									<li class="text-[var(--theme-text)]">
-										<span class="font-medium text-[var(--theme-accent)] capitalize">[{m.type}]</span>
-										{m.characterId}: {m.description}
+									<li class="rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-1.5 text-[var(--theme-text)] font-mono text-[11px]">
+										<span class="font-bold text-[var(--theme-accent)] uppercase">[{m.type}]</span>
+										<strong>{m.characterId}:</strong> {m.description}
 									</li>
 								{/each}
 							</ul>
