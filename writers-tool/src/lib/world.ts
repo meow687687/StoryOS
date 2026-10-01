@@ -893,5 +893,273 @@ export function saveStoryBeats(beats: StoryBeat[]): void {
 	}
 }
 
+// --- Sample Story Demo Suite (The Ashen Vow) ---
+
+export const SAMPLE_CHAPTERS: Chapter[] = [
+	{
+		id: 'c1',
+		title: 'Chapter 1 — The Ashen Vow',
+		act: 'Act I: The Exile',
+		pov: 'Kael',
+		goal: 'Conceal the forbidden fire-pact while bargaining for passage at the tavern.',
+		text: 'The embers in the hearth hissed as Kael stepped through the doorway of the tavern in Emberhold. His cloak smelled of salt and burned parchment. He kept his right hand inside the wool lining, fingers closed tight around the cold stone.',
+		updatedAt: new Date().toISOString(),
+		threads: ['Who betrayed the Prince?', 'The missing courier'],
+		rulesPinned: ['Fire Pact']
+	},
+	{
+		id: 'c2',
+		title: 'Chapter 2 — The Whispering Spire',
+		act: 'Act I: The Exile',
+		pov: 'Kael',
+		goal: 'Meet Lyra and secure the sealed route through the Iron Pass.',
+		text: 'Rain drummed against the stained glass of the High Citadel. Lyra did not look up from her celestial charts when Kael entered. "You bring fire into a sanctuary of glass, Prince," she said softly.',
+		updatedAt: new Date().toISOString(),
+		threads: ['The missing courier'],
+		rulesPinned: []
+	}
+];
+
+export const SAMPLE_BIBLE: WorldEntry[] = [
+	{
+		id: 'b1',
+		name: 'Kael',
+		kind: 'character',
+		status: 'canon',
+		aliases: ['Prince Kael', 'The Exiled Heir'],
+		text: 'Exiled heir to the Sunken Throne. Bearer of the forbidden ember seal. Bound by duty to protect his sister over reclaiming his lost kingdom.'
+	},
+	{
+		id: 'b2',
+		name: 'Lyra',
+		kind: 'character',
+		status: 'canon',
+		aliases: ['Lady Lyra', 'Stargazer of the Spire'],
+		text: 'High Astrologer of the High Citadel. An old ally of Kael who secretly aids the resistance against the Iron Council.'
+	},
+	{
+		id: 'b3',
+		name: 'Emberhold',
+		kind: 'place',
+		status: 'canon',
+		aliases: ['The City of Embers'],
+		text: 'Ancient port city built upon volcanic basalt cliffs. Known for clandestine black markets and illicit alchemical trade.'
+	},
+	{
+		id: 'b4',
+		name: 'High Citadel',
+		kind: 'place',
+		status: 'canon',
+		aliases: ['The Citadel'],
+		text: 'Fortress perched high in the northern crags overlooking the Iron Pass.'
+	},
+	{
+		id: 'b5',
+		name: 'Fire Pact',
+		kind: 'magic',
+		status: 'canon',
+		aliases: ['Ember Law'],
+		text: 'Fire magic cannot summon water. Only bonded mages may call flame. Every conjuration extracts a toll in physical warmth.'
+	},
+	{
+		id: 'b6',
+		name: 'Iron Council',
+		kind: 'faction',
+		status: 'canon',
+		aliases: ['The Council'],
+		text: 'Oligarchic ruling body that usurped the crown and placed a bounty upon all surviving bloodline mages.'
+	}
+];
+
+export const SAMPLE_DECISIONS: Decision[] = [
+	{
+		id: 'D1',
+		date: new Date().toISOString().slice(0, 10),
+		topic: 'Magic Cost & Limitations',
+		decision: 'Fire magic cannot summon water and demands physical body warmth.',
+		authorWords: '"Small fragments of warmth per use"',
+		source: 'Editorial outline',
+		affects: 'bible:magic, chapters:ch1',
+		status: 'locked'
+	},
+	{
+		id: 'D2',
+		date: new Date().toISOString().slice(0, 10),
+		topic: "Kael's Motivation",
+		decision: "Kael prioritizes saving his exiled sister over vengeance or the throne.",
+		authorWords: '"He is driven by love, not revenge"',
+		source: 'Character design document',
+		affects: 'character:Kael, theme',
+		status: 'locked'
+	}
+];
+
+export const SAMPLE_EVENTS: StoryEvent[] = [
+	{
+		id: 'ev1',
+		chapterId: 'c1',
+		sceneTitle: 'The Ashen Vow',
+		order: 1,
+		inStoryTime: 'Day 1 (Midnight)',
+		participantIds: ['Kael'],
+		disclosures: [
+			{
+				id: 'sec1',
+				fact: 'The courier was poisoned by the Iron Council',
+				disclosedAtOrder: 1,
+				disclosedToCharacterIds: ['Kael'],
+				isPublicToReader: true
+			}
+		],
+		mutations: [
+			{
+				id: 'mut1',
+				characterId: 'Kael',
+				type: 'item_acquired',
+				description: 'Basalt Signet Stone'
+			}
+		],
+		status: 'canon'
+	},
+	{
+		id: 'ev2',
+		chapterId: 'c2',
+		sceneTitle: 'The Whispering Spire',
+		order: 2,
+		inStoryTime: 'Day 3 (Dusk)',
+		participantIds: ['Kael', 'Lyra'],
+		disclosures: [
+			{
+				id: 'sec2',
+				fact: 'The Sunken Vault holds the True Crown',
+				disclosedAtOrder: 2,
+				disclosedToCharacterIds: ['Lyra', 'Kael'],
+				isPublicToReader: true
+			}
+		],
+		mutations: [
+			{
+				id: 'mut2',
+				characterId: 'Kael',
+				targetCharacterId: 'Lyra',
+				type: 'relationship',
+				description: 'Formed alliance with Lyra',
+				trustDelta: 25,
+				polarity: 'allied'
+			}
+		],
+		status: 'canon'
+	}
+];
+
+export const SAMPLE_MYSTERIES: MysteryNode[] = [
+	{
+		id: 'm1',
+		type: 'mystery',
+		title: 'Who poisoned the royal courier?',
+		description: 'The courier died of blackened blood before delivering the sealed decree.',
+		status: 'planted',
+		chapterId: 'c1',
+		connectedTo: ['m2', 'm3'],
+		x: 80,
+		y: 120
+	},
+	{
+		id: 'm2',
+		type: 'clue',
+		title: 'Blackened wax seal with snake crest',
+		description: 'The wax on the decree bore a serpentine crest instead of the King.',
+		status: 'discovered',
+		chapterId: 'c1',
+		connectedTo: ['m4'],
+		x: 320,
+		y: 80
+	},
+	{
+		id: 'm3',
+		type: 'red_herring',
+		title: 'Western Guild rumors',
+		description: 'Tavern gossips claim tavern smugglers poisoned the courier for gold.',
+		status: 'planted',
+		chapterId: 'c1',
+		connectedTo: [],
+		x: 320,
+		y: 240
+	},
+	{
+		id: 'm4',
+		type: 'reveal',
+		title: 'The Iron Council orchestrated the assassination',
+		description: 'Lyra reveals the snake crest belongs to the Chancellor of Iron.',
+		status: 'revealed',
+		chapterId: 'c2',
+		revealOrder: 2,
+		connectedTo: [],
+		x: 600,
+		y: 120
+	}
+];
+
+export const SAMPLE_PINS: MapPin[] = [
+	{ id: 'p1', name: 'Emberhold', type: 'city', x: 22, y: 35 },
+	{ id: 'p2', name: 'High Citadel', type: 'citadel', x: 55, y: 20 },
+	{ id: 'p3', name: 'Iron Pass', type: 'wilds', x: 40, y: 28 },
+	{ id: 'p4', name: 'Sunken Vault', type: 'fortress', x: 75, y: 65 }
+];
+
+export const SAMPLE_JOURNEYS: JourneyWaypoint[] = [
+	{ id: 'j1', characterId: 'Kael', pinId: 'p1', dayIndex: 1, order: 1, chapterTitle: 'Ch. 1' },
+	{ id: 'j2', characterId: 'Kael', pinId: 'p3', dayIndex: 2, order: 2, chapterTitle: 'Ch. 2' },
+	{ id: 'j3', characterId: 'Kael', pinId: 'p2', dayIndex: 3, order: 3, chapterTitle: 'Ch. 3' }
+];
+
+export const SAMPLE_BEATS: StoryBeat[] = [
+	{
+		id: 'b1',
+		chapterTitle: 'Chapter 1: The Ashen Vow',
+		beatName: 'Inciting Incident — The Poisoned Courier',
+		act: 'Act I',
+		order: 1,
+		tension: 3,
+		valueShift: 'Safety ➔ Danger',
+		summary: 'Kael discovers the assassination and must flee into the cold wilderness.'
+	},
+	{
+		id: 'b2',
+		chapterTitle: 'Chapter 2: The Whispering Spire',
+		beatName: 'Threshold — Entrance to the Spire',
+		act: 'Act I',
+		order: 2,
+		tension: 5,
+		valueShift: 'Isolation ➔ Alliance',
+		summary: 'Kael makes contact with Lyra to secure secret routes through the crags.'
+	}
+];
+
+export function loadSampleStory(): void {
+	if (typeof localStorage === 'undefined') return;
+	saveChapters(SAMPLE_CHAPTERS);
+	saveBible(SAMPLE_BIBLE);
+	saveDecisions(SAMPLE_DECISIONS);
+	saveEvents(SAMPLE_EVENTS);
+	saveMysteries(SAMPLE_MYSTERIES);
+	saveMapPins(SAMPLE_PINS);
+	saveJourneys(SAMPLE_JOURNEYS);
+	saveStoryBeats(SAMPLE_BEATS);
+}
+
+export function clearAllStoryData(): void {
+	if (typeof localStorage === 'undefined') return;
+	localStorage.removeItem(BIBLE_KEY);
+	localStorage.removeItem(CHAPTERS_KEY);
+	localStorage.removeItem(DECISIONS_KEY);
+	localStorage.removeItem(EVENTS_KEY);
+	localStorage.removeItem(MYSTERIES_KEY);
+	localStorage.removeItem(MAP_PINS_KEY);
+	localStorage.removeItem(JOURNEYS_KEY);
+	localStorage.removeItem(STORY_BEATS_KEY);
+}
+
+
 
 

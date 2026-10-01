@@ -2,50 +2,229 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+/* ==========================================================================
+   Story OS Theme Variables & Palette Definitions
+   ========================================================================== */
+
+:root,
+[data-theme='parchment'] {
+	--theme-bg: #faf7f2;
+	--theme-surface: #ffffff;
+	--theme-surface-subtle: #f5f0e6;
+	--theme-surface-card: #ffffff;
+	--theme-border: #e7e0d3;
+	--theme-border-strong: #d3c7b2;
+	--theme-text: #1c1917;
+	--theme-text-muted: #57534e;
+	--theme-text-faint: #78716c;
+	--theme-accent: #9a3412;
+	--theme-accent-hover: #7c2d12;
+	--theme-accent-subtle: #fff7ed;
+	--theme-header-bg: rgba(250, 247, 242, 0.95);
+	--theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+	color-scheme: light;
+}
+
+[data-theme='kanagawa-wave'] {
+	--theme-bg: #1f1f28;
+	--theme-surface: #2a2a37;
+	--theme-surface-subtle: #22222e;
+	--theme-surface-card: #252535;
+	--theme-border: #363646;
+	--theme-border-strong: #54546d;
+	--theme-text: #dcd7ba;
+	--theme-text-muted: #c8c093;
+	--theme-text-faint: #727169;
+	--theme-accent: #e46876;
+	--theme-accent-hover: #ff5d62;
+	--theme-accent-subtle: rgba(228, 104, 118, 0.15);
+	--theme-header-bg: rgba(31, 31, 40, 0.95);
+	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+	color-scheme: dark;
+}
+
+[data-theme='kanagawa-dragon'] {
+	--theme-bg: #181616;
+	--theme-surface: #222020;
+	--theme-surface-subtle: #1c1a1a;
+	--theme-surface-card: #282525;
+	--theme-border: #3a3636;
+	--theme-border-strong: #554f4f;
+	--theme-text: #c5c9c5;
+	--theme-text-muted: #a6a69c;
+	--theme-text-faint: #7a7774;
+	--theme-accent: #c4746e;
+	--theme-accent-hover: #e67e80;
+	--theme-accent-subtle: rgba(196, 116, 110, 0.15);
+	--theme-header-bg: rgba(24, 22, 22, 0.95);
+	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+	color-scheme: dark;
+}
+
+[data-theme='everforest-dark'] {
+	--theme-bg: #2d353b;
+	--theme-surface: #343f44;
+	--theme-surface-subtle: #2b3339;
+	--theme-surface-card: #3a474d;
+	--theme-border: #475258;
+	--theme-border-strong: #5c6a72;
+	--theme-text: #d3c6aa;
+	--theme-text-muted: #9da9a0;
+	--theme-text-faint: #7fbbb3;
+	--theme-accent: #a7c080;
+	--theme-accent-hover: #83c092;
+	--theme-accent-subtle: rgba(167, 192, 128, 0.15);
+	--theme-header-bg: rgba(45, 53, 59, 0.95);
+	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+	color-scheme: dark;
+}
+
+[data-theme='everforest-light'] {
+	--theme-bg: #fdf6e3;
+	--theme-surface: #f4f0d9;
+	--theme-surface-subtle: #ebe5c8;
+	--theme-surface-card: #f8f4df;
+	--theme-border: #ded8b8;
+	--theme-border-strong: #bdba9c;
+	--theme-text: #5c6a72;
+	--theme-text-muted: #708089;
+	--theme-text-faint: #939f91;
+	--theme-accent: #8da101;
+	--theme-accent-hover: #6a7a00;
+	--theme-accent-subtle: rgba(141, 161, 1, 0.15);
+	--theme-header-bg: rgba(253, 246, 227, 0.95);
+	--theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+	color-scheme: light;
+}
+
+[data-theme='catppuccin-mocha'] {
+	--theme-bg: #1e1e2e;
+	--theme-surface: #181825;
+	--theme-surface-subtle: #11111b;
+	--theme-surface-card: #242438;
+	--theme-border: #313244;
+	--theme-border-strong: #45475a;
+	--theme-text: #cdd6f4;
+	--theme-text-muted: #a6adc8;
+	--theme-text-faint: #6c7086;
+	--theme-accent: #cba6f7;
+	--theme-accent-hover: #f5c2e7;
+	--theme-accent-subtle: rgba(203, 166, 247, 0.15);
+	--theme-header-bg: rgba(30, 30, 46, 0.95);
+	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.35);
+	color-scheme: dark;
+}
+
+[data-theme='catppuccin-latte'] {
+	--theme-bg: #eff1f5;
+	--theme-surface: #ffffff;
+	--theme-surface-subtle: #e6e9ef;
+	--theme-surface-card: #ffffff;
+	--theme-border: #ccd0da;
+	--theme-border-strong: #bcc0cc;
+	--theme-text: #4c4f69;
+	--theme-text-muted: #6c6f85;
+	--theme-text-faint: #9ca0b0;
+	--theme-accent: #8839ef;
+	--theme-accent-hover: #7287fd;
+	--theme-accent-subtle: rgba(136, 57, 239, 0.15);
+	--theme-header-bg: rgba(239, 241, 245, 0.95);
+	--theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+	color-scheme: light;
+}
+
+[data-theme='gruvbox-dark'] {
+	--theme-bg: #282828;
+	--theme-surface: #1d2021;
+	--theme-surface-subtle: #18191a;
+	--theme-surface-card: #32302f;
+	--theme-border: #3c3836;
+	--theme-border-strong: #504945;
+	--theme-text: #ebdbb2;
+	--theme-text-muted: #d5c4a1;
+	--theme-text-faint: #928374;
+	--theme-accent: #fe8019;
+	--theme-accent-hover: #fabd2f;
+	--theme-accent-subtle: rgba(254, 128, 25, 0.15);
+	--theme-header-bg: rgba(40, 40, 40, 0.95);
+	--theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+	color-scheme: dark;
+}
+
 @theme {
 	--font-display: 'Cormorant Garamond', Georgia, serif;
 	--font-manuscript: 'Libre Baskerville', Georgia, serif;
 	--font-ui: 'Inter', system-ui, sans-serif;
-
-	--color-parchment: #faf7f2;
-	--color-ink: #1c1917;
-	--color-ink-soft: #57534e;
-	--color-ember: #9a3412;
-	--color-ember-deep: #7c2d12;
-	--color-rule: #e7e0d3;
 }
 
 html {
 	scroll-behavior: smooth;
+	background-color: var(--theme-bg);
+	color: var(--theme-text);
 }
 
 body {
-	background-color: var(--color-parchment);
-	color: var(--color-ink);
+	background-color: var(--theme-bg);
+	color: var(--theme-text);
 	font-family: var(--font-ui);
 	font-size: 16px;
 	line-height: 1.625;
+	transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Visible keyboard focus everywhere (ux: focus-states, CRITICAL) */
+/* Accessible focus outline */
 :where(a, button, input, select, textarea, summary):focus-visible {
-	outline: 2px solid var(--color-ember);
+	outline: 2px solid var(--theme-accent);
 	outline-offset: 2px;
-	border-radius: 2px;
+	border-radius: 4px;
 }
 
-/* Manuscript surfaces: serif, relaxed measure (ux: line-height + line-length) */
+/* Manuscript typography */
 .manuscript {
 	font-family: var(--font-manuscript);
 	line-height: 1.75;
 	max-width: 72ch;
+	color: var(--theme-text);
 }
 
 .font-display {
 	font-family: var(--font-display);
 }
 
-/* Respect reduced motion (ux: reduced-motion, HIGH) */
+/* Semantic utility classes */
+.theme-surface {
+	background-color: var(--theme-surface);
+	border-color: var(--theme-border);
+	color: var(--theme-text);
+}
+
+.theme-subtle {
+	background-color: var(--theme-surface-subtle);
+	border-color: var(--theme-border);
+}
+
+.theme-border {
+	border-color: var(--theme-border);
+}
+
+.theme-text-muted {
+	color: var(--theme-text-muted);
+}
+
+.theme-text-faint {
+	color: var(--theme-text-faint);
+}
+
+.theme-btn-accent {
+	background-color: var(--theme-accent);
+	color: #ffffff;
+}
+
+.theme-btn-accent:hover {
+	background-color: var(--theme-accent-hover);
+}
+
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
 	html {
 		scroll-behavior: auto;

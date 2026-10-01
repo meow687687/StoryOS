@@ -3,6 +3,7 @@
 	import {
 		loadChapters,
 		loadMysteries,
+		loadSampleStory,
 		saveMysteries,
 		type Chapter,
 		type MysteryNode,
@@ -14,6 +15,7 @@
 	let chapters = $state<Chapter[]>([]);
 	let selectedFilter = $state<string>('all');
 	let activeNode = $state<MysteryNode | null>(null);
+	let showHelpTips = $state(false);
 
 	// New Node Form State
 	let showNewNodeModal = $state(false);
@@ -25,73 +27,16 @@
 	let newRevealOrder = $state<number | undefined>(undefined);
 	let newConnectToId = $state('');
 
-	const DEMO_MYSTERY_NODES: MysteryNode[] = [
-		{
-			id: 'n_myst1',
-			type: 'mystery',
-			title: 'Who murdered King Alden?',
-			description: 'Found dead in the solar with his throat black as soot.',
-			status: 'planted',
-			connectedTo: ['n_clue1', 'n_herring1', 'n_rev1'],
-			x: 50,
-			y: 120
-		},
-		{
-			id: 'n_clue1',
-			type: 'clue',
-			title: 'Vial of Weeping Hemlock',
-			description: 'Discarded in the garden under the royal conservatory window.',
-			status: 'planted',
-			chapterId: 'c1',
-			manuscriptQuote: 'He kicked an empty glass phial half-buried under wet mulch.',
-			connectedTo: ['n_rev1'],
-			x: 320,
-			y: 60
-		},
-		{
-			id: 'n_herring1',
-			type: 'red_herring',
-			title: 'The Outcast Herbalist',
-			description: 'Boran was seen gathering roots by night and paid in gold.',
-			status: 'planted',
-			chapterId: 'c1',
-			manuscriptQuote: 'Old Boran had gold coins stamped with the Cinder seal.',
-			connectedTo: [],
-			x: 320,
-			y: 200
-		},
-		{
-			id: 'n_rev1',
-			type: 'reveal',
-			title: 'Archmage Solis poisoned the King',
-			description: 'Solis orchestrated the regicide to blame the Northern rebels.',
-			status: 'unplanted',
-			revealOrder: 4,
-			connectedTo: ['n_conseq1'],
-			x: 600,
-			y: 100
-		},
-		{
-			id: 'n_conseq1',
-			type: 'consequence',
-			title: 'Civil war erupts in Emberhold',
-			description: 'The military divides between Solis loyalists and the Crown prince.',
-			status: 'unplanted',
-			revealOrder: 5,
-			connectedTo: [],
-			x: 880,
-			y: 100
-		}
-	];
-
 	onMount(() => {
 		chapters = loadChapters();
 		nodes = loadMysteries();
-		if (!nodes.length) {
-			nodes = DEMO_MYSTERY_NODES;
-			saveMysteries(nodes);
-		}
 	});
+
+	function handleLoadSample() {
+		loadSampleStory();
+		chapters = loadChapters();
+		nodes = loadMysteries();
+	}
 
 	const mysteriesList = $derived(nodes.filter((n) => n.type === 'mystery'));
 
@@ -201,35 +146,72 @@
 <header class="max-w-6xl">
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
-			<h1 class="font-display text-4xl font-semibold tracking-tight text-[#1c1917]">
-				Mystery & Foreshadowing Board
-			</h1>
-			<p class="mt-1 text-sm text-[#57534e]">
+			<div class="flex items-center gap-3">
+				<h1 class="font-display text-4xl font-semibold tracking-tight text-[var(--theme-text)]">
+					Mystery & Foreshadowing Board
+				</h1>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)] transition-colors"
+					onclick={() => (showHelpTips = !showHelpTips)}
+				>
+					{showHelpTips ? '✕ Close Tips' : '💡 Mystery Board Tips'}
+				</button>
+			</div>
+			<p class="mt-1 text-sm text-[var(--theme-text-muted)]">
 				Detective corkboard connecting Mysteries ➔ Clues ➔ Red Herrings ➔ Reveals ➔ Consequences.
-				Tracks what has been planted, what remains shrouded, and guards against accidental
-				spoilers.
+				Tracks what has been planted, what remains shrouded, and guards against accidental spoilers.
 			</p>
 		</div>
 
 		<div class="flex items-center gap-2">
+			<a
+				href="/guide"
+				class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-text)] shadow-xs hover:border-[var(--theme-border-strong)]"
+			>
+				📖 Manual
+			</a>
 			<button
-				class="cursor-pointer rounded-lg bg-[#9a3412] px-4 py-2 text-xs font-semibold text-white hover:bg-[#7c2d12]"
+				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
 				onclick={() => (showNewNodeModal = true)}
 			>
 				+ Add Node to Board
 			</button>
 		</div>
 	</div>
+
+	{#if showHelpTips}
+		<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] shadow-xs animate-in fade-in duration-200">
+			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
+				<span>Mystery & Foreshadowing Board Quick Tips</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80">Full Documentation →</a>
+			</div>
+			<div class="mt-2 grid gap-3 sm:grid-cols-3">
+				<div>
+					<span class="font-semibold text-[var(--theme-text)]">The Mystery Pipeline</span>
+					<p class="mt-0.5 text-[11px]">Connect core mysteries to evidence clues, misleading red herrings, eventual dramatic reveals, and downstream consequences.</p>
+				</div>
+				<div>
+					<span class="font-semibold text-[var(--theme-text)]">Lifecycle Statuses</span>
+					<p class="mt-0.5 text-[11px]">Click any node's status pill to cycle: <em>Unplanted ➔ Planted ➔ Discovered ➔ Revealed ➔ Resolved</em> as manuscript events unfold.</p>
+				</div>
+				<div>
+					<span class="font-semibold text-[var(--theme-text)]">Accidental Spoilers</span>
+					<p class="mt-0.5 text-[11px]">Reveal order tags tie to planned chapters. The Reader Perspective Mode flags anytime a clue reveals its payoff prematurely.</p>
+				</div>
+			</div>
+		</div>
+	{/if}
 </header>
 
 <!-- Filter & Legend Bar -->
-<div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#e7e0d3] pb-3">
+<div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--theme-border)] pb-3">
 	<!-- Filter by Mystery Thread -->
 	<div class="flex items-center gap-2 text-xs">
-		<span class="font-semibold text-stone-600">Thread:</span>
+		<span class="font-semibold text-[var(--theme-text-muted)]">Thread:</span>
 		<select
 			bind:value={selectedFilter}
-			class="rounded border border-[#e7e0d3] bg-white px-2 py-1 text-xs font-medium text-stone-800 focus:outline-hidden"
+			class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2.5 py-1 text-xs font-medium text-[var(--theme-text)] focus:outline-hidden"
 		>
 			<option value="all">All Threads ({nodes.length} nodes)</option>
 			{#each mysteriesList as m}
@@ -250,108 +232,140 @@
 	</div>
 </div>
 
-<!-- Corkboard Visual Canvas -->
-<div
-	class="relative mt-6 min-h-[500px] w-full rounded-2xl border-4 border-[#d6c7b2] bg-[#eadecb] p-6 shadow-inner"
-	style="background-image: radial-gradient(#cbbba2 1px, transparent 1px); background-size: 20px 20px;"
->
-	<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-		{#each filteredNodes as node (node.id)}
-			{@const typeBadge = getNodeBadge(node.type)}
-			{@const statusBadge = getStatusBadge(node.status)}
-			<article
-				class="relative flex flex-col justify-between rounded-xl border border-stone-300/80 bg-white p-4 shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg"
+{#if nodes.length === 0}
+	<!-- Empty State -->
+	<div class="mt-8 rounded-2xl border-2 border-dashed border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-12 text-center">
+		<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-surface)] text-2xl shadow-xs">
+			📌
+		</div>
+		<h3 class="font-display mt-4 text-xl font-bold text-[var(--theme-text)]">
+			Mystery Corkboard is Empty
+		</h3>
+		<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)]">
+			Plot your plot twists, hidden daggers, poisoned cups, and false leads. Connect them visually so your readers never catch an unearned reveal.
+		</p>
+		<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+			<button
+				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+				onclick={() => {
+					newType = 'mystery';
+					showNewNodeModal = true;
+				}}
 			>
-				<!-- Pushpin Graphic -->
-				<div class="absolute -top-2.5 left-1/2 -translate-x-1/2">
-					<div class="h-4 w-4 rounded-full border border-red-800 bg-red-600 shadow-sm"></div>
-				</div>
-
-				<div>
-					<div class="flex items-start justify-between gap-2 pt-1">
-						<span
-							class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider {typeBadge.bg}"
-						>
-							<span>{typeBadge.icon}</span>
-							{typeBadge.label}
-						</span>
-
-						<button
-							class="cursor-pointer text-stone-400 hover:text-rose-600 p-0.5 text-xs"
-							onclick={() => deleteNode(node.id)}
-							aria-label="Remove node"
-						>
-							×
-						</button>
+				+ Add First Mystery
+			</button>
+			<button
+				class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-xs font-semibold text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] shadow-xs"
+				onclick={handleLoadSample}
+			>
+				✨ Load Sample Story (The Ashen Vow)
+			</button>
+		</div>
+	</div>
+{:else}
+	<!-- Corkboard Visual Canvas -->
+	<div
+		class="relative mt-6 min-h-[500px] w-full rounded-2xl border-4 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-6 shadow-inner"
+		style="background-image: radial-gradient(var(--theme-border) 1.5px, transparent 1.5px); background-size: 24px 24px;"
+	>
+		<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+			{#each filteredNodes as node (node.id)}
+				{@const typeBadge = getNodeBadge(node.type)}
+				{@const statusBadge = getStatusBadge(node.status)}
+				<article
+					class="relative flex flex-col justify-between rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-4 shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg"
+				>
+					<!-- Pushpin Graphic -->
+					<div class="absolute -top-2.5 left-1/2 -translate-x-1/2">
+						<div class="h-4 w-4 rounded-full border border-[var(--theme-border-strong)] bg-[var(--theme-accent)] shadow-sm"></div>
 					</div>
 
-					<h3 class="font-display mt-2 text-base font-bold text-[#1c1917] leading-snug">
-						{node.title}
-					</h3>
-
-					<p class="manuscript mt-1.5 text-xs leading-relaxed text-[#44403c]">
-						{node.description}
-					</p>
-
-					{#if node.manuscriptQuote}
-						<blockquote class="mt-2 border-l-2 border-[#9a3412] pl-2 text-[11px] italic text-stone-600">
-							“{node.manuscriptQuote}”
-						</blockquote>
-					{/if}
-				</div>
-
-				<!-- Footer with Status and Connectors -->
-				<div class="mt-4 border-t border-stone-100 pt-2 text-[11px]">
-					<div class="flex items-center justify-between">
-						<button
-							class="cursor-pointer rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {statusBadge.bg}"
-							onclick={() => cycleStatus(node.id)}
-							title="Click to cycle status (Unplanted ➔ Planted ➔ Discovered ➔ Revealed ➔ Resolved)"
-						>
-							{statusBadge.label} ↻
-						</button>
-
-						{#if node.revealOrder}
-							<span class="font-mono text-[10px] text-purple-700 font-semibold">
-								Ch. {node.revealOrder}
+					<div>
+						<div class="flex items-start justify-between gap-2 pt-1">
+							<span
+								class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider {typeBadge.bg}"
+							>
+								<span>{typeBadge.icon}</span>
+								{typeBadge.label}
 							</span>
+
+							<button
+								class="cursor-pointer text-[var(--theme-text-muted)] hover:text-rose-500 p-0.5 text-xs"
+								onclick={() => deleteNode(node.id)}
+								aria-label="Remove node"
+							>
+								×
+							</button>
+						</div>
+
+						<h3 class="font-display mt-2 text-base font-bold text-[var(--theme-text)] leading-snug">
+							{node.title}
+						</h3>
+
+						<p class="manuscript mt-1.5 text-xs leading-relaxed text-[var(--theme-text-muted)]">
+							{node.description}
+						</p>
+
+						{#if node.manuscriptQuote}
+							<blockquote class="mt-2 border-l-2 border-[var(--theme-accent)] pl-2 text-[11px] italic text-[var(--theme-text-muted)]">
+								“{node.manuscriptQuote}”
+							</blockquote>
 						{/if}
 					</div>
 
-					{#if node.connectedTo.length > 0}
-						<div class="mt-2 text-[10px] text-stone-500">
-							➔ Leads to:
-							<span class="font-medium text-stone-800">
-								{node.connectedTo
-									.map((id) => nodes.find((n) => n.id === id)?.title ?? id)
-									.join(', ')}
-							</span>
+					<!-- Footer with Status and Connectors -->
+					<div class="mt-4 border-t border-[var(--theme-border)] pt-2 text-[11px]">
+						<div class="flex items-center justify-between">
+							<button
+								class="cursor-pointer rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {statusBadge.bg}"
+								onclick={() => cycleStatus(node.id)}
+								title="Click to cycle status (Unplanted ➔ Planted ➔ Discovered ➔ Revealed ➔ Resolved)"
+							>
+								{statusBadge.label} ↻
+							</button>
+
+							{#if node.revealOrder}
+								<span class="font-mono text-[10px] font-semibold text-[var(--theme-accent)]">
+									Ch. {node.revealOrder}
+								</span>
+							{/if}
 						</div>
-					{/if}
-				</div>
-			</article>
-		{/each}
+
+						{#if node.connectedTo.length > 0}
+							<div class="mt-2 text-[10px] text-[var(--theme-text-muted)]">
+								➔ Leads to:
+								<span class="font-medium text-[var(--theme-text)]">
+									{node.connectedTo
+										.map((id) => nodes.find((n) => n.id === id)?.title ?? id)
+										.join(', ')}
+								</span>
+							</div>
+						{/if}
+					</div>
+				</article>
+			{/each}
+		</div>
 	</div>
-</div>
+{/if}
 
 <!-- Add Node Modal -->
 {#if showNewNodeModal}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-lg rounded-xl border border-[#e7e0d3] bg-[#faf7f2] p-6 shadow-xl">
-			<h2 class="font-display text-xl font-bold text-[#1c1917]">Add Detective Corkboard Node</h2>
+		<div class="w-full max-w-lg rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-xl">
+			<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">Add Detective Corkboard Node</h2>
 			<div class="mt-4 space-y-3 text-xs">
 				<div class="grid gap-3 sm:grid-cols-2">
 					<div>
-						<label for="node-type" class="block font-semibold text-stone-600 uppercase text-[10px]">
+						<label for="node-type" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Node Type
 						</label>
 						<select
 							id="node-type"
 							bind:value={newType}
-							class="mt-1 w-full rounded border border-[#e7e0d3] bg-white p-2"
+							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
 						>
 							<option value="mystery">❓ Mystery</option>
 							<option value="clue">🔍 Clue</option>
@@ -362,13 +376,13 @@
 					</div>
 
 					<div>
-						<label for="node-status" class="block font-semibold text-stone-600 uppercase text-[10px]">
+						<label for="node-status" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Status
 						</label>
 						<select
 							id="node-status"
 							bind:value={newStatus}
-							class="mt-1 w-full rounded border border-[#e7e0d3] bg-white p-2"
+							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
 						>
 							<option value="unplanted">Unplanted</option>
 							<option value="planted">Planted</option>
@@ -380,19 +394,19 @@
 				</div>
 
 				<div>
-					<label for="node-title" class="block font-semibold text-stone-600 uppercase text-[10px]">
+					<label for="node-title" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Title / Element Name
 					</label>
 					<input
 						id="node-title"
 						bind:value={newTitle}
 						placeholder="e.g. The Queen's Poisoner or Vial of Hemlock"
-						class="mt-1 w-full rounded border border-[#e7e0d3] bg-white p-2"
+						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 					/>
 				</div>
 
 				<div>
-					<label for="node-desc" class="block font-semibold text-stone-600 uppercase text-[10px]">
+					<label for="node-desc" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
 						Description
 					</label>
 					<textarea
@@ -400,19 +414,19 @@
 						bind:value={newDesc}
 						rows={2}
 						placeholder="Explain the clue, reveal, or consequence..."
-						class="mt-1 w-full rounded border border-[#e7e0d3] bg-white p-2"
+						class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 					></textarea>
 				</div>
 
 				<div class="grid gap-3 sm:grid-cols-2">
 					<div>
-						<label for="node-parent" class="block font-semibold text-stone-600 uppercase text-[10px]">
+						<label for="node-parent" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Connect to Existing Node
 						</label>
 						<select
 							id="node-parent"
 							bind:value={newConnectToId}
-							class="mt-1 w-full rounded border border-[#e7e0d3] bg-white p-2"
+							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden"
 						>
 							<option value="">None (Root Node)</option>
 							{#each nodes as n}
@@ -422,7 +436,7 @@
 					</div>
 
 					<div>
-						<label for="node-order" class="block font-semibold text-stone-600 uppercase text-[10px]">
+						<label for="node-order" class="block font-semibold text-[var(--theme-text-muted)] uppercase text-[10px]">
 							Planned Reveal Chapter (for Reveals)
 						</label>
 						<input
@@ -430,7 +444,7 @@
 							type="number"
 							bind:value={newRevealOrder}
 							placeholder="e.g. 4"
-							class="mt-1 w-full rounded border border-[#e7e0d3] bg-white p-2"
+							class="mt-1 w-full rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] p-2 text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 						/>
 					</div>
 				</div>
@@ -438,13 +452,13 @@
 
 			<div class="mt-5 flex justify-end gap-2">
 				<button
-					class="cursor-pointer rounded-lg border border-[#e7e0d3] px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-100"
+					class="cursor-pointer rounded-lg border border-[var(--theme-border)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]"
 					onclick={() => (showNewNodeModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="cursor-pointer rounded-lg bg-[#9a3412] px-4 py-1.5 text-xs font-semibold text-white hover:bg-[#7c2d12]"
+					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90"
 					onclick={addNode}
 				>
 					Pin to Board

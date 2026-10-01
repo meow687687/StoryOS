@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import {
 		loadDecisions,
+		loadSampleStory,
 		parseDecisionsMarkdown,
 		saveDecisions,
 		serializeDecisionsMarkdown,
@@ -12,6 +13,7 @@
 	let filter: 'all' | 'locked' | 'draft' | 'superseded' = $state('all');
 	let importText = $state('');
 	let showImportModal = $state(false);
+	let showHelpTips = $state(false);
 
 	// New decision form
 	let newTopic = $state('');
@@ -41,36 +43,16 @@
 - Source: editorial round 1
 - Affects: bible:geography
 - Status: locked
-
-## D3 — 2026-09-30 — Cargo identity
-- Decision: Kael smuggles a girl.
-- Author's words: "A girl"
-- Source: editorial round 1
-- Affects: bible:characters, outline:act1:beat1
-- Status: locked
-
-## D4 — 2026-09-30 — Betrayal causation
-- Decision: The merchant's betrayal causes the guard chase.
-- Author's words: "Betrayal causes chase"
-- Source: editorial round 1
-- Affects: outline:act2
-- Status: locked
-
-## D5 — 2026-09-30 — Magic price scale
-- Decision: Magic costs small memory fragments per use; mass-burn is possible.
-- Author's words: "Small fragments per use"
-- Source: editorial round 1 + round 2
-- Affects: bible:world-rules, outline:ch5
-- Status: locked
 `;
 
 	onMount(() => {
 		decisions = loadDecisions();
-		if (!decisions.length) {
-			decisions = parseDecisionsMarkdown(DEMO_DECISIONS_SAMPLE);
-			saveDecisions(decisions);
-		}
 	});
+
+	function handleLoadSample() {
+		loadSampleStory();
+		decisions = loadDecisions();
+	}
 
 	const filteredDecisions = $derived.by(() => {
 		if (filter === 'all') return decisions;
@@ -134,84 +116,122 @@
 <header class="max-w-4xl">
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
-			<h1 class="font-display text-4xl font-semibold tracking-tight text-[#1c1917]">
-				Decisions Ledger
-			</h1>
-			<p class="mt-1 text-sm text-[#57534e]">
+			<div class="flex items-center gap-3">
+				<h1 class="font-display text-4xl font-semibold tracking-tight text-[var(--theme-text)]">
+					Decisions Ledger
+				</h1>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)] transition-colors"
+					onclick={() => (showHelpTips = !showHelpTips)}
+				>
+					{showHelpTips ? '✕ Close Tips' : '💡 Decisions Tips'}
+				</button>
+			</div>
+			<p class="mt-1 text-sm text-[var(--theme-text-muted)]">
 				The inviolable record of author choices. Every story fact traces to your verbatim words.
 			</p>
 		</div>
 		<div class="flex items-center gap-2">
+			<a
+				href="/guide"
+				class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-text)] shadow-xs hover:border-[var(--theme-border-strong)]"
+			>
+				📖 Manual
+			</a>
 			<button
-				class="cursor-pointer rounded-lg border border-[#e7e0d3] bg-white px-3 py-1.5 text-xs font-medium text-[#292524] hover:bg-stone-50"
+				class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:border-[var(--theme-border-strong)]"
 				onclick={() => (showImportModal = true)}
 			>
 				Import Markdown
 			</button>
 			<button
-				class="cursor-pointer rounded-lg bg-[#292524] px-3 py-1.5 text-xs font-medium text-white hover:bg-black"
+				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
 				onclick={copyMarkdown}
 			>
 				Export decisions.md
 			</button>
 		</div>
 	</div>
+
+	{#if showHelpTips}
+		<div class="mt-4 rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] shadow-xs animate-in fade-in duration-200">
+			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
+				<span>Decisions Ledger Tips & Provenance</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80">Full Documentation →</a>
+			</div>
+			<div class="mt-2 grid gap-3 sm:grid-cols-3">
+				<div>
+					<span class="font-semibold text-[var(--theme-text)]">Verbatim Provenance</span>
+					<p class="mt-0.5 text-[11px]">Record your exact quotes when deciding story twists. The AI and editor will never contradict an author's verbatim locked choice.</p>
+				</div>
+				<div>
+					<span class="font-semibold text-[var(--theme-text)]">Lifecycle States</span>
+					<p class="mt-0.5 text-[11px]">Click any status pill to toggle: <em>Locked ➔ Draft ➔ Superseded</em>. Superseded choices preserve historical evolution without cluttering active canon.</p>
+				</div>
+				<div>
+					<span class="font-semibold text-[var(--theme-text)]">Export & Versioning</span>
+					<p class="mt-0.5 text-[11px]">Click <em>Export decisions.md</em> to copy your entire decision log as clean markdown suitable for git commits or sharing with beta readers.</p>
+				</div>
+			</div>
+		</div>
+	{/if}
 </header>
 
 <!-- New Decision Form -->
 <section
-	class="mt-6 max-w-4xl rounded-xl border border-[#e7e0d3] bg-[#faf7f2]/90 p-5 shadow-xs"
+	class="mt-6 max-w-4xl rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-5 shadow-xs"
 	aria-label="Record Decision"
 >
-	<h2 class="font-display text-base font-bold text-[#1c1917]">Record Author Decision</h2>
+	<h2 class="font-display text-base font-bold text-[var(--theme-text)]">Record Author Decision</h2>
 	<div class="mt-3 grid gap-3 sm:grid-cols-2">
 		<div>
-			<label for="dec-topic" class="block text-xs font-semibold text-[#78716c] uppercase">
+			<label for="dec-topic" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase">
 				Topic / Question
 			</label>
 			<input
 				id="dec-topic"
 				bind:value={newTopic}
 				placeholder="e.g. Magic cost scale"
-				class="mt-1 w-full rounded-md border border-[#e7e0d3] bg-white px-3 py-2 text-sm text-[#292524] focus:outline-hidden focus:border-[#9a3412]"
+				class="mt-1 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-2 text-sm text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 			/>
 		</div>
 		<div>
-			<label for="dec-affects" class="block text-xs font-semibold text-[#78716c] uppercase">
+			<label for="dec-affects" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase">
 				Affects (Bible or Scene)
 			</label>
 			<input
 				id="dec-affects"
 				bind:value={newAffects}
 				placeholder="e.g. bible:magic:fire-pact, ch03"
-				class="mt-1 w-full rounded-md border border-[#e7e0d3] bg-white px-3 py-2 text-sm text-[#292524] focus:outline-hidden focus:border-[#9a3412]"
+				class="mt-1 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-2 text-sm text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 			/>
 		</div>
 		<div class="sm:col-span-2">
-			<label for="dec-text" class="block text-xs font-semibold text-[#78716c] uppercase">
+			<label for="dec-text" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase">
 				Formal Canon Decision
 			</label>
 			<input
 				id="dec-text"
 				bind:value={newDecision}
 				placeholder="e.g. Magic costs memory fragments per use; mass-burn destroys personality."
-				class="mt-1 w-full rounded-md border border-[#e7e0d3] bg-white px-3 py-2 text-sm text-[#292524] focus:outline-hidden focus:border-[#9a3412]"
+				class="mt-1 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-2 text-sm text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 			/>
 		</div>
 		<div class="sm:col-span-2">
-			<label for="dec-author" class="block text-xs font-semibold text-[#78716c] uppercase">
+			<label for="dec-author" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase">
 				Author's Verbatim Words (Provenance)
 			</label>
 			<input
 				id="dec-author"
 				bind:value={newAuthorWords}
 				placeholder='e.g. "Memory fragments, never blood"'
-				class="mt-1 w-full rounded-md border border-[#e7e0d3] bg-white px-3 py-2 text-sm text-[#292524] focus:outline-hidden focus:border-[#9a3412]"
+				class="mt-1 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-2 text-sm text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 			/>
 		</div>
 	</div>
 	<button
-		class="mt-4 flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#9a3412] px-4 py-2 text-xs font-medium text-white hover:bg-[#7c2d12] disabled:opacity-40"
+		class="mt-4 flex cursor-pointer items-center gap-1.5 rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 disabled:opacity-40 shadow-xs"
 		onclick={addDecision}
 		disabled={!newTopic.trim() || !newDecision.trim()}
 	>
@@ -220,14 +240,14 @@
 </section>
 
 <!-- Filter Tabs -->
-<div class="mt-8 flex max-w-4xl items-center justify-between border-b border-[#e7e0d3] pb-2">
+<div class="mt-8 flex max-w-4xl items-center justify-between border-b border-[var(--theme-border)] pb-2">
 	<div class="flex gap-2">
 		{#each ['all', 'locked', 'draft', 'superseded'] as st}
 			<button
 				class="cursor-pointer rounded-md px-3 py-1 text-xs font-medium capitalize transition-colors {filter ===
 				st
-					? 'bg-[#292524] text-white'
-					: 'text-[#78716c] hover:bg-black/5 hover:text-[#1c1917]'}"
+					? 'bg-[var(--theme-accent)] text-[var(--theme-accent-fg)] font-semibold shadow-xs'
+					: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 				onclick={() => (filter = st as typeof filter)}
 			>
 				{st}
@@ -241,92 +261,125 @@
 	</div>
 </div>
 
-<!-- Decisions List -->
-<div class="mt-4 max-w-4xl space-y-3">
-	{#each filteredDecisions as item (item.id)}
-		<article
-			class="rounded-xl border border-[#e7e0d3] bg-white/80 p-5 shadow-xs transition-shadow hover:shadow-sm"
-		>
-			<div class="flex items-start justify-between gap-3">
-				<div>
-					<div class="flex items-center gap-2">
-						<span class="font-mono text-xs font-bold text-[#9a3412]">{item.id}</span>
-						<span class="text-xs text-stone-400">·</span>
-						<span class="text-xs text-stone-500">{item.date}</span>
-						<span class="text-xs text-stone-400">·</span>
-						<button
-							class="cursor-pointer rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider {item.status ===
-							'locked'
-								? 'border-emerald-300 bg-emerald-50 text-emerald-800'
-								: item.status === 'draft'
-									? 'border-amber-300 bg-amber-50 text-amber-800'
-									: 'border-stone-300 bg-stone-100 text-stone-600'}"
-							onclick={() => toggleStatus(item.id)}
-							title="Click to toggle status (locked ➔ draft ➔ superseded)"
-						>
-							{item.status}
-						</button>
+{#if decisions.length === 0}
+	<!-- Empty State -->
+	<div class="mt-8 max-w-4xl rounded-2xl border-2 border-dashed border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-12 text-center">
+		<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-surface)] text-2xl shadow-xs">
+			⚖️
+		</div>
+		<h3 class="font-display mt-4 text-xl font-bold text-[var(--theme-text)]">
+			Decisions Ledger is Empty
+		</h3>
+		<p class="mx-auto mt-2 max-w-md text-sm text-[var(--theme-text-muted)]">
+			Record immutable story choices with your own verbatim words. When you decide a character's true motivation or magic rules, seal it here.
+		</p>
+		<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+			<button
+				class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-2 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90 shadow-xs"
+				onclick={() => {
+					newTopic = 'Magic Price Scale';
+					newDecision = 'Magic costs small memory fragments per cast.';
+					newAuthorWords = 'Small fragments per use, never physical blood';
+				}}
+			>
+				📝 Fill Example Decision
+			</button>
+			<button
+				class="cursor-pointer rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-2 text-xs font-semibold text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] shadow-xs"
+				onclick={handleLoadSample}
+			>
+				✨ Load Sample Story (The Ashen Vow)
+			</button>
+		</div>
+	</div>
+{:else}
+	<!-- Decisions List -->
+	<div class="mt-4 max-w-4xl space-y-3">
+		{#each filteredDecisions as item (item.id)}
+			<article
+				class="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-5 shadow-xs transition-shadow hover:shadow-sm"
+			>
+				<div class="flex items-start justify-between gap-3">
+					<div>
+						<div class="flex items-center gap-2">
+							<span class="font-mono text-xs font-bold text-[var(--theme-accent)]">{item.id}</span>
+							<span class="text-xs text-[var(--theme-text-muted)]">·</span>
+							<span class="text-xs text-[var(--theme-text-muted)]">{item.date}</span>
+							<span class="text-xs text-[var(--theme-text-muted)]">·</span>
+							<button
+								class="cursor-pointer rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider {item.status ===
+								'locked'
+									? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+									: item.status === 'draft'
+										? 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+										: 'border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] text-[var(--theme-text-muted)]'}"
+								onclick={() => toggleStatus(item.id)}
+								title="Click to toggle status (locked ➔ draft ➔ superseded)"
+							>
+								{item.status}
+							</button>
+						</div>
+						<h3 class="font-display mt-1 text-lg font-bold text-[var(--theme-text)]">{item.topic}</h3>
 					</div>
-					<h3 class="font-display mt-1 text-lg font-bold text-[#1c1917]">{item.topic}</h3>
+					<button
+						class="cursor-pointer text-[var(--theme-text-muted)] hover:text-rose-500 text-sm p-1"
+						onclick={() => removeDecision(item.id)}
+						aria-label="Remove decision"
+					>
+						×
+					</button>
 				</div>
-				<button
-					class="cursor-pointer text-stone-400 hover:text-rose-600 text-sm p-1"
-					onclick={() => removeDecision(item.id)}
-					aria-label="Remove decision"
-				>
-					×
-				</button>
-			</div>
 
-			<p class="manuscript mt-2 text-sm leading-relaxed text-[#292524]">
-				{item.decision}
-			</p>
+				<p class="manuscript mt-2 text-sm leading-relaxed text-[var(--theme-text)]">
+					{item.decision}
+				</p>
 
-			<div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-[#78716c] border-t border-stone-100 pt-2">
-				{#if item.authorWords}
-					<div>
-						<span class="font-semibold text-stone-600">Verbatim:</span>
-						<span class="italic">“{item.authorWords}”</span>
-					</div>
-				{/if}
-				{#if item.affects}
-					<div>
-						<span class="font-semibold text-stone-600">Affects:</span>
-						<code class="rounded bg-stone-100 px-1 py-0.5 font-mono text-[11px] text-stone-700">
-							{item.affects}
-						</code>
-					</div>
-				{/if}
-			</div>
-		</article>
-	{/each}
-</div>
+				<div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-[var(--theme-text-muted)] border-t border-[var(--theme-border)] pt-2">
+					{#if item.authorWords}
+						<div>
+							<span class="font-semibold text-[var(--theme-text)]">Verbatim:</span>
+							<span class="italic">“{item.authorWords}”</span>
+						</div>
+					{/if}
+					{#if item.affects}
+						<div>
+							<span class="font-semibold text-[var(--theme-text)]">Affects:</span>
+							<code class="rounded bg-[var(--theme-surface-subtle)] border border-[var(--theme-border)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--theme-text)]">
+								{item.affects}
+							</code>
+						</div>
+					{/if}
+				</div>
+			</article>
+		{/each}
+	</div>
+{/if}
 
 {#if showImportModal}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-lg rounded-xl border border-[#e7e0d3] bg-[#faf7f2] p-6 shadow-xl">
-			<h2 class="font-display text-xl font-bold text-[#1c1917]">Import decisions.md</h2>
-			<p class="mt-1 text-xs text-stone-500">
+		<div class="w-full max-w-lg rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] p-6 shadow-xl">
+			<h2 class="font-display text-xl font-bold text-[var(--theme-text)]">Import decisions.md</h2>
+			<p class="mt-1 text-xs text-[var(--theme-text-muted)]">
 				Paste the contents of your <code>decisions.md</code> file below.
 			</p>
 			<textarea
 				bind:value={importText}
 				rows={10}
 				placeholder={DEMO_DECISIONS_SAMPLE}
-				class="manuscript mt-3 w-full rounded-md border border-[#e7e0d3] bg-white p-3 font-mono text-xs focus:outline-hidden"
+				class="manuscript mt-3 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface)] p-3 font-mono text-xs text-[var(--theme-text)] focus:outline-hidden focus:border-[var(--theme-accent)]"
 			></textarea>
 			<div class="mt-4 flex justify-end gap-2">
 				<button
-					class="cursor-pointer rounded-lg border border-[#e7e0d3] px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-100"
+					class="cursor-pointer rounded-lg border border-[var(--theme-border)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]"
 					onclick={() => (showImportModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="cursor-pointer rounded-lg bg-[#9a3412] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#7c2d12]"
+					class="cursor-pointer rounded-lg bg-[var(--theme-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--theme-accent-fg)] hover:opacity-90"
 					onclick={doImport}
 				>
 					Import Decisions

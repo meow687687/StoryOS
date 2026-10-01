@@ -42,8 +42,8 @@
 </script>
 
 <aside
-	class="rounded-xl border border-[#e7e0d3] bg-[#faf7f2]/90 shadow-sm transition-all duration-200 {collapsed
-		? 'p-2'
+	class="rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] shadow-xs transition-all duration-200 {collapsed
+		? 'p-2.5'
 		: 'p-4'}"
 	aria-label="Story Context"
 >
@@ -57,7 +57,7 @@
 				height="16"
 				viewBox="0 0 24 24"
 				fill="none"
-				class="text-[#9a3412] transition-transform duration-200 {collapsed ? '-rotate-90' : ''}"
+				class="text-[var(--theme-accent)] transition-transform duration-200 {collapsed ? '-rotate-90' : ''}"
 			>
 				<path
 					d="M19 9l-7 7-7-7"
@@ -67,20 +67,20 @@
 					stroke-linejoin="round"
 				/>
 			</svg>
-			<span class="font-display text-sm font-bold tracking-wide text-[#292524] uppercase">
+			<span class="font-display text-sm font-bold tracking-wide text-[var(--theme-text)] uppercase">
 				Story Context HUD
 			</span>
 		</button>
-		<span class="rounded bg-black/5 px-2 py-0.5 text-[11px] font-medium text-[#78716c]">
-			{collapsed ? 'Click to expand' : 'Active Scene'}
+		<span class="rounded bg-[var(--theme-surface-subtle)] px-2 py-0.5 text-[11px] font-medium text-[var(--theme-text-muted)]">
+			{collapsed ? 'Expand' : 'Active Scene'}
 		</span>
 	</div>
 
 	{#if !collapsed}
-		<div class="mt-3 space-y-3 text-sm">
+		<div class="mt-3 space-y-3.5 text-sm">
 			<!-- Act & Arc -->
 			<div>
-				<label for="hud-act" class="block text-xs font-semibold text-[#78716c] uppercase">
+				<label for="hud-act" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase tracking-wide">
 					Act / Arc
 				</label>
 				<input
@@ -88,13 +88,13 @@
 					bind:value={chapter.act}
 					oninput={ontouch}
 					placeholder="e.g. Act I — The Inciting Incident"
-					class="mt-1 w-full rounded-md border border-[#e7e0d3] bg-white px-2.5 py-1.5 text-xs text-[#292524] placeholder:text-stone-400 focus:border-[#9a3412] focus:outline-hidden"
+					class="mt-1 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:border-[var(--theme-accent)] focus:outline-hidden"
 				/>
 			</div>
 
 			<!-- POV Character -->
 			<div>
-				<label for="hud-pov" class="block text-xs font-semibold text-[#78716c] uppercase">
+				<label for="hud-pov" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase tracking-wide">
 					POV Character
 				</label>
 				<div class="mt-1 flex gap-1">
@@ -104,7 +104,7 @@
 						oninput={ontouch}
 						placeholder="e.g. Lucan"
 						list="pov-candidates"
-						class="w-full rounded-md border border-[#e7e0d3] bg-white px-2.5 py-1.5 text-xs text-[#292524] placeholder:text-stone-400 focus:border-[#9a3412] focus:outline-hidden"
+						class="w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1.5 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:border-[var(--theme-accent)] focus:outline-hidden"
 					/>
 					<datalist id="pov-candidates">
 						{#each characters as c (c.id)}
@@ -116,7 +116,7 @@
 
 			<!-- Scene Goal / Dramatic Turn -->
 			<div>
-				<label for="hud-goal" class="block text-xs font-semibold text-[#78716c] uppercase">
+				<label for="hud-goal" class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase tracking-wide">
 					Dramatic Scene Goal
 				</label>
 				<textarea
@@ -125,19 +125,19 @@
 					oninput={ontouch}
 					rows={2}
 					placeholder="What must change by the end of this scene? What is at stake?"
-					class="mt-1 w-full rounded-md border border-[#e7e0d3] bg-white p-2 text-xs leading-relaxed text-[#292524] placeholder:text-stone-400 focus:border-[#9a3412] focus:outline-hidden"
+					class="mt-1 w-full rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-2 text-xs leading-relaxed text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:border-[var(--theme-accent)] focus:outline-hidden"
 				></textarea>
 			</div>
 
 			<!-- Pinned World & Magic Rules -->
 			<div>
 				<div class="flex items-center justify-between">
-					<span class="text-xs font-semibold text-[#78716c] uppercase">
+					<span class="text-xs font-semibold text-[var(--theme-text-muted)] uppercase tracking-wide">
 						Active World Laws ({chapter.rulesPinned?.length ?? 0})
 					</span>
 				</div>
 				{#if magicRules.length === 0}
-					<p class="mt-1 text-[11px] text-[#78716c]">
+					<p class="mt-1 text-[11px] text-[var(--theme-text-faint)]">
 						No magic rules in Bible. Add magic entries with "cannot/never/only" to pin them here.
 					</p>
 				{:else}
@@ -147,14 +147,14 @@
 							<button
 								type="button"
 								class="flex w-full cursor-pointer items-start gap-1.5 rounded-md border p-1.5 text-left text-[11px] transition-colors {isPinned
-									? 'border-[#9a3412] bg-[#9a3412]/5 text-[#9a3412]'
-									: 'border-[#e7e0d3] bg-white text-[#57534e] hover:bg-stone-50'}"
+									? 'border-[var(--theme-accent)] bg-[var(--theme-accent-subtle)] text-[var(--theme-accent)] font-medium'
+									: 'border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] text-[var(--theme-text-muted)] hover:border-[var(--theme-border-strong)]'}"
 								onclick={() => toggleRule(rule.id)}
 							>
 								<span class="mt-0.5">{isPinned ? '📌' : '▫️'}</span>
 								<div class="min-w-0 flex-1">
 									<div class="font-semibold">{rule.name}</div>
-									<div class="line-clamp-2 text-[10px] text-stone-500">{rule.text}</div>
+									<div class="line-clamp-2 text-[10px] opacity-75">{rule.text}</div>
 								</div>
 							</button>
 						{/each}
@@ -164,17 +164,17 @@
 
 			<!-- Unresolved Threads / Open Clues -->
 			<div>
-				<span class="block text-xs font-semibold text-[#78716c] uppercase">
+				<span class="block text-xs font-semibold text-[var(--theme-text-muted)] uppercase tracking-wide">
 					Unresolved Threads ({chapter.threads?.length ?? 0})
 				</span>
 				<div class="mt-1 space-y-1">
 					{#each chapter.threads ?? [] as thread, i (thread + i)}
 						<div
-							class="flex items-center justify-between gap-1 rounded bg-white px-2 py-1 text-xs text-[#292524] border border-[#e7e0d3]"
+							class="flex items-center justify-between gap-1 rounded bg-[var(--theme-surface-subtle)] px-2 py-1 text-xs text-[var(--theme-text)] border border-[var(--theme-border)]"
 						>
 							<span class="min-w-0 flex-1 truncate">• {thread}</span>
 							<button
-								class="cursor-pointer text-stone-400 hover:text-rose-600"
+								class="cursor-pointer text-[var(--theme-text-faint)] hover:text-rose-500"
 								onclick={() => removeThread(i)}
 								aria-label="Remove thread"
 							>
@@ -187,10 +187,10 @@
 							bind:value={newThread}
 							onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addThread())}
 							placeholder="Plant or advance a clue…"
-							class="min-w-0 flex-1 rounded border border-[#e7e0d3] bg-white px-2 py-1 text-xs placeholder:text-stone-400 focus:outline-hidden"
+							class="min-w-0 flex-1 rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-1 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
 						/>
 						<button
-							class="cursor-pointer rounded bg-[#292524] px-2 py-1 text-xs font-medium text-white hover:bg-black"
+							class="cursor-pointer rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-2.5 py-1 text-xs font-medium text-[var(--theme-text)] hover:border-[var(--theme-border-strong)]"
 							onclick={addThread}
 						>
 							Add
