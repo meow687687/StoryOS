@@ -35,7 +35,7 @@
 	--theme-border-strong: #727169;
 	--theme-text: #dcd7ba;
 	--theme-text-muted: #c8c093;
-	--theme-text-faint: #727169;
+	--theme-text-faint: #a6a0b5;
 	--theme-accent: #e46876;
 	--theme-accent-fg: #1f1f28;
 	--theme-accent-hover: #ff5d62;
@@ -53,8 +53,8 @@
 	--theme-border: #554f4f;
 	--theme-border-strong: #7a7774;
 	--theme-text: #c5c9c5;
-	--theme-text-muted: #a6a69c;
-	--theme-text-faint: #7a7774;
+	--theme-text-muted: #b5b5ad;
+	--theme-text-faint: #9c9c94;
 	--theme-accent: #c4746e;
 	--theme-accent-fg: #181616;
 	--theme-accent-hover: #e67e80;
@@ -72,8 +72,8 @@
 	--theme-border: #5c6a72;
 	--theme-border-strong: #7fbbb3;
 	--theme-text: #d3c6aa;
-	--theme-text-muted: #a7b8a8;
-	--theme-text-faint: #7fbbb3;
+	--theme-text-muted: #b5c4b5;
+	--theme-text-faint: #8fb5ad;
 	--theme-accent: #a7c080;
 	--theme-accent-fg: #2d353b;
 	--theme-accent-hover: #83c092;
@@ -194,6 +194,34 @@ body {
 	line-height: 1.8;
 	max-width: 72ch;
 	color: var(--theme-text);
+}
+
+.prose {
+	color: var(--theme-text) !important;
+	--tw-prose-body: var(--theme-text) !important;
+	--tw-prose-headings: var(--theme-text) !important;
+	--tw-prose-lead: var(--theme-text-muted) !important;
+	--tw-prose-links: var(--theme-accent) !important;
+	--tw-prose-bold: var(--theme-text) !important;
+	--tw-prose-counters: var(--theme-text-muted) !important;
+	--tw-prose-bullets: var(--theme-text-muted) !important;
+	--tw-prose-hr: var(--theme-border-strong) !important;
+	--tw-prose-quotes: var(--theme-text) !important;
+	--tw-prose-quote-borders: var(--theme-accent) !important;
+	--tw-prose-captions: var(--theme-text-muted) !important;
+	--tw-prose-code: var(--theme-text) !important;
+	--tw-prose-pre-code: var(--theme-text) !important;
+	--tw-prose-pre-bg: var(--theme-surface-subtle) !important;
+	--tw-prose-th-borders: var(--theme-border-strong) !important;
+	--tw-prose-td-borders: var(--theme-border) !important;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose p, .prose li, .prose strong, .prose em {
+	color: var(--theme-text);
+}
+
+.prose a {
+	color: var(--theme-accent);
 }
 
 .font-display {

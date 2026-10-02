@@ -1,67 +1,191 @@
-<section class="max-w-3xl">
-	<p class="mb-2 text-sm font-semibold tracking-widest text-[#9a3412] uppercase">
-		For fantasy writers, by a fantasy writer
-	</p>
-	<h1 class="font-display text-5xl leading-[1.05] font-semibold tracking-tight text-balance">
+<section class="max-w-3xl space-y-4">
+	<div class="inline-block">
+		<span
+			class="neo-badge border-2 border-current bg-[var(--theme-accent)] px-2.5 py-1 text-xs font-black uppercase tracking-wider text-[var(--theme-accent-fg)]"
+		>
+			The Operating System for Your Story
+		</span>
+	</div>
+
+	<h1
+		class="font-display text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-[1.05] tracking-tight text-[var(--theme-text)]"
+	>
 		Keep your world true, chapter after chapter.
 	</h1>
-	<p class="manuscript mt-4 text-lg text-[#57534e]">
-		Dump messy notes, get a clean World Bible, then draft chapters that are checked against your own
-		magic, timeline, and characters. Local-first — your book never leaves your browser until you say
-		so.
+
+	<p class="manuscript text-lg sm:text-xl leading-relaxed text-[var(--theme-text-muted)]">
+		Dump messy notes, build an interconnected World Bible, and draft chapters protected against
+		magic rule violations, timeline paradoxes, and knowledge leaks. Local-first, private, and
+		canon-protected.
 	</p>
-	<div class="mt-6 flex flex-wrap gap-3">
-		<a
-			href="/bible"
-			class="flex min-h-[44px] cursor-pointer items-center rounded bg-[#9a3412] px-5 font-medium text-white transition-colors duration-200 hover:bg-[#7c2d12]"
-		>
-			Start your Bible
-		</a>
+
+	<div class="flex flex-wrap gap-3 pt-2">
 		<a
 			href="/chapters"
-			class="flex min-h-[44px] cursor-pointer items-center rounded border border-[#9a3412] px-5 font-medium text-[#9a3412] transition-colors duration-200 hover:bg-[#9a3412]/10"
+			class="neo-btn-primary flex min-h-[44px] items-center gap-2 px-6 py-2.5 text-sm font-black uppercase tracking-wider transition-all"
 		>
-			Draft a chapter
+			<span>✍️ Draft a Chapter</span>
+		</a>
+		<a
+			href="/bible"
+			class="neo-btn flex min-h-[44px] items-center gap-2 bg-[var(--theme-surface)] px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-[var(--theme-text)] transition-all"
+		>
+			<span>📖 Open World Bible</span>
+		</a>
+		<a
+			href="/voice"
+			class="neo-btn flex min-h-[44px] items-center gap-2 bg-[var(--theme-surface)] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-[var(--theme-text)] transition-all"
+		>
+			<span>🎙️ Calibrate Voice</span>
 		</a>
 	</div>
 </section>
 
-<section aria-label="How it works" class="mt-10 grid gap-4 md:grid-cols-3">
+<!-- 3 Core Workflow Pillars (Neobrutalism Cards) -->
+<section aria-label="How it works" class="mt-12 grid gap-6 md:grid-cols-3">
 	<a
 		href="/bible"
-		class="cursor-pointer rounded border border-[#e7e0d3] bg-white/60 p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow"
+		class="neo-box group flex flex-col justify-between bg-[var(--theme-surface)] p-6 transition-all active:translate-x-0.5 active:translate-y-0.5"
 	>
-		<div class="font-display text-xl font-semibold">1. Dump the chaos</div>
-		<p class="mt-1 max-w-[65ch] text-[15px] leading-relaxed text-[#57534e]">
-			Paste pen-and-paper notes. Blank line starts a new entry — sorted into Characters, Magic,
-			Places, Timeline.
-		</p>
+		<div class="space-y-3">
+			<div class="flex items-center justify-between">
+				<span
+					class="font-mono text-xs font-black uppercase tracking-wider text-[var(--theme-accent)]"
+				>
+					Step 01
+				</span>
+				<span class="text-xl">📥</span>
+			</div>
+			<h2 class="font-display text-xl font-extrabold uppercase tracking-tight text-[var(--theme-text)]">
+				1. Dump the Chaos
+			</h2>
+			<p class="text-sm leading-relaxed text-[var(--theme-text-muted)]">
+				Paste pen-and-paper notes. Blank lines separate new lore entries — auto-classified into
+				Characters, Magic Laws, Timeline Events, and Mysteries.
+			</p>
+		</div>
+		<div class="mt-6 flex items-center gap-1 font-mono text-xs font-bold text-[var(--theme-accent)] group-hover:underline">
+			<span>Open Lore Dump</span>
+			<span>→</span>
+		</div>
 	</a>
+
 	<a
 		href="/chapters"
-		class="cursor-pointer rounded border border-[#e7e0d3] bg-white/60 p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow"
+		class="neo-box group flex flex-col justify-between bg-[var(--theme-surface)] p-6 transition-all active:translate-x-0.5 active:translate-y-0.5"
 	>
-		<div class="font-display text-xl font-semibold">2. Catch the break</div>
-		<p class="mt-1 max-w-[65ch] text-[15px] leading-relaxed text-[#57534e]">
-			Write a scene that breaks a magic rule — the checker flags it against your Bible before it
-			spreads.
-		</p>
+		<div class="space-y-3">
+			<div class="flex items-center justify-between">
+				<span
+					class="font-mono text-xs font-black uppercase tracking-wider text-[var(--theme-accent)]"
+				>
+					Step 02
+				</span>
+				<span class="text-xl">🛡️</span>
+			</div>
+			<h2 class="font-display text-xl font-extrabold uppercase tracking-tight text-[var(--theme-text)]">
+				2. Catch the Break
+			</h2>
+			<p class="text-sm leading-relaxed text-[var(--theme-text-muted)]">
+				Draft chapters in a distraction-free editor with live continuity checks. Flag magic law
+				violations, accidental reader spoilers, and character knowledge leaks in real time.
+			</p>
+		</div>
+		<div class="mt-6 flex items-center gap-1 font-mono text-xs font-bold text-[var(--theme-accent)] group-hover:underline">
+			<span>Open Editor</span>
+			<span>→</span>
+		</div>
 	</a>
-	<div class="rounded border border-[#e7e0d3] bg-white/60 p-5 shadow-sm">
-		<div class="font-display text-xl font-semibold">3. Expand the beat</div>
-		<p class="mt-1 max-w-[65ch] text-[15px] leading-relaxed text-[#57534e]">
-			One bullet becomes vivid prose in your voice. Offline rules free; full AI with your own key.
-		</p>
-	</div>
+
+	<a
+		href="/voice"
+		class="neo-box group flex flex-col justify-between bg-[var(--theme-surface)] p-6 transition-all active:translate-x-0.5 active:translate-y-0.5"
+	>
+		<div class="space-y-3">
+			<div class="flex items-center justify-between">
+				<span
+					class="font-mono text-xs font-black uppercase tracking-wider text-[var(--theme-accent)]"
+				>
+					Step 03
+				</span>
+				<span class="text-xl">🎙️</span>
+			</div>
+			<h2 class="font-display text-xl font-extrabold uppercase tracking-tight text-[var(--theme-text)]">
+				3. Elevate & Protect Voice
+			</h2>
+			<p class="text-sm leading-relaxed text-[var(--theme-text-muted)]">
+				Run the 10-rule Anti-Slop Prose Elevator and Voice Quality Gate. Rephrase with sentence rhythm
+				variation without ever ghostwriting your canon.
+			</p>
+		</div>
+		<div class="mt-6 flex items-center gap-1 font-mono text-xs font-bold text-[var(--theme-accent)] group-hover:underline">
+			<span>Explore Voice Lab</span>
+			<span>→</span>
+		</div>
+	</a>
 </section>
 
-<section class="prose mt-10 max-w-3xl">
-	<h2 class="font-display text-3xl font-semibold">Try it in two minutes</h2>
-	<ol>
-		<li>
-			Go to <a href="/bible">Bible</a>, paste two paragraphs about your magic and one character.
-		</li>
-		<li>Click <em>Organize dump</em>, then open <a href="/chapters">Chapters</a>.</li>
-		<li>Write a scene that breaks a magic rule — watch it get flagged.</li>
-	</ol>
+<!-- High-Contrast Quick Start Guide Card -->
+<section class="neo-box mt-12 bg-[var(--theme-surface)] p-6 sm:p-8 space-y-6">
+	<div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[var(--theme-border-strong)] pb-4">
+		<div>
+			<span class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-accent)]">
+				Quick Start Walkthrough
+			</span>
+			<h2 class="font-display text-2xl font-extrabold uppercase tracking-tight text-[var(--theme-text)]">
+				Try it in two minutes
+			</h2>
+		</div>
+		<a
+			href="/guide"
+			class="neo-btn px-3 py-1.5 font-mono text-xs font-bold text-[var(--theme-text)] hover:text-[var(--theme-accent)]"
+		>
+			View Complete Author Guide →
+		</a>
+	</div>
+
+	<div class="grid gap-4 sm:grid-cols-3">
+		<div class="rounded-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+			<div class="flex items-center gap-2">
+				<span
+					class="flex h-6 w-6 items-center justify-center rounded-xs bg-[var(--theme-accent)] font-mono text-xs font-black text-[var(--theme-accent-fg)]"
+				>
+					1
+				</span>
+				<h3 class="font-display font-bold text-sm uppercase text-[var(--theme-text)]">Seed the Bible</h3>
+			</div>
+			<p class="text-xs leading-relaxed text-[var(--theme-text-muted)]">
+				Go to <a href="/bible" class="font-bold text-[var(--theme-accent)] underline">Bible</a>. Paste
+				two paragraphs defining a magic limitation (e.g. <em>"Fire magic cannot summon water"</em>) and a character.
+			</p>
+		</div>
+
+		<div class="rounded-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+			<div class="flex items-center gap-2">
+				<span
+					class="flex h-6 w-6 items-center justify-center rounded-xs bg-[var(--theme-accent)] font-mono text-xs font-black text-[var(--theme-accent-fg)]"
+				>
+					2
+				</span>
+				<h3 class="font-display font-bold text-sm uppercase text-[var(--theme-text)]">Draft & Test</h3>
+			</div>
+			<p class="text-xs leading-relaxed text-[var(--theme-text-muted)]">
+				Click <em>Organize dump</em>, then open <a href="/chapters" class="font-bold text-[var(--theme-accent)] underline">Chapters</a>. Write a sentence that breaks the magic law.
+			</p>
+		</div>
+
+		<div class="rounded-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+			<div class="flex items-center gap-2">
+				<span
+					class="flex h-6 w-6 items-center justify-center rounded-xs bg-[var(--theme-accent)] font-mono text-xs font-black text-[var(--theme-accent-fg)]"
+				>
+					3
+				</span>
+				<h3 class="font-display font-bold text-sm uppercase text-[var(--theme-text)]">Watch the Radar</h3>
+			</div>
+			<p class="text-xs leading-relaxed text-[var(--theme-text-muted)]">
+				Watch the <strong>Continuity Radar</strong> immediately highlight the contradiction in high-contrast red before it spreads into lore.
+			</p>
+		</div>
+	</div>
 </section>
