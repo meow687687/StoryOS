@@ -9,6 +9,7 @@
 		type MysteryNode,
 		type WorldEntry
 	} from './world';
+	import { MAGIC_ARCHETYPES } from './magic';
 
 	let isOpen = $state(false);
 	let query = $state('');
@@ -35,7 +36,7 @@
 
 	interface PaletteItem {
 		id: string;
-		category: 'Chapter' | 'Bible' | 'Mystery' | 'Action';
+		category: 'Chapter' | 'Bible' | 'Mystery' | 'Action' | 'Magic';
 		title: string;
 		subtitle: string;
 		icon: string;
@@ -50,6 +51,14 @@
 			subtitle: 'Write, draft scenes, and consult lore HUD',
 			icon: '✍️',
 			action: () => goto('/chapters')
+		},
+		{
+			id: 'act-magic',
+			category: 'Action',
+			title: 'Open Magic System Studio',
+			subtitle: 'Design hard magic rules, test loopholes & Sanderson laws',
+			icon: '✨',
+			action: () => goto('/magic')
 		},
 		{
 			id: 'act-voice',
@@ -153,6 +162,25 @@
 					subtitle: `[${ent.kind.toUpperCase()}] ${ent.text.slice(0, 70)}...`,
 					icon: ent.kind === 'magic' ? '✨' : ent.kind === 'character' ? '👤' : '📍',
 					action: () => goto(`/bible?select=${ent.id}`)
+				});
+			}
+		}
+
+		// Search Magic Archetypes
+		for (const arch of MAGIC_ARCHETYPES) {
+			if (
+				arch.name.toLowerCase().includes(q) ||
+				arch.source.toLowerCase().includes(q) ||
+				arch.tagline.toLowerCase().includes(q) ||
+				arch.famousInspirations.some((ex) => ex.toLowerCase().includes(q))
+			) {
+				results.push({
+					id: `magic-arch-${arch.id}`,
+					category: 'Magic',
+					title: `Magic: ${arch.name}`,
+					subtitle: `[Hardness ${arch.hardness}/5] ${arch.tagline.slice(0, 70)}...`,
+					icon: '🔮',
+					action: () => goto('/magic')
 				});
 			}
 		}
