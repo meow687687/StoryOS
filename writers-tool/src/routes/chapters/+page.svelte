@@ -452,8 +452,8 @@
 
 		<div class="flex flex-wrap items-center gap-2">
 			<button
-				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold {readerMode
-					? '!bg-purple-600 !text-white'
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold {readerMode
+					? '!bg-purple-700 !text-white'
 					: ''}"
 				onclick={toggleReaderMode}
 				title="Toggle Reader Perspective Mode (masks unrevealed secrets and scans for premature reveals)"
@@ -461,7 +461,7 @@
 				<span>{readerMode ? '👁️ Reader Mode [ACTIVE]' : '👁️ Author Omniscient'}</span>
 			</button>
 			<button
-				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[var(--theme-accent)]"
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[var(--theme-accent)]"
 				onclick={runSocraticInterrogation}
 				disabled={busy || !active?.text.trim()}
 				title="Run Socratic interrogation on motivations, plot holes, and pacing"
@@ -470,7 +470,7 @@
 				{busy && activeTab === 'interrogate' ? 'Challenging…' : 'Socratic Interrogation'}
 			</button>
 			<button
-				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold disabled:opacity-40"
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold disabled:opacity-40"
 				onclick={runContinuityCheck}
 				disabled={busy || !active?.text.trim()}
 				title="Run continuity & magic rule contradiction check"
@@ -479,7 +479,7 @@
 				{busy && activeTab === 'continuity' ? 'Checking…' : 'Continuity Check'}
 			</button>
 			<button
-				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400"
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400"
 				onclick={runProseElevator}
 				disabled={busy || !active?.text.trim()}
 				title="Run Prose Elevator: Anti-slop check, sentence rhythm variation, and craft micro-lessons"
@@ -487,13 +487,13 @@
 				<span>🎙️</span>
 				{busy && activeTab === 'elevator' ? 'Elevating…' : 'Prose Elevator'}
 				{#if antiSlopViolations.length > 0}
-					<span class="rounded-xs bg-rose-500 px-1 py-0.2 text-[10px] text-white font-mono">
+					<span class="rounded bg-rose-500 px-1.5 py-0.2 text-[10px] text-white font-mono">
 						{antiSlopViolations.length}
 					</span>
 				{/if}
 			</button>
 			<button
-				class="neo-btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold {active?.auditStatus === 'accepted' ? '!border-emerald-600 !bg-emerald-500 !text-black' : ''}"
+				class="skeuo-btn-primary flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold {active?.auditStatus === 'accepted' ? '!border-emerald-600 !bg-emerald-500 !text-black' : ''}"
 				onclick={runVoiceContinuityGate}
 				disabled={busy || !active?.text.trim()}
 				title="Run Voice & Continuity Gate: Audit chapter for official ACCEPTED certification"
@@ -509,23 +509,23 @@
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
-			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
-				<span class="font-mono text-xs uppercase tracking-wider">Editor Quick Reference & Keyboard Accelerators</span>
-				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Open Full Guide →</a>
+		<div class="mt-4 skeuo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
+			<div class="flex items-center justify-between font-serif font-bold text-[var(--theme-text)]">
+				<span class="text-xs tracking-wide">Editor Quick Reference & Keyboard Accelerators</span>
+				<a href="/guide" class="text-[var(--theme-accent)] underline hover:opacity-80 font-sans">Open Full Guide →</a>
 			</div>
 			<div class="mt-2 grid gap-3 sm:grid-cols-3">
 				<div>
 					<span class="font-bold text-[var(--theme-text)]">@ Autocomplete</span>
-					<p class="mt-0.5 text-[11px]">Type <kbd class="font-mono font-bold rounded-xs border border-[var(--theme-border-strong)] bg-[var(--theme-surface)] px-1 py-0.5">@</kbd> anywhere to insert characters, magic laws, and places from your Bible.</p>
+					<p class="mt-0.5 text-[11px] leading-relaxed">Type <kbd class="font-mono font-bold rounded border border-[var(--theme-border)] bg-[var(--theme-surface)] px-1 py-0.5">@</kbd> anywhere to insert characters, magic laws, and places from your Bible.</p>
 				</div>
 				<div>
 					<span class="font-bold text-[var(--theme-text)]">Reader Perspective Mode</span>
-					<p class="mt-0.5 text-[11px]">Masks future secrets and catches accidental spoilers before readers discover clues naturally.</p>
+					<p class="mt-0.5 text-[11px] leading-relaxed">Masks future secrets and catches accidental spoilers before readers discover clues naturally.</p>
 				</div>
 				<div>
 					<span class="font-bold text-[var(--theme-text)]">Socratic AI Interrogator</span>
-					<p class="mt-0.5 text-[11px]">Challenges causality and character motivation without ever ghostwriting your prose.</p>
+					<p class="mt-0.5 text-[11px] leading-relaxed">Challenges causality and character motivation without ever ghostwriting your prose.</p>
 				</div>
 			</div>
 		</div>
@@ -533,30 +533,28 @@
 </header>
 
 <!-- Chapter Selector Tabs: Manuscript Binder Rail -->
-<div class="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[var(--theme-border-strong)] pb-2">
+<div class="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[var(--theme-border)] pb-2">
 	{#each chapters as c, idx (c.id)}
 		<button
 			role="tab"
 			aria-selected={c.id === activeId}
-			class="flex items-center gap-1.5 rounded-t-lg border border-b-0 px-3.5 py-1.5 text-xs font-bold transition-all {c.id === activeId
-				? 'border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] text-[var(--theme-accent-fg)] shadow-[0_-2px_6px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.4)]'
+			class="flex items-center gap-1.5 rounded-t-lg border border-b-0 px-3.5 py-1.5 text-xs font-serif font-semibold transition-all {c.id === activeId
+				? 'border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-accent)] shadow-[0_-2px_6px_rgba(0,0,0,0.06),inset_0_1px_0_var(--theme-bevel-top)]'
 				: 'border-transparent bg-[var(--theme-surface-subtle)] text-[var(--theme-text-muted)] hover:border-[var(--theme-border)] hover:text-[var(--theme-text)]'}"
 			onclick={() => selectChapter(c.id)}
 		>
-			<span class="font-mono opacity-80 mr-0.5">#{idx + 1}</span>
+			<span class="font-mono text-[11px] opacity-70">#{idx + 1}</span>
 			<span>{c.title}</span>
 			{#if c.act}
-				<span class="font-mono text-[10px] opacity-80">[{c.act}]</span>
+				<span class="text-[10px] opacity-75">[{c.act}]</span>
 			{/if}
 			{#if c.auditStatus === 'accepted'}
-				<span class="skeuo-seal px-1.5 py-0.2 font-mono text-[9px] font-black bg-emerald-600 text-emerald-50">
-					✓
-				</span>
+				<span class="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.8)]"></span>
 			{/if}
 		</button>
 	{/each}
 	<button
-		class="skeuo-btn !border-dashed !px-3 !py-1 text-xs font-mono font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
+		class="skeuo-btn !border-dashed !px-3 !py-1 text-xs font-serif font-semibold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
 		onclick={newChapter}
 	>
 		+ new scene
@@ -573,20 +571,20 @@
 					bind:value={active.title}
 					oninput={touch}
 					placeholder="Chapter Title"
-					class="font-display flex-1 bg-transparent text-2xl font-bold text-[var(--theme-text)] focus:outline-hidden"
+					class="letterpress-title flex-1 bg-transparent text-2xl sm:text-3xl font-serif font-bold text-[var(--theme-text)] focus:outline-hidden"
 				/>
 				<div class="flex items-center gap-2">
 					{#if active.auditStatus === 'accepted'}
 						<span
-							class="skeuo-seal px-3 py-1 font-mono text-[11px] font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-stone-950 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.7)]"
+							class="skeuo-seal px-3 py-1 font-serif text-[11px] font-bold bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-stone-950 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.7)]"
 						>
 							🛡️ CANON ACCEPTED
 						</span>
 					{:else if active.auditStatus === 'revision_needed'}
 						<span
-							class="skeuo-badge border border-amber-600 bg-amber-400/20 px-2.5 py-0.5 font-mono text-[11px] font-bold text-amber-700 dark:text-amber-300"
+							class="skeuo-badge border border-amber-600 bg-amber-400/20 px-2.5 py-0.5 font-serif text-[11px] font-bold text-amber-700 dark:text-amber-300"
 						>
-							⚠️ REVISION NEEDED
+							⚠️ Revision Needed
 						</span>
 					{/if}
 				</div>
@@ -606,61 +604,61 @@
 			<!-- Interrogation & Novel Skills Analysis Panel -->
 			{#if interrogationReport || continuityReport || elevationResult || auditResult || antiSlopViolations.length > 0 || error}
 				<section
-					class="mt-4 neo-box p-5"
+					class="mt-4 skeuo-paper-sheet p-5"
 					aria-label="Editorial Debrief"
 				>
 					<!-- Tab Navigation Rail -->
-					<div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[var(--theme-border-strong)] pb-3">
-						<div class="flex flex-wrap items-center gap-2">
+					<div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--theme-border)] pb-3">
+						<div class="flex flex-wrap items-center gap-3">
 							<button
-								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider {activeTab ===
+								class="cursor-pointer text-xs font-serif font-bold transition-all {activeTab ===
 								'interrogate'
-									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
+									? 'text-[var(--theme-accent)] border-b-2 border-[var(--theme-accent)] pb-1'
 									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'interrogate')}
 							>
 								Socratic Interrogator
 							</button>
-							<span class="text-[var(--theme-text-faint)] font-bold">|</span>
+							<span class="text-[var(--theme-border)] font-normal">|</span>
 							<button
-								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider {activeTab ===
+								class="cursor-pointer text-xs font-serif font-bold transition-all {activeTab ===
 								'continuity'
-									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
+									? 'text-[var(--theme-accent)] border-b-2 border-[var(--theme-accent)] pb-1'
 									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'continuity')}
 							>
 								Continuity & Lore
 							</button>
-							<span class="text-[var(--theme-text-faint)] font-bold">|</span>
+							<span class="text-[var(--theme-border)] font-normal">|</span>
 							<button
-								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-1.5 {activeTab ===
+								class="cursor-pointer text-xs font-serif font-bold flex items-center gap-1.5 transition-all {activeTab ===
 								'elevator'
-									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
+									? 'text-[var(--theme-accent)] border-b-2 border-[var(--theme-accent)] pb-1'
 									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'elevator')}
 							>
 								<span>Prose Elevator & Anti-Slop</span>
 								{#if antiSlopViolations.length > 0}
-									<span class="rounded-xs bg-rose-500 px-1 py-0.2 font-mono text-[9px] text-white">
+									<span class="rounded bg-rose-500 px-1.5 py-0.2 font-mono text-[9px] text-white">
 										{antiSlopViolations.length}
 									</span>
 								{:else}
-									<span class="rounded-xs bg-emerald-500 px-1 py-0.2 font-mono text-[9px] text-black">
+									<span class="rounded bg-emerald-500 px-1.5 py-0.2 font-mono text-[9px] text-black">
 										✓
 									</span>
 								{/if}
 							</button>
-							<span class="text-[var(--theme-text-faint)] font-bold">|</span>
+							<span class="text-[var(--theme-border)] font-normal">|</span>
 							<button
-								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-1.5 {activeTab ===
+								class="cursor-pointer text-xs font-serif font-bold flex items-center gap-1.5 transition-all {activeTab ===
 								'gate'
-									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
+									? 'text-[var(--theme-accent)] border-b-2 border-[var(--theme-accent)] pb-1'
 									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'gate')}
 							>
 								<span>Quality Gate</span>
 								{#if active.auditStatus === 'accepted'}
-									<span class="rounded-xs bg-emerald-500 px-1 py-0.2 font-mono text-[9px] text-black">
+									<span class="rounded bg-emerald-500 px-1.5 py-0.2 font-mono text-[9px] text-black">
 										PASSED
 									</span>
 								{/if}
@@ -669,13 +667,13 @@
 
 						<div class="flex items-center gap-2">
 							<button
-								class="neo-btn !px-2.5 !py-1 text-xs font-bold"
+								class="skeuo-btn !px-2.5 !py-1 text-xs font-serif font-semibold"
 								onclick={() => (showQuickDecisionForm = !showQuickDecisionForm)}
 							>
 								{showQuickDecisionForm ? 'Cancel' : '+ Lock Decision'}
 							</button>
 							<button
-								class="neo-btn !px-2.5 !py-1 text-xs font-bold text-[var(--theme-accent)]"
+								class="skeuo-btn !px-2.5 !py-1 text-xs font-serif font-semibold text-[var(--theme-accent)]"
 								onclick={() => (showQuickDisclosureForm = !showQuickDisclosureForm)}
 							>
 								{showQuickDisclosureForm ? 'Cancel' : '+ Log Secret to Timeline'}
@@ -1046,8 +1044,8 @@
 							🚨 Accidental Spoiler Alert ({accidentalSpoilers.length})
 						</span>
 						{#each accidentalSpoilers as sp}
-							<div class="rounded-xs border-2 border-purple-500 bg-purple-500/10 p-2 text-xs text-[var(--theme-text)] leading-tight shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
-								<strong>{sp.nodeTitle}:</strong> {sp.reason}
+							<div class="rounded-lg border border-purple-500/40 bg-purple-500/10 p-2.5 text-xs text-[var(--theme-text)] leading-snug shadow-xs">
+								<strong class="font-serif">{sp.nodeTitle}:</strong> {sp.reason}
 							</div>
 						{/each}
 					</div>
@@ -1056,12 +1054,12 @@
 				<!-- Knowledge Leaks Section -->
 				{#if knowledgeLeaks.length > 0}
 					<div class="mt-3 space-y-1.5">
-						<span class="text-[11px] font-bold font-mono text-rose-600 dark:text-rose-400 uppercase tracking-wide">
+						<span class="text-[11px] font-bold font-serif text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 							⚠️ Knowledge Leaks ({knowledgeLeaks.length})
 						</span>
 						{#each knowledgeLeaks as leak}
-							<div class="rounded-xs border-2 border-rose-500 bg-rose-500/10 p-2 text-xs text-[var(--theme-text)] leading-tight shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
-								<strong>{leak.characterName}:</strong> {leak.reason}
+							<div class="rounded-lg border border-rose-500/40 bg-rose-500/10 p-2.5 text-xs text-[var(--theme-text)] leading-snug shadow-xs">
+								<strong class="font-serif">{leak.characterName}:</strong> {leak.reason}
 							</div>
 						{/each}
 					</div>
@@ -1070,14 +1068,14 @@
 				<!-- Magic Rule Contradictions -->
 				{#if contradictions.length > 0}
 					<div class="mt-3 space-y-1.5">
-						<span class="text-[11px] font-bold font-mono text-rose-600 dark:text-rose-400 uppercase tracking-wide">
+						<span class="text-[11px] font-bold font-serif text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 							🛡️ Magic Rule Conflicts ({contradictions.length})
 						</span>
 						<ul class="space-y-1.5 text-xs">
 							{#each contradictions as c (c.entryId + c.reason)}
-								<li class="rounded-xs border-2 border-rose-500 bg-rose-500/10 p-2 text-[var(--theme-text)] leading-tight shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
-									<div class="font-bold">{c.entryName}</div>
-									<div class="mt-0.5 text-[11px] opacity-80">{c.reason}</div>
+								<li class="rounded-lg border border-rose-500/40 bg-rose-500/10 p-2.5 text-[var(--theme-text)] leading-snug shadow-xs">
+									<div class="font-serif font-bold">{c.entryName}</div>
+									<div class="mt-0.5 text-[11px] opacity-85 leading-relaxed">{c.reason}</div>
 								</li>
 							{/each}
 						</ul>
@@ -1085,21 +1083,21 @@
 				{/if}
 
 				{#if !contradictions.length && !knowledgeLeaks.length && !accidentalSpoilers.length && !antiSlopViolations.length}
-					<p class="mt-2 text-xs leading-relaxed text-[var(--theme-text-muted)] font-mono">
+					<p class="mt-2 text-xs leading-relaxed text-[var(--theme-text-muted)] font-serif italic">
 						No canon contradictions, knowledge leaks, accidental spoilers, or anti-slop violations detected.
 					</p>
 				{/if}
 
 				<!-- Reader Clue Horizon when Reader Mode is Active -->
 				{#if readerMode}
-					<div class="mt-3 border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px]">
-						<span class="font-bold font-mono text-purple-600 dark:text-purple-400 uppercase text-[10px]">
+					<div class="mt-3 border-t border-[var(--theme-border)] pt-2 text-[11px]">
+						<span class="font-bold font-serif text-purple-600 dark:text-purple-400 text-[11px]">
 							Reader Horizon (Clues Observed: {readerClues.length}):
 						</span>
 						{#if !readerClues.length}
-							<p class="mt-1 text-[var(--theme-text-faint)] italic font-mono">No clues planted in story yet.</p>
+							<p class="mt-1 text-[var(--theme-text-faint)] italic font-serif">No clues planted in story yet.</p>
 						{:else}
-							<ul class="mt-1 space-y-0.5 text-[var(--theme-text)] font-mono">
+							<ul class="mt-1 space-y-0.5 text-[var(--theme-text)] font-sans">
 								{#each readerClues as rc}
 									<li>🔍 {rc.title}</li>
 								{/each}
@@ -1108,9 +1106,9 @@
 					</div>
 				{/if}
 
-				<div class="mt-3 flex items-center justify-between border-t-2 border-[var(--theme-border-strong)] pt-2 text-[11px] text-[var(--theme-text-muted)] font-mono">
+				<div class="mt-3 flex items-center justify-between border-t border-[var(--theme-border)] pt-2 text-[11px] text-[var(--theme-text-muted)] font-serif">
 					<span class="truncate max-w-[170px]" title={linked.map((e) => e.name).join(', ')}>Linked: {linked.map((e) => e.name).join(', ') || 'None'}</span>
-					<div class="flex gap-2 font-bold">
+					<div class="flex gap-2 font-bold font-sans">
 						<a href="/timeline" class="text-[var(--theme-accent)] hover:underline">
 							Timeline
 						</a>
@@ -1123,17 +1121,17 @@
 			</section>
 
 			<!-- AI Provider Settings Drawer -->
-			<details class="neo-box-sm bg-[var(--theme-surface-subtle)] p-3 text-xs">
-				<summary class="cursor-pointer font-bold font-mono text-[var(--theme-text)] hover:text-[var(--theme-accent)]">
+			<details class="skeuo-box-sm bg-[var(--theme-surface-subtle)] p-3 text-xs">
+				<summary class="cursor-pointer font-serif font-bold text-[var(--theme-text)] hover:text-[var(--theme-accent)]">
 					AI Settings ({cfg.provider})
 				</summary>
 				<div class="mt-3 space-y-2">
 					<label class="block">
-						<span class="text-[11px] font-bold font-mono text-[var(--theme-text-muted)] uppercase">Provider</span>
+						<span class="text-[11px] font-serif font-semibold text-[var(--theme-text-muted)]">Provider</span>
 						<select
 							bind:value={cfg.provider}
 							onchange={saveKey}
-							class="neo-input mt-1 w-full text-xs"
+							class="skeuo-groove mt-1 w-full p-2 text-xs"
 						>
 							<option value="ollama">Ollama (Local Private AI)</option>
 							<option value="openai">OpenAI</option>
@@ -1144,11 +1142,11 @@
 
 					{#if cfg.provider === 'ollama'}
 						<label class="block">
-							<span class="text-[11px] font-bold font-mono text-[var(--theme-text-muted)] uppercase">Model</span>
+							<span class="text-[11px] font-serif font-semibold text-[var(--theme-text-muted)]">Model</span>
 							<select
 								bind:value={cfg.model}
 								onchange={saveKey}
-								class="neo-input mt-1 w-full text-xs"
+								class="skeuo-groove mt-1 w-full p-2 text-xs"
 							>
 								{#each ollama.models as m}
 									<option value={m}>{m}</option>
@@ -1159,20 +1157,20 @@
 							</select>
 						</label>
 						<button
-							class="neo-btn !px-2 !py-1 text-[11px] font-bold font-mono mt-1"
+							class="skeuo-btn !px-2.5 !py-1 text-[11px] font-serif font-semibold mt-1"
 							onclick={refreshOllama}
 						>
 							Refresh Ollama Models
 						</button>
 					{:else if cfg.provider !== 'local'}
 						<label class="block">
-							<span class="text-[11px] font-bold font-mono text-[var(--theme-text-muted)] uppercase">API Key</span>
+							<span class="text-[11px] font-serif font-semibold text-[var(--theme-text-muted)]">API Key</span>
 							<input
 								type="password"
 								bind:value={cfg.apiKey}
 								onchange={saveKey}
 								placeholder="sk-…"
-								class="neo-input mt-1 w-full text-xs"
+								class="skeuo-groove mt-1 w-full p-2 text-xs"
 							/>
 						</label>
 					{/if}

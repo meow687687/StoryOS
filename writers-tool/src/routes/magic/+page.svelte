@@ -94,20 +94,20 @@
 
 <div class="space-y-6">
 	<!-- Header / Master Bureau Toolbar -->
-	<header class="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--theme-border-strong)] pb-4">
+	<header class="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--theme-border)] pb-4">
 		<div>
 			<div class="flex items-center gap-3">
-				<span class="skeuo-seal h-8 w-8 text-sm bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-300 text-stone-950 font-black shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
+				<span class="h-8 w-8 rounded-lg bg-gradient-to-tr from-amber-600 via-amber-500 to-amber-300 text-stone-950 font-black shadow-[0_2px_6px_rgba(0,0,0,0.2)] flex items-center justify-center text-sm">
 					✨
 				</span>
-				<h1 class="font-display text-3xl font-extrabold tracking-tight text-[var(--theme-text)]">
+				<h1 class="letterpress-title text-2xl sm:text-3xl font-serif font-bold text-[var(--theme-text)]">
 					Magic System Studio
 				</h1>
-				<span class="rounded border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] px-2 py-0.5 font-mono text-xs font-bold text-[var(--theme-accent)]">
+				<span class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-0.5 font-serif text-xs font-semibold text-[var(--theme-accent)]">
 					Arcanum Lab
 				</span>
 			</div>
-			<p class="mt-1 font-mono text-xs text-[var(--theme-text-muted)]">
+			<p class="mt-1 font-serif text-xs text-[var(--theme-text-muted)]">
 				Grounded in Brandon Sanderson's Laws of Magic · Limitations > Powers · Expand Before Adding
 			</p>
 		</div>
@@ -116,7 +116,7 @@
 		<div class="flex flex-wrap items-center gap-2">
 			<button
 				type="button"
-				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold"
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-serif font-semibold"
 				onclick={() => (showGuide = !showGuide)}
 			>
 				<span>📖</span>
@@ -125,7 +125,7 @@
 
 			<button
 				type="button"
-				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-300"
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-serif font-semibold text-amber-600 dark:text-amber-300"
 				onclick={handleRollSpark}
 				title="Roll randomized combination to break creative block"
 			>
@@ -135,7 +135,7 @@
 
 			<button
 				type="button"
-				class="skeuo-btn-primary flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold"
+				class="skeuo-btn-primary flex items-center gap-1.5 px-4 py-1.5 text-xs font-serif font-bold"
 				onclick={handleCommitToCanon}
 				title="Commit this magic system directly to World Bible & decisions.md"
 			>
@@ -147,16 +147,16 @@
 
 	<!-- Expandable Sanderson's 3 Laws Craft Guide Drawer -->
 	{#if showGuide}
-		<section class="skeuo-paper p-5 space-y-4 transition-all animate-in fade-in" aria-label="Sanderson's Laws of Magic">
+		<section class="skeuo-paper-sheet p-5 space-y-4 transition-all animate-in fade-in" aria-label="Sanderson's Laws of Magic">
 			<div class="flex items-center justify-between border-b border-[var(--theme-border)] pb-2.5">
 				<div class="flex items-center gap-2">
-					<span class="font-display text-sm font-bold uppercase tracking-wider text-[var(--theme-accent)]">
+					<span class="font-serif text-sm font-bold text-[var(--theme-accent)]">
 						🏛️ Brandon Sanderson's Laws of Magic & Craft Principles
 					</span>
 				</div>
 				<button
 					type="button"
-					class="text-xs font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
+					class="text-xs font-serif font-semibold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
 					onclick={() => (showGuide = false)}
 				>
 					✕ Close
@@ -165,13 +165,13 @@
 
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 				{#each SANDERSON_LAWS_GUIDE as law}
-					<div class="skeuo-box p-3.5 bg-[var(--theme-surface-subtle)] space-y-1.5">
-						<span class="rounded bg-[var(--theme-accent)]/20 px-1.5 py-0.2 font-mono text-[10px] font-black text-[var(--theme-accent)]">
+					<div class="skeuo-box-sm p-3.5 bg-[var(--theme-surface-subtle)] space-y-1.5">
+						<span class="rounded bg-[var(--theme-accent)]/15 px-2 py-0.5 font-serif text-[11px] font-bold text-[var(--theme-accent)]">
 							{law.number}
 						</span>
-						<h3 class="font-display text-xs font-bold text-[var(--theme-text)]">{law.title}</h3>
-						<p class="text-[11px] font-bold italic text-[var(--theme-text-muted)]">"{law.maxim}"</p>
-						<p class="text-[11px] leading-relaxed text-[var(--theme-text)]">{law.principle}</p>
+						<h3 class="font-serif text-xs font-bold text-[var(--theme-text)]">{law.title}</h3>
+						<p class="text-[11px] font-serif font-semibold italic text-[var(--theme-text-muted)]">"{law.maxim}"</p>
+						<p class="text-[11px] font-sans leading-relaxed text-[var(--theme-text)]">{law.principle}</p>
 					</div>
 				{/each}
 			</div>
@@ -182,12 +182,12 @@
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
 		<!-- Left: 12 Archetypes Compendium (3 cols) -->
 		<aside class="space-y-4 lg:col-span-3">
-			<div class="skeuo-box p-4 bg-[var(--theme-surface)] space-y-3">
+			<div class="skeuo-paper-sheet p-4 bg-[var(--theme-surface)] space-y-3">
 				<div class="flex items-center justify-between border-b border-[var(--theme-border)] pb-2">
-					<h2 class="font-display text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+					<h2 class="font-serif text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						12 Curated Archetypes
 					</h2>
-					<span class="font-mono text-[10px] text-[var(--theme-text-faint)]">Pick to load</span>
+					<span class="font-sans text-[10px] text-[var(--theme-text-faint)]">Pick to load</span>
 				</div>
 
 				<div class="max-h-[580px] overflow-y-auto space-y-1.5 pr-1">
@@ -196,8 +196,8 @@
 							type="button"
 							class="flex w-full cursor-pointer items-start gap-2.5 rounded-lg border p-2 text-left text-xs transition-all {activeArchetype.id ===
 							arch.id
-								? 'border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] text-[var(--theme-accent-fg)] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.4)]'
-								: 'border-transparent bg-[var(--theme-surface-subtle)] text-[var(--theme-text)] hover:border-[var(--theme-border)] hover:bg-[var(--theme-surface)]'}"
+								? 'border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] text-[var(--theme-accent)] font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.06),inset_0_1px_0_var(--theme-bevel-top)]'
+								: 'border-transparent bg-[var(--theme-surface-subtle)]/50 text-[var(--theme-text)] hover:border-[var(--theme-border)] hover:bg-[var(--theme-surface-subtle)]'}"
 							onclick={() => (activeArchetype = arch)}
 						>
 							<span class="text-base shrink-0">{arch.icon}</span>
@@ -234,32 +234,31 @@
 			</div>
 		</aside>
 
-		<!-- Center: 5-Pillar Blueprint Builder (6 cols) -->
+		<!-- Center: 5-Pillar Blueprint Workbench (6 cols) -->
 		<main class="space-y-4 lg:col-span-6">
-			<div class="skeuo-paper p-6 space-y-5">
+			<div class="skeuo-paper-sheet p-6 bg-[var(--theme-surface)] space-y-4">
 				<!-- System Name & Hardness Gauge -->
 				<div class="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--theme-border)] pb-4">
 					<div class="min-w-0 flex-1">
-						<label for="magic-name" class="block font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+						<label for="magic-name" class="block font-serif text-xs font-bold text-[var(--theme-text-muted)]">
 							Magic System Name *
 						</label>
 						<input
 							id="magic-name"
 							bind:value={blueprint.name}
-							oninput={runAudit}
 							placeholder="e.g. Ashen Sympathy, Blood Iron Law"
-							class="font-display mt-1 w-full bg-transparent text-xl font-bold text-[var(--theme-text)] focus:outline-hidden"
+							class="letterpress-title mt-1 w-full bg-transparent text-xl font-serif font-bold text-[var(--theme-text)] focus:outline-hidden"
 						/>
 					</div>
 
 					<!-- Hard vs Soft Magic Slider Gauge -->
 					<div class="text-right">
-						<div class="flex items-center justify-end gap-2 font-mono text-xs font-bold text-[var(--theme-text)]">
+						<div class="flex items-center justify-end gap-2 font-serif text-xs font-bold text-[var(--theme-text)]">
 							<span>Hardness:</span>
-							<span class="skeuo-seal h-5 w-5 bg-amber-600 text-stone-950 font-black text-[10px]">
+							<span class="h-5 w-5 rounded bg-amber-600/20 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center justify-center">
 								{blueprint.hardness}
 							</span>
-							<span class="text-[10px] text-[var(--theme-text-muted)]">
+							<span class="text-[11px] font-sans text-[var(--theme-text-muted)]">
 								{blueprint.hardness >= 4 ? '(Hard Rules)' : blueprint.hardness <= 2 ? '(Soft Wonder)' : '(Balanced)'}
 							</span>
 						</div>
@@ -275,84 +274,79 @@
 
 				<!-- Pillar 1: Source / Wellspring -->
 				<div>
-					<label for="pillar-source" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+					<label for="pillar-source" class="block font-serif text-xs font-bold text-[var(--theme-text-muted)]">
 						1. Power Source & Wellspring (Where does energy originate?)
 					</label>
 					<textarea
 						id="pillar-source"
 						bind:value={blueprint.source}
-						oninput={runAudit}
 						rows="2"
 						placeholder="e.g. Drawn from ambient thermal heat, celestial conjunctions, or tectonic ley lines..."
-						class="skeuo-input mt-1 w-full p-2.5 text-xs leading-relaxed"
+						class="skeuo-groove mt-1 w-full p-2.5 text-xs leading-relaxed"
 					></textarea>
 				</div>
 
 				<!-- Pillar 2: Medium & Channel -->
 				<div>
-					<label for="pillar-vector" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+					<label for="pillar-vector" class="block font-serif text-xs font-bold text-[var(--theme-text-muted)]">
 						2. Medium & Channel (How is power invoked and directed?)
 					</label>
 					<textarea
 						id="pillar-vector"
 						bind:value={blueprint.vector}
-						oninput={runAudit}
 						rows="2"
 						placeholder="e.g. Silver needles in anatomical nerves, chalk runic circles, consumed metal vials..."
-						class="skeuo-input mt-1 w-full p-2.5 text-xs leading-relaxed"
+						class="skeuo-groove mt-1 w-full p-2.5 text-xs leading-relaxed"
 					></textarea>
 				</div>
 
 				<!-- Pillar 3: Physical Cost & Depletion -->
 				<div>
-					<label for="pillar-cost" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+					<label for="pillar-cost" class="block font-serif text-xs font-bold text-[var(--theme-text-muted)]">
 						3. Physical Fuel & Cost (What price does the caster pay every single time?)
 					</label>
 					<textarea
 						id="pillar-cost"
 						bind:value={blueprint.cost}
-						oninput={runAudit}
 						rows="2"
 						placeholder="e.g. Binder's chills (hypothermia), irreversible memory loss, capillary rupture..."
-						class="skeuo-input mt-1 w-full p-2.5 text-xs leading-relaxed"
+						class="skeuo-groove mt-1 w-full p-2.5 text-xs leading-relaxed"
 					></textarea>
 				</div>
 
 				<!-- Pillar 4: Iron Limitations & Cannot Laws -->
-				<div class="rounded-lg border border-amber-600/50 bg-amber-500/10 p-3.5 space-y-1">
+				<div class="rounded-lg border border-amber-600/40 bg-amber-500/10 p-3.5 space-y-1">
 					<div class="flex items-center justify-between">
-						<label for="pillar-limitations" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+						<label for="pillar-limitations" class="block font-serif text-xs font-bold text-amber-800 dark:text-amber-300">
 							🛡️ 4. Iron "Cannot" Laws & Strict Limitations (Enforced in Manuscript)
 						</label>
-						<span class="font-mono text-[9px] font-bold text-amber-700 dark:text-amber-400">
+						<span class="font-mono text-[10px] font-semibold text-amber-700 dark:text-amber-400">
 							Uses "cannot / never / only"
 						</span>
 					</div>
 					<textarea
 						id="pillar-limitations"
 						bind:value={blueprint.limitations}
-						oninput={runAudit}
 						rows="2"
 						placeholder="e.g. Cannot create matter from nothing; cannot harm living iron; cannot resurrect dead flesh..."
-						class="skeuo-input w-full p-2.5 text-xs font-mono leading-relaxed"
+						class="skeuo-groove w-full p-2.5 text-xs font-mono leading-relaxed"
 					></textarea>
-					<p class="text-[10px] text-[var(--theme-text-muted)]">
+					<p class="text-[11px] font-serif text-[var(--theme-text-muted)] italic">
 						These negative constraints are parsed directly by our Manuscript Continuity Checker.
 					</p>
 				</div>
 
 				<!-- Pillar 5: Societal & Economic Fallout -->
 				<div>
-					<label for="pillar-fallout" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+					<label for="pillar-fallout" class="block font-serif text-xs font-bold text-[var(--theme-text-muted)]">
 						5. Societal, Economic & Military Fallout (How did the world adapt?)
 					</label>
 					<textarea
 						id="pillar-fallout"
 						bind:value={blueprint.fallout}
-						oninput={runAudit}
 						rows="2"
 						placeholder="e.g. Salt-miners hold monopolies over kings; armies abandoned plate armor for silk..."
-						class="skeuo-input mt-1 w-full p-2.5 text-xs leading-relaxed"
+						class="skeuo-groove mt-1 w-full p-2.5 text-xs leading-relaxed"
 					></textarea>
 				</div>
 			</div>
@@ -361,13 +355,13 @@
 		<!-- Right: Socratic Stress-Tester & Canon Bridge (3 cols) -->
 		<aside class="space-y-4 lg:col-span-3">
 			<!-- Loophole Stress-Tester Card -->
-			<div class="skeuo-box p-4 bg-[var(--theme-surface)] space-y-3">
+			<div class="skeuo-paper-sheet p-4 bg-[var(--theme-surface)] space-y-3">
 				<div class="flex items-center justify-between border-b border-[var(--theme-border)] pb-2">
-					<h2 class="font-display text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
+					<h2 class="font-serif text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Socratic Stress-Tester
 					</h2>
 					<span
-						class="skeuo-seal px-2 py-0.5 font-mono text-[9px] font-black {auditReport.overallScore ===
+						class="px-2 py-0.5 rounded font-serif text-[10px] font-bold {auditReport.overallScore ===
 						'SOLID'
 							? 'bg-emerald-600 text-white'
 							: auditReport.overallScore === 'LOOPHOLE_ALERT'
@@ -382,17 +376,17 @@
 					{#each auditReport.critiques as crit}
 						<div class="rounded-lg border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] p-2.5 space-y-1 text-xs">
 							<div class="flex items-center justify-between">
-								<span class="font-bold flex items-center gap-1.5">
+								<span class="font-serif font-bold flex items-center gap-1.5">
 									<span>{crit.status === 'pass' ? '✓' : crit.status === 'alert' ? '🚨' : '⚠️'}</span>
 									<span class="{crit.status === 'pass' ? 'text-emerald-700 dark:text-emerald-300' : crit.status === 'alert' ? 'text-rose-600' : 'text-amber-600'}">
 										{crit.title}
 									</span>
 								</span>
-								<span class="font-mono text-[9px] uppercase opacity-70">{crit.category}</span>
+								<span class="font-sans text-[10px] opacity-70">{crit.category}</span>
 							</div>
-							<p class="text-[11px] leading-snug text-[var(--theme-text)]">{crit.observation}</p>
+							<p class="text-[11px] font-sans leading-snug text-[var(--theme-text)]">{crit.observation}</p>
 							{#if crit.status !== 'pass'}
-								<div class="rounded bg-black/15 p-1.5 text-[10px] text-[var(--theme-text-muted)]">
+								<div class="rounded bg-black/10 p-1.5 text-[10px] font-sans text-[var(--theme-text-muted)]">
 									<span class="font-bold">Fix:</span> {crit.recommendation}
 								</div>
 							{/if}
@@ -402,16 +396,16 @@
 			</div>
 
 			<!-- Direct Canon Commit Station -->
-			<div class="skeuo-box p-4 bg-[var(--theme-surface-subtle)] space-y-3">
-				<div class="border-b border-[var(--theme-border)] pb-2 text-xs font-bold font-mono uppercase tracking-wider text-[var(--theme-accent)]">
+			<div class="skeuo-paper-sheet p-4 bg-[var(--theme-surface-subtle)] space-y-3">
+				<div class="border-b border-[var(--theme-border)] pb-2 text-xs font-bold font-serif uppercase tracking-wider text-[var(--theme-accent)]">
 					🛡️ Canon Commit Station
 				</div>
-				<p class="text-[11px] text-[var(--theme-text-muted)] leading-relaxed">
+				<p class="text-[11px] font-serif text-[var(--theme-text-muted)] leading-relaxed">
 					Locking writes a permanent <code class="font-bold">[magic]</code> record into the World Bible and appends a verified decision into <code class="font-bold">decisions.md</code>.
 				</p>
 				<button
 					type="button"
-					class="skeuo-btn-primary w-full py-2.5 text-xs font-bold"
+					class="skeuo-btn-primary w-full py-2.5 text-xs font-serif font-bold"
 					onclick={handleCommitToCanon}
 				>
 					Lock into Bible & Decisions.md

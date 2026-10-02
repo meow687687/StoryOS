@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=JetBrains+Mono:wght@500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
@@ -200,10 +200,12 @@
 }
 
 @theme {
-	--font-display: 'Space Grotesk', system-ui, sans-serif;
-	--font-manuscript: 'Libre Baskerville', Georgia, serif;
+	--font-display: 'Newsreader', 'EB Garamond', 'Libre Baskerville', Georgia, serif;
+	--font-serif: 'Newsreader', 'EB Garamond', 'Libre Baskerville', Georgia, serif;
+	--font-manuscript: 'Newsreader', 'Libre Baskerville', Georgia, serif;
 	--font-mono: 'JetBrains Mono', monospace;
-	--font-ui: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+	--font-ui: 'Instrument Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+	--font-sans: 'Instrument Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 html {
@@ -268,8 +270,104 @@ body {
 	font-family: var(--font-display);
 }
 
+.font-serif {
+	font-family: var(--font-serif);
+}
+
+.font-sans {
+	font-family: var(--font-sans);
+}
+
 .font-mono {
 	font-family: var(--font-mono);
+}
+
+/* Debossed letterpress typography */
+.letterpress-title {
+	font-family: var(--font-display);
+	letter-spacing: -0.015em;
+	text-shadow: 0 1px 0 var(--theme-bevel-top);
+}
+
+/* Desk Blotter texture and depth */
+.desk-blotter {
+	background-color: var(--theme-bg);
+	min-height: 100vh;
+	position: relative;
+}
+
+/* Floating Cotton Rag Paper Canvas */
+.skeuo-paper-sheet {
+	background: var(--theme-surface);
+	border: 1px solid var(--theme-border);
+	border-radius: 12px;
+	box-shadow: 
+		0 1px 2px rgba(0, 0, 0, 0.04),
+		0 4px 12px rgba(0, 0, 0, 0.08),
+		0 16px 36px -4px rgba(0, 0, 0, 0.14),
+		inset 0 1px 0 var(--theme-bevel-top);
+	transition: box-shadow 0.2s ease;
+}
+
+/* Sunken Pen-Groove inputs (replaces harsh 1-bit borders) */
+.skeuo-groove {
+	background: var(--theme-surface-subtle);
+	border: 1px solid var(--theme-border);
+	box-shadow: 
+		inset 0 1.5px 3px rgba(0, 0, 0, 0.15),
+		0 1px 0 var(--theme-bevel-top);
+	border-radius: 8px;
+	color: var(--theme-text);
+}
+
+.skeuo-groove:focus {
+	outline: none;
+	border-color: var(--theme-accent);
+	box-shadow: 
+		inset 0 1.5px 3px rgba(0, 0, 0, 0.2),
+		0 0 0 2px var(--theme-accent-subtle);
+}
+
+/* Bookbinder Navigation Tab */
+.skeuo-binder-tab {
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--theme-text-muted);
+	transition: all 0.12s ease;
+	position: relative;
+	user-select: none;
+}
+
+.skeuo-binder-tab:hover {
+	color: var(--theme-text);
+	background: var(--theme-surface-subtle);
+}
+
+.skeuo-binder-tab.active {
+	color: var(--theme-accent);
+	background: var(--theme-surface);
+	border: 1px solid var(--theme-border);
+	box-shadow: 
+		0 2px 5px rgba(0, 0, 0, 0.08),
+		inset 0 1px 0 var(--theme-bevel-top);
+}
+
+/* Bookmark ribbon indicator on active tab */
+.skeuo-binder-tab.active::before {
+	content: '';
+	position: absolute;
+	left: -0.25rem;
+	top: 20%;
+	bottom: 20%;
+	width: 3px;
+	background: var(--theme-accent);
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* ==========================================================================

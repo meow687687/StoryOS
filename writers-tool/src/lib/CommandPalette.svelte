@@ -262,31 +262,31 @@
 			aria-label="Close dialog backdrop"
 		></button>
 		<div
-			class="skeuo-box-lg w-full max-w-2xl overflow-hidden rounded-2xl bg-[var(--theme-surface)] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_0_var(--theme-bevel-top)] transition-all animate-in fade-in zoom-in-95"
+			class="skeuo-paper-sheet w-full max-w-2xl overflow-hidden rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all animate-in fade-in zoom-in-95"
 		>
 			<!-- Search Input Box -->
-			<div class="flex items-center gap-3 border-b border-[var(--theme-border-strong)] px-4 py-3">
+			<div class="flex items-center gap-3 border-b border-[var(--theme-border)] px-4 py-3.5 bg-[var(--theme-surface)]">
 				<span class="text-base text-[var(--theme-accent)]">🔍</span>
 				<input
 					bind:this={inputEl}
 					bind:value={query}
 					type="text"
-					placeholder="Jump to chapter, bible entity, mystery, or command..."
-					class="w-full bg-transparent font-display text-sm font-bold text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
+					placeholder="Search chapters, bible lore, mysteries, or commands..."
+					class="w-full bg-transparent font-serif text-sm font-semibold text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
 				/>
-				<span class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-0.5 font-mono text-[10px] font-bold text-[var(--theme-text-muted)] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">
+				<span class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2 py-0.5 font-sans text-[10px] font-semibold text-[var(--theme-text-muted)] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">
 					Esc
 				</span>
 			</div>
 
 			<!-- Results List -->
-			<div class="max-h-96 overflow-y-auto p-2 space-y-1">
+			<div class="max-h-96 overflow-y-auto p-2 space-y-1 bg-[var(--theme-surface-card)]">
 				{#each filteredItems as item, idx (item.id)}
 					<button
 						type="button"
 						class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition-all {idx ===
 						selectedIndex
-							? 'border border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] text-[var(--theme-accent-fg)] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.4)]'
+							? 'border border-[var(--theme-border)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] text-[var(--theme-accent-fg)] font-semibold shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.4)]'
 							: 'border border-transparent text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]'}"
 						onclick={() => {
 							item.action();
@@ -294,35 +294,35 @@
 						}}
 					>
 						<div class="flex items-center gap-3 min-w-0 flex-1">
-							<span class="skeuo-seal h-6 w-6 text-xs bg-[var(--theme-surface-subtle)] border border-[var(--theme-border)] shrink-0">
+							<span class="h-6 w-6 rounded-md text-xs bg-[var(--theme-surface-subtle)] border border-[var(--theme-border)] flex items-center justify-center shrink-0">
 								{item.icon}
 							</span>
 							<div class="min-w-0 flex-1 truncate">
-								<div class="font-bold truncate">{item.title}</div>
-								<div class="text-[10px] opacity-80 truncate">{item.subtitle}</div>
+								<div class="font-serif font-bold truncate leading-snug">{item.title}</div>
+								<div class="text-[11px] font-sans opacity-80 truncate">{item.subtitle}</div>
 							</div>
 						</div>
-						<span class="rounded border border-current/30 px-1.5 py-0.2 font-mono text-[9px] uppercase shrink-0">
+						<span class="rounded border border-current/25 px-2 py-0.5 font-serif text-[10px] font-semibold shrink-0">
 							{item.category}
 						</span>
 					</button>
 				{/each}
 
 				{#if filteredItems.length === 0}
-					<div class="py-8 text-center text-xs font-mono text-[var(--theme-text-muted)]">
+					<div class="py-8 text-center text-xs font-serif text-[var(--theme-text-muted)]">
 						No results matching "{query}".
 					</div>
 				{/if}
 			</div>
 
 			<!-- Footer Keys Hint -->
-			<div class="flex items-center justify-between border-t border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-4 py-2 text-[10px] font-mono text-[var(--theme-text-muted)]">
+			<div class="flex items-center justify-between border-t border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-4 py-2.5 text-[11px] font-sans text-[var(--theme-text-muted)]">
 				<div class="flex items-center gap-3">
-					<span><kbd class="font-bold">↑↓</kbd> navigate</span>
-					<span><kbd class="font-bold">↵</kbd> select</span>
-					<span><kbd class="font-bold">esc</kbd> close</span>
+					<span><kbd class="font-semibold px-1 py-0.5 rounded border border-[var(--theme-border)] bg-[var(--theme-surface)]">↑↓</kbd> navigate</span>
+					<span><kbd class="font-semibold px-1 py-0.5 rounded border border-[var(--theme-border)] bg-[var(--theme-surface)]">↵</kbd> select</span>
+					<span><kbd class="font-semibold px-1 py-0.5 rounded border border-[var(--theme-border)] bg-[var(--theme-surface)]">esc</kbd> close</span>
 				</div>
-				<div>
+				<div class="font-serif italic text-[11px]">
 					<span>Story OS Quick Jump</span>
 				</div>
 			</div>
