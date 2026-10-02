@@ -101,38 +101,40 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<!-- Neobrutalist Top Command Header -->
-<header class="sticky top-0 z-50 border-b-2 border-[var(--theme-border-strong)] bg-[var(--theme-header-bg)] shadow-[0_3px_0_0_var(--theme-shadow-hard)]">
+<!-- Skeuomorphic Top Command Header / Desk Blotter -->
+<header class="sticky top-0 z-50 border-b border-[var(--theme-border-strong)] bg-[var(--theme-header-bg)] shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
 	<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2.5">
-		<!-- Brand Logo Stamp -->
+		<!-- Brand Logo Stamp (Tactile Medallion) -->
 		<a
 			href="/"
-			class="neo-btn flex items-center gap-2 rounded-lg bg-[var(--theme-surface)] px-3 py-1.5 text-base font-extrabold uppercase tracking-tight text-[var(--theme-text)]"
+			class="skeuo-btn flex items-center gap-2 rounded-lg px-3 py-1.5 text-base font-extrabold tracking-tight text-[var(--theme-text)]"
 		>
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-[var(--theme-accent)]" aria-hidden="true">
-				<path
-					d="M12 2c1 4 4 5 4 9a4 4 0 0 1-8 0c0-4 3-5 4-9Z"
-					stroke="currentColor"
-					stroke-width="2.5"
-					stroke-linejoin="round"
-				/>
-				<path d="M12 22v-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
-			</svg>
-			<span class="font-display font-black tracking-tighter">Story OS</span>
-			<span class="rounded-xs border border-current bg-[var(--theme-accent)] px-1 py-0.2 font-mono text-[10px] font-bold text-[var(--theme-accent-fg)]">
+			<span class="skeuo-seal h-6 w-6 bg-gradient-to-tr from-amber-600 to-amber-400 text-amber-950 font-black shadow-[0_1px_3px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.6)]">
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" class="text-amber-950" aria-hidden="true">
+					<path
+						d="M12 2c1 4 4 5 4 9a4 4 0 0 1-8 0c0-4 3-5 4-9Z"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linejoin="round"
+					/>
+					<path d="M12 22v-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+				</svg>
+			</span>
+			<span class="font-display font-black tracking-tight">Story OS</span>
+			<span class="rounded border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] px-1.5 py-0.2 font-mono text-[10px] font-bold text-[var(--theme-accent)] shadow-[inset_0_1px_1px_rgba(0,0,0,0.2)]">
 				v1.0
 			</span>
 		</a>
 
 		<!-- Segmented Tactile Navigation Rail -->
-		<nav aria-label="Primary" class="flex flex-wrap items-center gap-1 rounded-xl border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-1 shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
+		<nav aria-label="Primary" class="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-1 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2),0_1px_0_var(--theme-bevel-top)]">
 			{#each navItems as item}
 				{@const isActive = item.pathMatch(page.url.pathname)}
 				<a
 					href={item.href}
-					class="flex min-h-[34px] items-center gap-1.5 rounded-lg border-2 px-3 py-1 text-xs font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 {isActive
-						? 'border-[var(--theme-border-strong)] bg-[var(--theme-accent)] text-[var(--theme-accent-fg)] shadow-[2px_2px_0px_var(--theme-shadow-hard)]'
-						: 'border-transparent text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] hover:bg-[var(--theme-surface)]'}"
+					class="flex min-h-[34px] items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-bold transition-all {isActive
+						? 'skeuo-btn-primary border border-black/20 text-[var(--theme-accent-fg)] shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.35)]'
+						: 'border border-transparent text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] hover:bg-[var(--theme-surface)] hover:shadow-[0_1px_2px_rgba(0,0,0,0.1)]'}"
 				>
 					{#if item.icon === 'pen'}
 						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4 4 4L8 20l-5 1 1-5L16 4Z"/></svg>
@@ -162,7 +164,7 @@
 		<div class="flex items-center gap-2">
 			<button
 				type="button"
-				class="neo-btn flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold"
+				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold"
 				onclick={() => (showBundleModal = true)}
 				title="Export or Import complete Story OS workspace bundle"
 			>
@@ -177,10 +179,10 @@
 <!-- Agent Bundle Export / Import Modal -->
 {#if showBundleModal}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-		<div class="neo-box w-full max-w-xl space-y-4 bg-[var(--theme-surface)] p-6 shadow-[8px_8px_0px_var(--theme-shadow-hard)]">
-			<div class="flex items-center justify-between border-b pb-3">
+		<div class="skeuo-box-lg w-full max-w-xl space-y-4 bg-[var(--theme-surface)] p-6 shadow-[0_16px_48px_rgba(0,0,0,0.4)]">
+			<div class="flex items-center justify-between border-b border-[var(--theme-border)] pb-3">
 				<div>
-					<h3 class="font-display text-lg font-bold uppercase">📦 Story OS Project Bundle</h3>
+					<h3 class="font-display text-lg font-bold">📦 Story OS Project Bundle</h3>
 					<p class="text-xs text-[var(--theme-text-muted)]">
 						Export or import the complete portable agent workspace (bible, decisions, voice, feedback, chapters, timeline, maps).
 					</p>
@@ -195,34 +197,34 @@
 			</div>
 
 			{#if bundleStatusMsg}
-				<div class="rounded-md border-2 border-emerald-600 bg-emerald-500/15 p-2.5 text-xs font-bold text-emerald-800 dark:text-emerald-200">
+				<div class="rounded-md border border-emerald-600 bg-emerald-500/15 p-2.5 text-xs font-bold text-emerald-800 dark:text-emerald-200">
 					{bundleStatusMsg}
 				</div>
 			{/if}
 
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-				<div class="neo-box bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+				<div class="skeuo-box bg-[var(--theme-surface-subtle)] p-4 space-y-2">
 					<h4 class="font-mono text-xs font-bold uppercase">Export Workspace</h4>
 					<p class="text-[11px] text-[var(--theme-text-muted)] leading-relaxed">
 						Download a JSON bundle with full state to transfer between devices or use with CLI agents (Claude Code, Cursor, OpenCode).
 					</p>
 					<button
 						type="button"
-						class="neo-btn-primary w-full py-2 text-xs font-bold"
+						class="skeuo-btn-primary w-full py-2 text-xs font-bold"
 						onclick={handleExportBundle}
 					>
 						💾 Download Bundle JSON
 					</button>
 				</div>
 
-				<div class="neo-box bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+				<div class="skeuo-box bg-[var(--theme-surface-subtle)] p-4 space-y-2">
 					<h4 class="font-mono text-xs font-bold uppercase">Import Workspace</h4>
 					<p class="text-[11px] text-[var(--theme-text-muted)] leading-relaxed">
 						Paste a previously exported bundle JSON below to restore or merge your complete story state.
 					</p>
 					<button
 						type="button"
-						class="neo-btn w-full py-2 text-xs font-bold"
+						class="skeuo-btn w-full py-2 text-xs font-bold"
 						onclick={handleImportBundle}
 						disabled={!importJsonText.trim()}
 					>
@@ -240,14 +242,14 @@
 					bind:value={importJsonText}
 					rows="6"
 					placeholder="Paste JSON bundle content here..."
-					class="neo-input mt-1 w-full p-2.5 font-mono text-xs"
+					class="skeuo-input mt-1 w-full p-2.5 font-mono text-xs"
 				></textarea>
 			</div>
 
 			<div class="flex justify-end pt-2">
 				<button
 					type="button"
-					class="neo-btn px-4 py-2 text-xs font-bold"
+					class="skeuo-btn px-4 py-2 text-xs font-bold"
 					onclick={() => (showBundleModal = false)}
 				>
 					Close
@@ -261,11 +263,11 @@
 	{@render children()}
 </main>
 
-<!-- Neobrutalist Footer -->
-<footer class="mt-16 border-t-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] px-4 py-6 shadow-[0_-2px_0_0_var(--theme-shadow-hard)]">
+<!-- Skeuomorphic Footer -->
+<footer class="mt-16 border-t border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-4 py-6 shadow-[inset_0_1px_0_var(--theme-bevel-top)]">
 	<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 text-xs font-medium">
 		<div class="flex items-center gap-2">
-			<span class="neo-badge rounded-xs bg-[var(--theme-surface)] px-1.5 py-0.5 text-[10px] text-[var(--theme-text)]">
+			<span class="skeuo-badge rounded-xs bg-[var(--theme-surface)] px-1.5 py-0.5 text-[10px] text-[var(--theme-text)]">
 				CANON-PROTECTED
 			</span>
 			<span class="text-[var(--theme-text-muted)]">

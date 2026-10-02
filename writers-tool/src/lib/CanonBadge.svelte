@@ -15,33 +15,33 @@
 				return {
 					label: 'Canon',
 					icon: '🛡️',
-					bg: 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
+					bg: 'bg-gradient-to-b from-emerald-600 to-emerald-800 text-emerald-50 border-emerald-900/80 shadow-[0_2px_4px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-1px_0_rgba(0,0,0,0.3)]'
 				};
 			case 'draft':
 				return {
 					label: 'Draft',
 					icon: '📝',
-					bg: 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
+					bg: 'bg-gradient-to-b from-amber-100 to-amber-200 text-amber-950 border-amber-400/80 dark:from-stone-800 dark:to-stone-900 dark:text-amber-200 dark:border-amber-700/70 shadow-[0_1px_3px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.4)]'
 				};
 			case 'rejected':
 				return {
 					label: 'Rejected',
 					icon: '❌',
-					bg: 'bg-rose-50 text-rose-800 border-rose-300 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800'
+					bg: 'bg-gradient-to-b from-rose-100 to-rose-200 text-rose-950 border-rose-400/80 dark:from-rose-950/60 dark:to-rose-900/60 dark:text-rose-200 dark:border-rose-800 shadow-[0_1px_3px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.2)]'
 				};
 			case 'idea':
 			default:
 				return {
 					label: 'Idea',
 					icon: '💡',
-					bg: 'bg-sky-50 text-sky-800 border-sky-300 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800'
+					bg: 'bg-gradient-to-b from-sky-100 to-sky-200 text-sky-950 border-sky-400/80 dark:from-sky-950/60 dark:to-sky-900/60 dark:text-sky-200 dark:border-sky-800 shadow-[0_1px_3px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.4)]'
 				};
 		}
 	});
 </script>
 
 <span
-	class="inline-flex items-center gap-1 rounded-md border-[1.5px] border-[var(--theme-border-strong)] font-mono font-bold tracking-wider uppercase shadow-[1.5px_1.5px_0px_var(--theme-shadow-hard)] {config.bg} {size ===
+	class="inline-flex items-center gap-1 rounded-md border font-mono font-bold tracking-wider uppercase {config.bg} {size ===
 	'sm'
 		? 'px-1.5 py-0.5 text-[10px]'
 		: 'px-2 py-0.5 text-[11px]'}"

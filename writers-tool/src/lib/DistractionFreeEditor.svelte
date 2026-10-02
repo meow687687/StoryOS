@@ -132,26 +132,26 @@
 </script>
 
 <div
-	class="relative flex flex-col rounded-xl border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] shadow-[3.5px_3.5px_0px_var(--theme-shadow-hard)] transition-all duration-200 {isFocusMode
+	class="relative flex flex-col rounded-xl skeuo-paper transition-all duration-200 {isFocusMode
 		? 'fixed inset-0 z-50 rounded-none border-none p-6 md:p-12 shadow-none'
-		: 'p-5'}"
+		: 'p-6'}"
 >
 	<!-- Editor Toolbar / Stats Header -->
-	<div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b-2 border-[var(--theme-border-strong)] pb-2.5">
+	<div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--theme-border)] pb-2.5">
 		<div class="flex items-center gap-3 text-xs font-mono font-bold text-[var(--theme-text-muted)]">
-			<span class="rounded bg-[var(--theme-surface-subtle)] border border-[var(--theme-border-strong)] px-2 py-0.5 text-[var(--theme-text)]">
+			<span class="rounded bg-[var(--theme-surface-subtle)] border border-[var(--theme-border)] px-2.5 py-0.5 text-[var(--theme-text)] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]">
 				{words} words
 			</span>
 			<span>·</span>
 			<span>{readingTimeMinutes} min read</span>
 			<span>·</span>
-			<span class="hidden sm:inline font-sans text-xs font-normal">Type <kbd class="rounded border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] px-1 py-0.5 font-mono text-[11px] font-bold text-[var(--theme-text)]">@</kbd> to insert entity</span>
+			<span class="hidden sm:inline font-sans text-xs font-normal">Type <kbd class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-1.5 py-0.5 font-mono text-[11px] font-bold text-[var(--theme-text)] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">@</kbd> to insert entity</span>
 		</div>
 
 		<div class="flex items-center gap-2">
 			<button
 				type="button"
-				class="neo-btn rounded-md px-2.5 py-1 text-xs font-bold text-[var(--theme-text)]"
+				class="skeuo-btn rounded-md px-3 py-1 text-xs font-bold text-[var(--theme-text)]"
 				onclick={() => (isFocusMode = !isFocusMode)}
 				title={isFocusMode ? 'Exit focus mode (Esc)' : 'Enter distraction-free focus mode'}
 			>
@@ -175,17 +175,17 @@
 		<!-- Autocomplete Menu -->
 		{#if autocompleteQuery !== null && filteredCandidates.length > 0}
 			<div
-				class="neo-box-lg absolute bottom-12 left-4 z-40 max-h-52 w-72 overflow-y-auto rounded-xl p-1.5"
+				class="skeuo-box-lg absolute bottom-12 left-4 z-40 max-h-52 w-72 overflow-y-auto rounded-xl p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-md"
 			>
-				<div class="border-b border-[var(--theme-border-strong)] px-2 py-1 text-[10px] font-mono font-bold tracking-wider text-[var(--theme-text-faint)] uppercase">
+				<div class="border-b border-[var(--theme-border)] px-2 py-1 text-[10px] font-mono font-bold tracking-wider text-[var(--theme-text-faint)] uppercase">
 					Bible Entities
 				</div>
 				{#each filteredCandidates as candidate, idx (candidate.id)}
 					<button
 						type="button"
-						class="flex w-full cursor-pointer items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors {idx ===
+						class="flex w-full cursor-pointer items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-all {idx ===
 						autocompleteIndex
-							? 'border-[var(--theme-border-strong)] bg-[var(--theme-accent)] font-bold text-[var(--theme-accent-fg)] shadow-[1.5px_1.5px_0px_var(--theme-shadow-hard)]'
+							? 'border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] font-bold text-[var(--theme-accent-fg)] shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.35)]'
 							: 'border-transparent text-[var(--theme-text)] hover:bg-[var(--theme-surface-subtle)]'}"
 						onclick={() => insertEntity(candidate)}
 					>
@@ -205,7 +205,7 @@
 
 	<!-- Ambient Entity Mentions Bar -->
 	{#if detectedMentions.length > 0}
-		<div class="mt-3 border-t-2 border-[var(--theme-border-strong)] pt-2.5">
+		<div class="mt-4 border-t border-[var(--theme-border)] pt-3">
 			<div class="flex flex-wrap items-center gap-1.5 text-xs">
 				<span class="font-mono text-[11px] font-bold tracking-wider text-[var(--theme-text-faint)] uppercase">
 					Linked in Scene:
@@ -215,7 +215,7 @@
 					{#if fullEntry}
 						<button
 							type="button"
-							class="neo-btn inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs text-[var(--theme-text)] hover:border-[var(--theme-accent)]"
+							class="skeuo-btn inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-[var(--theme-text)]"
 							onclick={() => onselectentity(fullEntry)}
 							title="Click to view dossier and temporal state"
 						>

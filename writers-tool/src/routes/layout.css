@@ -8,12 +8,17 @@
 
 :root,
 [data-theme='parchment'] {
-	--theme-bg: #faf7f2;
+	--theme-bg: #f5f0e6;
 	--theme-surface: #ffffff;
-	--theme-surface-subtle: #f5efe2;
-	--theme-surface-card: #ffffff;
-	--theme-border: #1c1917;
-	--theme-border-strong: #1c1917;
+	--theme-surface-subtle: #ede5d5;
+	--theme-surface-card: #faf7f2;
+	--theme-surface-gradient: linear-gradient(180deg, #ffffff 0%, #f6f1e7 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #ffffff 0%, #ede4d4 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #b23c16 0%, #852a0e 100%);
+	--theme-border: #d4c8b4;
+	--theme-border-strong: #968369;
+	--theme-bevel-top: rgba(255, 255, 255, 0.9);
+	--theme-bevel-bottom: rgba(60, 40, 20, 0.3);
 	--theme-text: #1c1917;
 	--theme-text-muted: #44403c;
 	--theme-text-faint: #78716c;
@@ -21,18 +26,23 @@
 	--theme-accent-fg: #ffffff;
 	--theme-accent-hover: #7c2d12;
 	--theme-accent-subtle: #ffedd5;
-	--theme-header-bg: #faf7f2;
+	--theme-header-bg: #ebe3d3;
 	--theme-shadow-hard: #1c1917;
 	color-scheme: light;
 }
 
 [data-theme='kanagawa-wave'] {
-	--theme-bg: #1f1f28;
-	--theme-surface: #2a2a37;
-	--theme-surface-subtle: #22222e;
+	--theme-bg: #1a1a23;
+	--theme-surface: #272735;
+	--theme-surface-subtle: #1e1e2b;
 	--theme-surface-card: #252535;
-	--theme-border: #54546d;
-	--theme-border-strong: #727169;
+	--theme-surface-gradient: linear-gradient(180deg, #2e2e3f 0%, #232331 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #37374a 0%, #282838 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #ea7380 0%, #c45260 100%);
+	--theme-border: #49495e;
+	--theme-border-strong: #6c6b75;
+	--theme-bevel-top: rgba(255, 255, 255, 0.16);
+	--theme-bevel-bottom: rgba(0, 0, 0, 0.55);
 	--theme-text: #dcd7ba;
 	--theme-text-muted: #c8c093;
 	--theme-text-faint: #a6a0b5;
@@ -40,18 +50,23 @@
 	--theme-accent-fg: #1f1f28;
 	--theme-accent-hover: #ff5d62;
 	--theme-accent-subtle: rgba(228, 104, 118, 0.2);
-	--theme-header-bg: #1f1f28;
+	--theme-header-bg: #1c1c27;
 	--theme-shadow-hard: #0d0c0c;
 	color-scheme: dark;
 }
 
 [data-theme='kanagawa-dragon'] {
-	--theme-bg: #181616;
-	--theme-surface: #222020;
-	--theme-surface-subtle: #1c1a1a;
+	--theme-bg: #141212;
+	--theme-surface: #201e1e;
+	--theme-surface-subtle: #171515;
 	--theme-surface-card: #282525;
-	--theme-border: #554f4f;
-	--theme-border-strong: #7a7774;
+	--theme-surface-gradient: linear-gradient(180deg, #282525 0%, #1c1a1a 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #302d2d 0%, #211f1f 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #d37f79 0%, #a85d57 100%);
+	--theme-border: #454141;
+	--theme-border-strong: #686462;
+	--theme-bevel-top: rgba(255, 255, 255, 0.15);
+	--theme-bevel-bottom: rgba(0, 0, 0, 0.65);
 	--theme-text: #c5c9c5;
 	--theme-text-muted: #b5b5ad;
 	--theme-text-faint: #9c9c94;
@@ -59,37 +74,47 @@
 	--theme-accent-fg: #181616;
 	--theme-accent-hover: #e67e80;
 	--theme-accent-subtle: rgba(196, 116, 110, 0.2);
-	--theme-header-bg: #181616;
+	--theme-header-bg: #171515;
 	--theme-shadow-hard: #080808;
 	color-scheme: dark;
 }
 
 [data-theme='everforest-dark'] {
-	--theme-bg: #2d353b;
+	--theme-bg: #272e33;
 	--theme-surface: #343f44;
-	--theme-surface-subtle: #2b3339;
+	--theme-surface-subtle: #2b3338;
 	--theme-surface-card: #3a474d;
-	--theme-border: #5c6a72;
-	--theme-border-strong: #7fbbb3;
+	--theme-surface-gradient: linear-gradient(180deg, #3d4a50 0%, #303a3f 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #445259 0%, #343f44 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #b5cf8c 0%, #91aa68 100%);
+	--theme-border: #4f5b61;
+	--theme-border-strong: #6d8882;
+	--theme-bevel-top: rgba(255, 255, 255, 0.2);
+	--theme-bevel-bottom: rgba(0, 0, 0, 0.6);
 	--theme-text: #d3c6aa;
 	--theme-text-muted: #b5c4b5;
 	--theme-text-faint: #8fb5ad;
 	--theme-accent: #a7c080;
-	--theme-accent-fg: #2d353b;
+	--theme-accent-fg: #272e33;
 	--theme-accent-hover: #83c092;
 	--theme-accent-subtle: rgba(167, 192, 128, 0.2);
-	--theme-header-bg: #2d353b;
-	--theme-shadow-hard: #1e2326;
+	--theme-header-bg: #2a3237;
+	--theme-shadow-hard: #191e21;
 	color-scheme: dark;
 }
 
 [data-theme='everforest-light'] {
-	--theme-bg: #fdf6e3;
+	--theme-bg: #f8f1dc;
 	--theme-surface: #f4f0d9;
-	--theme-surface-subtle: #ebe5c8;
+	--theme-surface-subtle: #ebe4c4;
 	--theme-surface-card: #f8f4df;
-	--theme-border: #2d353b;
-	--theme-border-strong: #2d353b;
+	--theme-surface-gradient: linear-gradient(180deg, #fdfaf0 0%, #eee8cb 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #fefcf5 0%, #e6dfbd 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #9cb202 0%, #798b00 100%);
+	--theme-border: #d4ccb0;
+	--theme-border-strong: #8a9686;
+	--theme-bevel-top: rgba(255, 255, 255, 0.9);
+	--theme-bevel-bottom: rgba(45, 53, 59, 0.25);
 	--theme-text: #2d353b;
 	--theme-text-muted: #4f5b66;
 	--theme-text-faint: #708089;
@@ -97,18 +122,23 @@
 	--theme-accent-fg: #ffffff;
 	--theme-accent-hover: #6a7a00;
 	--theme-accent-subtle: rgba(141, 161, 1, 0.2);
-	--theme-header-bg: #fdf6e3;
+	--theme-header-bg: #ebe3cb;
 	--theme-shadow-hard: #2d353b;
 	color-scheme: light;
 }
 
 [data-theme='catppuccin-mocha'] {
-	--theme-bg: #1e1e2e;
-	--theme-surface: #181825;
-	--theme-surface-subtle: #11111b;
+	--theme-bg: #181825;
+	--theme-surface: #1e1e2e;
+	--theme-surface-subtle: #151521;
 	--theme-surface-card: #242438;
-	--theme-border: #45475a;
-	--theme-border-strong: #6c7086;
+	--theme-surface-gradient: linear-gradient(180deg, #242438 0%, #191928 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #2b2b42 0%, #1f1f31 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #d8b8ff 0%, #b388ec 100%);
+	--theme-border: #3b3d52;
+	--theme-border-strong: #5a5d74;
+	--theme-bevel-top: rgba(255, 255, 255, 0.18);
+	--theme-bevel-bottom: rgba(0, 0, 0, 0.65);
 	--theme-text: #cdd6f4;
 	--theme-text-muted: #a6adc8;
 	--theme-text-faint: #6c7086;
@@ -116,18 +146,23 @@
 	--theme-accent-fg: #1e1e2e;
 	--theme-accent-hover: #f5c2e7;
 	--theme-accent-subtle: rgba(203, 166, 247, 0.2);
-	--theme-header-bg: #1e1e2e;
+	--theme-header-bg: #141420;
 	--theme-shadow-hard: #0a0a0f;
 	color-scheme: dark;
 }
 
 [data-theme='catppuccin-latte'] {
-	--theme-bg: #eff1f5;
+	--theme-bg: #e6e9ef;
 	--theme-surface: #ffffff;
-	--theme-surface-subtle: #e6e9ef;
+	--theme-surface-subtle: #dce0e8;
 	--theme-surface-card: #ffffff;
-	--theme-border: #4c4f69;
-	--theme-border-strong: #4c4f69;
+	--theme-surface-gradient: linear-gradient(180deg, #ffffff 0%, #eef1f7 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #ffffff 0%, #e4e8f0 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #9a4ffc 0%, #7626e8 100%);
+	--theme-border: #ccd0da;
+	--theme-border-strong: #8c8fa1;
+	--theme-bevel-top: rgba(255, 255, 255, 0.95);
+	--theme-bevel-bottom: rgba(76, 79, 105, 0.25);
 	--theme-text: #4c4f69;
 	--theme-text-muted: #5c5f77;
 	--theme-text-faint: #6c6f85;
@@ -135,18 +170,23 @@
 	--theme-accent-fg: #ffffff;
 	--theme-accent-hover: #7287fd;
 	--theme-accent-subtle: rgba(136, 57, 239, 0.2);
-	--theme-header-bg: #eff1f5;
+	--theme-header-bg: #dce0e8;
 	--theme-shadow-hard: #4c4f69;
 	color-scheme: light;
 }
 
 [data-theme='gruvbox-dark'] {
-	--theme-bg: #282828;
-	--theme-surface: #1d2021;
-	--theme-surface-subtle: #18191a;
+	--theme-bg: #202020;
+	--theme-surface: #282828;
+	--theme-surface-subtle: #1d2021;
 	--theme-surface-card: #32302f;
-	--theme-border: #504945;
-	--theme-border-strong: #7c6f64;
+	--theme-surface-gradient: linear-gradient(180deg, #323232 0%, #242424 100%);
+	--theme-btn-gradient: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+	--theme-btn-primary-gradient: linear-gradient(180deg, #ff9233 0%, #db6d09 100%);
+	--theme-border: #4a4542;
+	--theme-border-strong: #70655c;
+	--theme-bevel-top: rgba(255, 255, 255, 0.18);
+	--theme-bevel-bottom: rgba(0, 0, 0, 0.7);
 	--theme-text: #ebdbb2;
 	--theme-text-muted: #d5c4a1;
 	--theme-text-faint: #a89984;
@@ -154,7 +194,7 @@
 	--theme-accent-fg: #282828;
 	--theme-accent-hover: #fabd2f;
 	--theme-accent-subtle: rgba(254, 128, 25, 0.2);
-	--theme-header-bg: #282828;
+	--theme-header-bg: #1c1d1e;
 	--theme-shadow-hard: #141617;
 	color-scheme: dark;
 }
@@ -233,93 +273,162 @@ body {
 }
 
 /* ==========================================================================
-   Neobrutalism Design System Classes & Utilities
+   Skeuomorphic & Physical Material Classes & Utilities
    ========================================================================== */
 
-/* Hard-shadow box containers */
-.neo-box {
-	border: 2px solid var(--theme-border-strong);
-	background-color: var(--theme-surface);
-	box-shadow: 3px 3px 0px var(--theme-shadow-hard);
+/* Box containers: Layered physical elevation with bevel highlight */
+.skeuo-box, .neo-box {
+	border: 1px solid var(--theme-border-strong);
+	background: var(--theme-surface-gradient, var(--theme-surface));
+	border-radius: 8px;
+	box-shadow: 
+		0 1px 3px rgba(0, 0, 0, 0.12),
+		0 6px 16px -2px rgba(0, 0, 0, 0.18),
+		inset 0 1px 0 var(--theme-bevel-top);
+	border-bottom: 2px solid var(--theme-bevel-bottom);
 }
 
-.neo-box-sm {
-	border: 2px solid var(--theme-border-strong);
-	background-color: var(--theme-surface);
-	box-shadow: 2px 2px 0px var(--theme-shadow-hard);
+.skeuo-box-sm, .neo-box-sm {
+	border: 1px solid var(--theme-border-strong);
+	background: var(--theme-surface-gradient, var(--theme-surface));
+	border-radius: 6px;
+	box-shadow: 
+		0 1px 2px rgba(0, 0, 0, 0.1),
+		0 3px 8px -1px rgba(0, 0, 0, 0.14),
+		inset 0 1px 0 var(--theme-bevel-top);
+	border-bottom: 1.5px solid var(--theme-bevel-bottom);
 }
 
-.neo-box-lg {
-	border: 3px solid var(--theme-border-strong);
-	background-color: var(--theme-surface);
-	box-shadow: 5px 5px 0px var(--theme-shadow-hard);
+.skeuo-box-lg, .neo-box-lg {
+	border: 1px solid var(--theme-border-strong);
+	background: var(--theme-surface-gradient, var(--theme-surface));
+	border-radius: 12px;
+	box-shadow: 
+		0 2px 5px rgba(0, 0, 0, 0.15),
+		0 12px 28px -4px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 var(--theme-bevel-top);
+	border-bottom: 3px solid var(--theme-bevel-bottom);
 }
 
-/* Tactile physical buttons with click physics */
-.neo-btn {
-	border: 2px solid var(--theme-border-strong);
-	background-color: var(--theme-surface);
+/* Tactile 3D push buttons with realistic beveled edge and active depression physics */
+.skeuo-btn, .neo-btn {
+	border: 1px solid var(--theme-border-strong);
+	background: var(--theme-btn-gradient, var(--theme-surface));
 	color: var(--theme-text);
-	box-shadow: 3px 3px 0px var(--theme-shadow-hard);
-	font-weight: 700;
-	transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
+	border-radius: 6px;
+	border-bottom: 2px solid var(--theme-bevel-bottom);
+	box-shadow: 
+		0 2px 4px rgba(0, 0, 0, 0.16),
+		inset 0 1px 0 var(--theme-bevel-top);
+	font-weight: 600;
+	transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
 	cursor: pointer;
 	user-select: none;
 }
 
-.neo-btn:hover:not(:disabled) {
-	transform: translate(-1px, -1px);
-	box-shadow: 4px 4px 0px var(--theme-shadow-hard);
+.skeuo-btn:hover:not(:disabled), .neo-btn:hover:not(:disabled) {
+	filter: brightness(1.04);
+	box-shadow: 
+		0 3px 7px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 var(--theme-bevel-top);
+	transform: translateY(-1px);
 }
 
-.neo-btn:active:not(:disabled) {
-	transform: translate(2px, 2px);
-	box-shadow: 0px 0px 0px var(--theme-shadow-hard);
+.skeuo-btn:active:not(:disabled), .neo-btn:active:not(:disabled) {
+	transform: translateY(2px);
+	border-bottom: 1px solid var(--theme-bevel-bottom);
+	box-shadow: 
+		inset 0 2px 4px rgba(0, 0, 0, 0.35),
+		0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.neo-btn-primary {
-	border: 2px solid var(--theme-border-strong);
-	background-color: var(--theme-accent);
+.skeuo-btn-primary, .neo-btn-primary {
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	background: var(--theme-btn-primary-gradient, var(--theme-accent));
 	color: var(--theme-accent-fg);
-	box-shadow: 3px 3px 0px var(--theme-shadow-hard);
+	border-radius: 6px;
+	border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+	box-shadow: 
+		0 2px 5px rgba(0, 0, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.35);
 	font-weight: 700;
-	transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.12s ease;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+	transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.12s ease;
 	cursor: pointer;
 	user-select: none;
 }
 
-.neo-btn-primary:hover:not(:disabled) {
-	transform: translate(-1px, -1px);
-	box-shadow: 4px 4px 0px var(--theme-shadow-hard);
-	opacity: 0.95;
+.skeuo-btn-primary:hover:not(:disabled), .neo-btn-primary:hover:not(:disabled) {
+	filter: brightness(1.08);
+	transform: translateY(-1px);
+	box-shadow: 
+		0 4px 8px rgba(0, 0, 0, 0.28),
+		inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
-.neo-btn-primary:active:not(:disabled) {
-	transform: translate(2px, 2px);
-	box-shadow: 0px 0px 0px var(--theme-shadow-hard);
+.skeuo-btn-primary:active:not(:disabled), .neo-btn-primary:active:not(:disabled) {
+	transform: translateY(2px);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+	box-shadow: 
+		inset 0 2px 5px rgba(0, 0, 0, 0.45),
+		0 1px 1px rgba(0, 0, 0, 0.15);
 }
 
-/* Neobrutalist form inputs */
-.neo-input {
-	border: 2px solid var(--theme-border-strong);
-	background-color: var(--theme-surface);
+/* Debossed / Sunken well form inputs */
+.skeuo-input, .neo-input {
+	border: 1px solid var(--theme-border-strong);
+	background: var(--theme-surface-subtle);
 	color: var(--theme-text);
-	box-shadow: 2px 2px 0px var(--theme-shadow-hard);
+	border-radius: 6px;
+	box-shadow: 
+		inset 0 2px 4px rgba(0, 0, 0, 0.22),
+		inset 0 1px 1px rgba(0, 0, 0, 0.12),
+		0 1px 0 var(--theme-bevel-top);
 	transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
-.neo-input:focus {
+.skeuo-input:focus, .neo-input:focus {
 	outline: none;
 	border-color: var(--theme-accent);
-	box-shadow: 3px 3px 0px var(--theme-accent);
+	box-shadow: 
+		inset 0 2px 4px rgba(0, 0, 0, 0.22),
+		0 0 0 2px var(--theme-accent-subtle),
+		0 1px 0 var(--theme-bevel-top);
 }
 
-/* Neobrutalist badge / sticker */
-.neo-badge {
-	border: 1.5px solid var(--theme-border-strong);
-	box-shadow: 1.5px 1.5px 0px var(--theme-shadow-hard);
+/* Tactile badges, pill tags & stickers */
+.skeuo-badge, .neo-badge {
+	border: 1px solid var(--theme-border-strong);
+	border-radius: 4px;
+	box-shadow: 
+		0 1px 2px rgba(0, 0, 0, 0.12),
+		inset 0 1px 0 var(--theme-bevel-top);
 	font-family: var(--font-mono);
 	font-weight: 700;
+}
+
+/* Parchment writing sheet paper with stacked depth */
+.skeuo-paper {
+	background: var(--theme-surface);
+	border: 1px solid var(--theme-border);
+	border-radius: 4px;
+	box-shadow: 
+		0 1px 1px rgba(0, 0, 0, 0.08),
+		0 4px 12px rgba(0, 0, 0, 0.12),
+		0 12px 32px rgba(0, 0, 0, 0.18),
+		inset 0 1px 0 var(--theme-bevel-top);
+}
+
+/* Wax seal medallion */
+.skeuo-seal {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+	box-shadow: 
+		0 2px 6px rgba(0, 0, 0, 0.35),
+		inset 0 1px 1px rgba(255, 255, 255, 0.35),
+		inset 0 -2px 3px rgba(0, 0, 0, 0.35);
 }
 
 /* Semantic utility classes */

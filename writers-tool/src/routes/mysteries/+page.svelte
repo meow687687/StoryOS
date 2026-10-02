@@ -265,25 +265,26 @@
 {:else}
 	<!-- Corkboard Visual Canvas -->
 	<div
-		class="relative mt-6 min-h-[500px] w-full neo-box !p-6 bg-[var(--theme-surface-subtle)]"
-		style="background-image: radial-gradient(var(--theme-border-strong) 1.5px, transparent 1.5px); background-size: 24px 24px;"
+		class="relative mt-6 min-h-[500px] w-full rounded-2xl border-2 border-[var(--theme-border-strong)] p-6 shadow-[inset_0_4px_12px_rgba(0,0,0,0.25),0_2px_4px_rgba(0,0,0,0.1)]"
+		style="background: linear-gradient(135deg, rgba(160, 110, 60, 0.08) 0%, rgba(120, 80, 40, 0.14) 100%), var(--theme-surface-subtle); background-image: radial-gradient(var(--theme-border-strong) 1.5px, transparent 1.5px); background-size: 22px 22px;"
 	>
-		<div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+		<div class="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each filteredNodes as node (node.id)}
 				{@const typeBadge = getNodeBadge(node.type)}
 				{@const statusBadge = getStatusBadge(node.status)}
 				<article
-					class="relative flex flex-col justify-between neo-box p-4 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+					class="relative flex flex-col justify-between skeuo-paper p-4 transition-all hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(0,0,0,0.2)]"
 				>
-					<!-- Pushpin Graphic -->
-					<div class="absolute -top-3 left-1/2 -translate-x-1/2">
-						<div class="h-4 w-4 rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-accent)] shadow-[1px_1px_0px_var(--theme-shadow-hard)]"></div>
+					<!-- 3D Pushpin Graphic -->
+					<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center pointer-events-none">
+						<div class="h-4 w-4 rounded-full bg-gradient-to-tr from-rose-700 via-rose-500 to-rose-300 border border-rose-900 shadow-[0_3px_5px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.7)]"></div>
+						<div class="h-1.5 w-1 bg-stone-700 -mt-0.5 rounded-b-xs shadow-[1px_1px_2px_rgba(0,0,0,0.3)]"></div>
 					</div>
 
 					<div>
 						<div class="flex items-start justify-between gap-2 pt-1">
 							<span
-								class="inline-flex items-center gap-1 rounded-xs border-2 border-[var(--theme-border-strong)] px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider {typeBadge.bg} shadow-[1px_1px_0px_var(--theme-shadow-hard)]"
+								class="inline-flex items-center gap-1 rounded-md border border-[var(--theme-border-strong)] px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider {typeBadge.bg} shadow-[0_1px_2px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.4)]"
 							>
 								<span>{typeBadge.icon}</span>
 								{typeBadge.label}

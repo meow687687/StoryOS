@@ -146,9 +146,9 @@
 							{@const isPinned = (chapter.rulesPinned ?? []).includes(rule.id)}
 							<button
 								type="button"
-								class="flex w-full cursor-pointer items-start gap-1.5 rounded-md border-2 p-1.5 text-left text-[11px] transition-transform active:translate-x-0.5 active:translate-y-0.5 {isPinned
-									? 'border-[var(--theme-border-strong)] bg-[var(--theme-accent)] text-[var(--theme-accent-fg)] font-bold shadow-[2px_2px_0px_var(--theme-shadow-hard)]'
-									: 'border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] text-[var(--theme-text)] hover:bg-[var(--theme-surface)]'}"
+								class="flex w-full cursor-pointer items-start gap-1.5 rounded-md border p-1.5 text-left text-[11px] transition-all {isPinned
+									? 'border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] text-[var(--theme-accent-fg)] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.35)]'
+									: 'border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] text-[var(--theme-text)] hover:bg-[var(--theme-surface)] hover:border-[var(--theme-border-strong)] shadow-[0_1px_2px_rgba(0,0,0,0.08)]'}"
 								onclick={() => toggleRule(rule.id)}
 							>
 								<span class="mt-0.5">{isPinned ? '📌' : '▫️'}</span>
@@ -170,7 +170,7 @@
 				<div class="mt-1 space-y-1.5">
 					{#each chapter.threads ?? [] as thread, i (thread + i)}
 						<div
-							class="flex items-center justify-between gap-1 rounded-md border-[1.5px] border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] px-2 py-1 text-xs font-medium text-[var(--theme-text)] shadow-[1.5px_1.5px_0px_var(--theme-shadow-hard)]"
+							class="flex items-center justify-between gap-1 rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-2.5 py-1 text-xs font-medium text-[var(--theme-text)] shadow-[0_1px_2px_rgba(0,0,0,0.08),inset_0_1px_0_var(--theme-bevel-top)]"
 						>
 							<span class="min-w-0 flex-1 truncate">• {thread}</span>
 							<button
@@ -187,10 +187,10 @@
 							bind:value={newThread}
 							onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addThread())}
 							placeholder="Plant or advance a clue…"
-							class="neo-input min-w-0 flex-1 rounded-md px-2 py-1 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)]"
+							class="skeuo-input min-w-0 flex-1 rounded-md px-2.5 py-1 text-xs text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)]"
 						/>
 						<button
-							class="neo-btn rounded-md px-3 py-1 text-xs font-bold text-[var(--theme-text)]"
+							class="skeuo-btn rounded-md px-3 py-1 text-xs font-bold text-[var(--theme-text)]"
 							onclick={addThread}
 						>
 							Add

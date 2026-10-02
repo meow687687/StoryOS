@@ -391,26 +391,28 @@
 			<div class="space-y-4">
 				{#each clusters as cluster, cIdx}
 					<div
-						class="neo-box space-y-4 bg-[var(--theme-surface)] p-5 {cluster.candidateClass === 'taste'
+						class="skeuo-paper space-y-4 p-5 {cluster.candidateClass === 'taste'
 							? 'opacity-85'
 							: ''}"
 					>
-						<!-- Cluster Header Banner -->
-						<div class="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
+						<!-- Cluster Header Banner / Folder Tab -->
+						<div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--theme-border)] pb-3">
 							<div class="flex items-center gap-2">
-								<span class="font-mono text-xs font-black">F{cIdx + 1}</span>
+								<span class="skeuo-seal h-6 w-6 font-mono text-[10px] font-black bg-[var(--theme-surface-subtle)] text-[var(--theme-text)] border border-[var(--theme-border-strong)]">
+									F{cIdx + 1}
+								</span>
 								<span
-									class="neo-badge text-[10px] uppercase {cluster.candidateClass === 'confusion'
-										? 'bg-red-500 text-white'
+									class="skeuo-badge text-[10px] uppercase px-2 py-0.5 {cluster.candidateClass === 'confusion'
+										? 'bg-rose-500 text-white'
 										: cluster.candidateClass === 'character'
-											? 'bg-amber-500 text-black'
+											? 'bg-amber-500 text-amber-950 font-bold'
 											: cluster.candidateClass === 'stakes'
-												? 'bg-purple-500 text-white'
+												? 'bg-purple-600 text-white'
 												: cluster.candidateClass === 'pacing'
-													? 'bg-blue-500 text-white'
+													? 'bg-sky-500 text-sky-950 font-bold'
 													: cluster.candidateClass === 'taste'
-														? 'bg-neutral-500 text-white'
-														: 'bg-emerald-500 text-white'}"
+														? 'bg-stone-500 text-white'
+														: 'bg-emerald-600 text-white'}"
 								>
 									{cluster.candidateClass}
 								</span>
@@ -425,11 +427,11 @@
 							</div>
 
 							<div class="flex items-center gap-2">
-								<span class="neo-badge bg-[var(--theme-surface-subtle)] text-[10px]">
+								<span class="skeuo-badge bg-[var(--theme-surface-subtle)] px-2 py-0.5 text-[10px]">
 									{cluster.items.length} reader{cluster.items.length > 1 ? 's' : ''} (weight {cluster.totalWeight})
 								</span>
 								{#if cluster.candidateClass === 'taste'}
-									<span class="neo-badge border-amber-600 bg-amber-400/20 text-[10px] text-amber-700 dark:text-amber-300">
+									<span class="skeuo-badge border border-amber-600 bg-amber-400/20 text-[10px] text-amber-700 dark:text-amber-300">
 										SAFE TO IGNORE
 									</span>
 								{/if}

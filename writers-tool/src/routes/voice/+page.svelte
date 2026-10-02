@@ -297,7 +297,7 @@
 		<section class="space-y-6 lg:col-span-7">
 			<!-- Metrics Stat Grid -->
 			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-				<div class="neo-box bg-[var(--theme-surface)] p-4">
+				<div class="skeuo-box p-4 bg-[var(--theme-surface-subtle)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.12),0_1px_0_var(--theme-bevel-top)]">
 					<span class="text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Contraction Rate
 					</span>
@@ -318,7 +318,7 @@
 					</p>
 				</div>
 
-				<div class="neo-box bg-[var(--theme-surface)] p-4">
+				<div class="skeuo-box p-4 bg-[var(--theme-surface-subtle)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.12),0_1px_0_var(--theme-bevel-top)]">
 					<span class="text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Avg Sentence Length
 					</span>
@@ -333,7 +333,7 @@
 					</p>
 				</div>
 
-				<div class="neo-box bg-[var(--theme-surface)] p-4">
+				<div class="skeuo-box p-4 bg-[var(--theme-surface-subtle)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.12),0_1px_0_var(--theme-bevel-top)]">
 					<span class="text-[11px] font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Formality Register
 					</span>
@@ -341,7 +341,7 @@
 						<select
 							bind:value={profile.formality}
 							onchange={handleSave}
-							class="neo-input w-full p-1.5 font-bold uppercase text-xs"
+							class="skeuo-input w-full p-1.5 font-bold uppercase text-xs"
 						>
 							<option value="casual">Casual</option>
 							<option value="neutral">Neutral</option>
@@ -354,8 +354,8 @@
 				</div>
 			</div>
 
-			<!-- Sentence Distribution Bar -->
-			<div class="neo-box space-y-3 bg-[var(--theme-surface)] p-5">
+			<!-- Sentence Distribution Bar (Analog VU Meter) -->
+			<div class="skeuo-box space-y-3 bg-[var(--theme-surface)] p-5">
 				<div class="flex items-center justify-between">
 					<h3 class="text-xs font-bold uppercase tracking-wider text-[var(--theme-text-muted)]">
 						Sentence Length Rhythm Distribution
@@ -364,9 +364,9 @@
 						Short: {profile.sentenceLengthDistribution.short} · Med: {profile.sentenceLengthDistribution.medium} · Long: {profile.sentenceLengthDistribution.long}
 					</span>
 				</div>
-				<div class="flex h-5 w-full overflow-hidden rounded-md border-2 border-[var(--theme-border-strong)]">
+				<div class="flex h-6 w-full overflow-hidden rounded-md border border-[var(--theme-border-strong)] bg-stone-900 shadow-[inset_0_2px_5px_rgba(0,0,0,0.4),0_1px_0_var(--theme-bevel-top)]">
 					<div
-						class="bg-amber-400 flex items-center justify-center text-[10px] font-bold text-black"
+						class="bg-gradient-to-r from-amber-500 to-amber-400 flex items-center justify-center text-[10px] font-bold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]"
 						style="width: {Math.max(
 							5,
 							(profile.sentenceLengthDistribution.short /
@@ -380,7 +380,7 @@
 						Short
 					</div>
 					<div
-						class="bg-blue-400 flex items-center justify-center text-[10px] font-bold text-black"
+						class="bg-gradient-to-r from-sky-500 to-sky-400 flex items-center justify-center text-[10px] font-bold text-sky-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]"
 						style="width: {Math.max(
 							5,
 							(profile.sentenceLengthDistribution.medium /
@@ -394,7 +394,7 @@
 						Med
 					</div>
 					<div
-						class="bg-emerald-400 flex items-center justify-center text-[10px] font-bold text-black"
+						class="bg-gradient-to-r from-emerald-500 to-emerald-400 flex items-center justify-center text-[10px] font-bold text-emerald-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]"
 						style="width: {Math.max(
 							5,
 							(profile.sentenceLengthDistribution.long /

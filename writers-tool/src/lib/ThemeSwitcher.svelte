@@ -46,7 +46,7 @@
 		<!-- Color dot swatch -->
 		<span class="flex items-center gap-1">
 			<span
-				class="h-3.5 w-3.5 rounded-sm border-[1.5px] border-[var(--theme-border-strong)]"
+				class="h-3.5 w-3.5 rounded-sm border border-[var(--theme-border-strong)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_1px_2px_rgba(0,0,0,0.2)]"
 				style="background-color: {activeOption.accentHex};"
 			></span>
 		</span>
@@ -66,38 +66,38 @@
 
 	{#if isOpen}
 		<div
-			class="neo-box-lg absolute right-0 z-50 mt-2 w-72 rounded-xl p-2"
+			class="neo-box-lg absolute right-0 z-50 mt-2 w-72 rounded-xl p-2.5 backdrop-blur-md"
 			role="listbox"
 			tabindex="-1"
 		>
-			<div class="border-b-2 border-[var(--theme-border-strong)] px-2.5 pb-1.5 text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--theme-text-faint)]">
+			<div class="border-b border-[var(--theme-border)] pb-2 text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--theme-text-faint)]">
 				Theme Presets
 			</div>
-			<div class="mt-1 space-y-1 max-h-80 overflow-y-auto">
+			<div class="mt-1.5 space-y-1 max-h-80 overflow-y-auto">
 				{#each THEMES as theme (theme.id)}
 					<button
 						type="button"
 						role="option"
 						aria-selected={theme.id === currentTheme}
-						class="flex w-full cursor-pointer items-center justify-between rounded-lg border-2 px-2.5 py-2 text-left text-xs transition-transform active:translate-x-0.5 active:translate-y-0.5 {theme.id ===
+						class="flex w-full cursor-pointer items-center justify-between rounded-lg border px-2.5 py-2 text-left text-xs transition-all active:scale-[0.98] {theme.id ===
 						currentTheme
-							? 'border-[var(--theme-border-strong)] bg-[var(--theme-accent)] font-bold text-[var(--theme-accent-fg)] shadow-[2px_2px_0px_var(--theme-shadow-hard)]'
-							: 'border-transparent text-[var(--theme-text)] hover:border-[var(--theme-border-strong)] hover:bg-[var(--theme-surface-subtle)]'}"
+							? 'border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] font-bold text-[var(--theme-accent-fg)] shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.35)]'
+							: 'border-transparent text-[var(--theme-text)] hover:border-[var(--theme-border)] hover:bg-[var(--theme-surface-subtle)]'}"
 						onclick={() => selectTheme(theme.id)}
 					>
 						<div class="flex items-center gap-2.5">
 							<!-- 3-square color preview -->
 							<div class="flex items-center -space-x-1">
 								<span
-									class="h-3.5 w-3.5 rounded-xs border border-[var(--theme-border-strong)] shadow-xs"
+									class="h-3.5 w-3.5 rounded-xs border border-[var(--theme-border-strong)] shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
 									style="background-color: {theme.bgHex};"
 								></span>
 								<span
-									class="h-3.5 w-3.5 rounded-xs border border-[var(--theme-border-strong)] shadow-xs"
+									class="h-3.5 w-3.5 rounded-xs border border-[var(--theme-border-strong)] shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
 									style="background-color: {theme.surfaceHex};"
 								></span>
 								<span
-									class="h-3.5 w-3.5 rounded-xs border border-[var(--theme-border-strong)] shadow-xs"
+									class="h-3.5 w-3.5 rounded-xs border border-[var(--theme-border-strong)] shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
 									style="background-color: {theme.accentHex};"
 								></span>
 							</div>

@@ -530,14 +530,14 @@
 </header>
 
 <!-- Chapter Selector Tabs: Manuscript Binder Rail -->
-<div class="mt-4 flex flex-wrap items-center gap-2 border-b-2 border-[var(--theme-border-strong)] pb-3">
+<div class="mt-4 flex flex-wrap items-center gap-1.5 border-b border-[var(--theme-border-strong)] pb-2">
 	{#each chapters as c, idx (c.id)}
 		<button
 			role="tab"
 			aria-selected={c.id === activeId}
-			class="{c.id === activeId
-				? 'neo-btn-primary !px-3 !py-1.5 text-xs font-bold'
-				: 'neo-btn !px-3 !py-1.5 text-xs font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
+			class="flex items-center gap-1.5 rounded-t-lg border border-b-0 px-3.5 py-1.5 text-xs font-bold transition-all {c.id === activeId
+				? 'border-[var(--theme-border-strong)] bg-[var(--theme-btn-primary-gradient,var(--theme-accent))] text-[var(--theme-accent-fg)] shadow-[0_-2px_6px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.4)]'
+				: 'border-transparent bg-[var(--theme-surface-subtle)] text-[var(--theme-text-muted)] hover:border-[var(--theme-border)] hover:text-[var(--theme-text)]'}"
 			onclick={() => selectChapter(c.id)}
 		>
 			<span class="font-mono opacity-80 mr-0.5">#{idx + 1}</span>
@@ -546,14 +546,14 @@
 				<span class="font-mono text-[10px] opacity-80">[{c.act}]</span>
 			{/if}
 			{#if c.auditStatus === 'accepted'}
-				<span class="rounded-xs bg-emerald-500 px-1 py-0.2 font-mono text-[9px] font-black text-black">
-					✓ ACCEPTED
+				<span class="skeuo-seal px-1.5 py-0.2 font-mono text-[9px] font-black bg-emerald-600 text-emerald-50">
+					✓
 				</span>
 			{/if}
 		</button>
 	{/each}
 	<button
-		class="neo-btn !border-dashed !px-3 !py-1.5 text-xs font-mono font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
+		class="skeuo-btn !border-dashed !px-3 !py-1 text-xs font-mono font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
 		onclick={newChapter}
 	>
 		+ new scene
@@ -575,15 +575,15 @@
 				<div class="flex items-center gap-2">
 					{#if active.auditStatus === 'accepted'}
 						<span
-							class="neo-badge border-2 border-emerald-600 bg-emerald-500 px-2 py-0.5 font-mono text-[10px] font-black text-black shadow-[2px_2px_0px_var(--theme-shadow-hard)]"
+							class="skeuo-seal px-3 py-1 font-mono text-[11px] font-black bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-stone-950 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.7)]"
 						>
-							✓ ACCEPTED CERTIFIED
+							🛡️ CANON ACCEPTED
 						</span>
 					{:else if active.auditStatus === 'revision_needed'}
 						<span
-							class="neo-badge border-2 border-amber-600 bg-amber-400 px-2 py-0.5 font-mono text-[10px] font-black text-black shadow-[2px_2px_0px_var(--theme-shadow-hard)]"
+							class="skeuo-badge border border-amber-600 bg-amber-400/20 px-2.5 py-0.5 font-mono text-[11px] font-bold text-amber-700 dark:text-amber-300"
 						>
-							REVISION NEEDED
+							⚠️ REVISION NEEDED
 						</span>
 					{/if}
 				</div>
