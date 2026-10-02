@@ -2,6 +2,8 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte';
+	import CommandPalette from '$lib/CommandPalette.svelte';
+	import ToastManager from '$lib/ToastManager.svelte';
 	import { page } from '$app/state';
 	import {
 		exportProjectBundleJson,
@@ -14,6 +16,7 @@
 	let showBundleModal = $state(false);
 	let importJsonText = $state('');
 	let bundleStatusMsg = $state<string | null>(null);
+	let paletteComponent = $state<CommandPalette | null>(null);
 
 	function handleExportBundle() {
 		const json = exportProjectBundleJson();
@@ -160,8 +163,18 @@
 			{/each}
 		</nav>
 
-		<!-- Right Tooling: Agent Bundle & Theme Switcher -->
+		<!-- Right Tooling: Search, Agent Bundle & Theme Switcher -->
 		<div class="flex items-center gap-2">
+			<button
+				type="button"
+				class="skeuo-btn flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
+				onclick={() => paletteComponent?.openPalette()}
+				title="Open Command & Jump Palette (Cmd+K / Cmd+P)"
+			>
+				<span>🔍</span>
+				<span class="hidden sm:inline font-mono text-[11px]">⌘K</span>
+			</button>
+
 			<button
 				type="button"
 				class="skeuo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold"
@@ -175,6 +188,9 @@
 		</div>
 	</div>
 </header>
+
+<CommandPalette bind:this={paletteComponent} />
+<ToastManager />
 
 <!-- Agent Bundle Export / Import Modal -->
 {#if showBundleModal}

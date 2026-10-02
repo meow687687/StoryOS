@@ -16,6 +16,7 @@
 	import DistractionFreeEditor from '$lib/DistractionFreeEditor.svelte';
 	import EntityDossierModal from '$lib/EntityDossierModal.svelte';
 	import StoryContextHUD from '$lib/StoryContextHUD.svelte';
+	import { toasts } from '$lib/toasts';
 	import {
 		checkContradictions,
 		detectAccidentalSpoilers,
@@ -365,6 +366,7 @@
 		quickDecisionTopic = '';
 		quickDecisionAnswer = '';
 		showQuickDecisionForm = false;
+		toasts.success(`Decision locked into decisions.md!`, '🛡️');
 	}
 
 	function commitQuickDisclosure() {
@@ -399,6 +401,7 @@
 		saveEvents(events);
 		quickSecretText = '';
 		showQuickDisclosureForm = false;
+		toasts.success(`Secret logged to Scene #${activeOrder} in Timeline!`, '⏳');
 	}
 
 	function saveKey() {
@@ -593,6 +596,9 @@
 			<DistractionFreeEditor
 				bind:text={active.text}
 				{bible}
+				{decisions}
+				voice={voiceProfile}
+				{cfg}
 				ontouch={touch}
 				onselectentity={(ent) => (selectedEntity = ent)}
 			/>

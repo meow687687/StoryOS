@@ -735,3 +735,327 @@ export async function aiAuditVoiceContinuity(
 		antiSlopViolations: []
 	};
 }
+
+// ============================================================================
+// Inline AI Assistant & Quick-Action Transformations
+// ============================================================================
+
+export type InlineActionType = 'sensory' | 'dialogue' | 'canon' | 'rhythm' | 'custom';
+
+export interface InlineTransformRequest {
+	selectedText: string;
+	fullChapterText?: string;
+	action: InlineActionType;
+	customPrompt?: string;
+	bible: WorldEntry[];
+	decisions: Decision[];
+	voice: VoiceProfile | null;
+}
+
+export interface InlineTransformResult {
+	originalText: string;
+	transformedText: string;
+	action: InlineActionType;
+	explanation: string;
+	canonWarnings?: string[];
+	antiSlopFixed?: number;
+}
+
+export interface TextDiffPart {
+	type: 'same' | 'added' | 'removed';
+	value: string;
+}
+
+export function computeWordDiff(original: string, updated: string): TextDiffPart[] {
+	if (original === updated) return [{ type: 'same', value: original }];
+	const origTokens = original.split(/(\s+)/);
+	const upTokens = updated.split(/(\s+)/);
+
+	const m = origTokens.length;
+	const n = upTokens.length;
+	const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+
+	for (let i = 1; i <= m; i++) {
+		for (let j = 1; j <= n; j++) {
+			if (origTokens[i - 1] === upTokens[j - 1]) {
+				dp[i][j] = dp[i - 1][j - 1] + 1;
+			} else {
+				dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+			}
+		}
+	}
+
+	let i = m;
+	let j = n;
+	const reversed: TextDiffPart[] = [];
+
+	while (i > 0 || j > 0) {
+		if (i > 0 && j > 0 && origTokens[i - 1] === upTokens[j - 1]) {
+			reversed.push({ type: 'same', value: origTokens[i - 1] });
+			i--;
+			j--;
+		} else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+			reversed.push({ type: 'added', value: upTokens[j - 1] });
+			j--;
+		} else if (i > 0 && (j === 0 || dp[i][j - 1] < dp[i - 1][j])) {
+			reversed.push({ type: 'removed', value: origTokens[i - 1] });
+			i--;
+		}
+	}
+
+	return reversed.reverse();
+}
+
+function localInlineTransform(req: InlineTransformRequest): InlineTransformResult {
+	let text = req.selectedText;
+	const warnings: string[] = [];
+	let fixed = 0;
+
+	if (req.action === 'sensory') {
+		// Filter verbs stripping
+		const filterPatterns: [RegExp, string][] = [
+			[/\b(he|she|they|I)\s+(felt|could feel)\s+(that\s+)?/gi, ''],
+			[/\b(he|she|they|I)\s+(saw|could see)\s+(that\s+)?/gi, ''],
+			[/\b(he|she|they|I)\s+(heard|could hear)\s+(that\s+)?/gi, ''],
+			[/\b(he|she|they|I)\s+(noticed|wondered|knew)\s+(that\s+)?/gi, ''],
+			[/\b(a\s+sense\s+of\s+)/gi, ''],
+			[/\b(a\s+feeling\s+of\s+)/gi, '']
+		];
+		for (const [pat, rep] of filterPatterns) {
+			const before = text;
+			text = text.replace(pat, rep);
+			if (text !== before) fixed++;
+		}
+
+		// Anti-slop clichés
+		const cliches: [RegExp, string][] = [
+			[/\btapestry of\b/gi, 'weave of'],
+			[/\bmosaic of\b/gi, 'cluster of'],
+			[/\bpalpable\b/gi, 'heavy'],
+			[/\bineffable\b/gi, 'nameless'],
+			[/\bliminal\b/gi, 'threshold'],
+			[/\ba testament to\b/gi, 'proof of'],
+			[/\ba shiver ran down\b/gi, 'cold gripped']
+		];
+		for (const [pat, rep] of cliches) {
+			const before = text;
+			text = text.replace(pat, rep);
+			if (text !== before) fixed++;
+		}
+	} else if (req.action === 'dialogue') {
+		// Contraction alignment
+		const contractions: [RegExp, string][] = [
+			[/\bdo not\b/gi, "don't"],
+			[/\bdid not\b/gi, "didn't"],
+			[/\bcould not\b/gi, "couldn't"],
+			[/\bwould not\b/gi, "wouldn't"],
+			[/\bcannot\b/gi, "can't"],
+			[/\bis not\b/gi, "isn't"],
+			[/\bare not\b/gi, "aren't"],
+			[/\bwill not\b/gi, "won't"],
+			[/\bhas not\b/gi, "hasn't"],
+			[/\bhave not\b/gi, "haven't"]
+		];
+		for (const [pat, rep] of contractions) {
+			const before = text;
+			text = text.replace(pat, rep);
+			if (text !== before) fixed++;
+		}
+
+		// Simplify purple dialogue tags
+		const dialogueTags: [RegExp, string][] = [
+			[/\b(he|she|they)\s+intoned\b/gi, '$1 said'],
+			[/\b(he|she|they)\s+murmured softly\b/gi, '$1 muttered'],
+			[/\b(he|she|they)\s+queried eloquently\b/gi, '$1 asked']
+		];
+		for (const [pat, rep] of dialogueTags) {
+			const before = text;
+			text = text.replace(pat, rep);
+			if (text !== before) fixed++;
+		}
+	} else if (req.action === 'rhythm') {
+		// Break overly uniform sentences into 4-22-6 cadence
+		const sentences = text.match(/[^.!?]+[.!?]+(\s+|$)/g) || [text];
+		if (sentences.length >= 2) {
+			const s1 = sentences[0].trim();
+			const s2 = sentences[1].trim();
+			const words1 = s1.split(/\s+/);
+			if (words1.length >= 8) {
+				const punch = words1.slice(0, 4).join(' ') + '.';
+				const rest = words1.slice(4).join(' ');
+				const capRest = rest.charAt(0).toUpperCase() + rest.slice(1);
+				text = `${punch} ${capRest} ${s2}`;
+				fixed++;
+			}
+		}
+	} else if (req.action === 'canon') {
+		const contradictions = checkContradictions(req.bible, req.selectedText);
+		for (const c of contradictions) {
+			warnings.push(`Contradicts [${c.entryName}]: ${c.reason}`);
+		}
+
+		// Check character negative constraints
+		const lower = req.selectedText.toLowerCase();
+		for (const entry of req.bible) {
+			if (lower.includes(entry.name.toLowerCase())) {
+				const cannotMatch = entry.text.match(/\b(cannot|never)\s+([^.!\n]+)/i);
+				if (cannotMatch) {
+					const forbiddenWords = cannotMatch[2].toLowerCase().split(/\s+/).filter((w) => w.length > 3);
+					const hits = forbiddenWords.filter((w) => lower.includes(w));
+					if (hits.length >= 1) {
+						warnings.push(`Potential violation for [${entry.name}]: Canon states "${cannotMatch[0]}"`);
+					}
+				}
+			}
+		}
+
+		if (warnings.length === 0) {
+			warnings.push('✓ Lore verified: No contradictions found against Canon Bible.');
+		}
+	} else if (req.action === 'custom' && req.customPrompt) {
+		text = text.replace(/\s{2,}/g, ' ').trim();
+	}
+
+	// Capitalize first letter if was capitalized
+	if (req.selectedText[0] && req.selectedText[0] === req.selectedText[0].toUpperCase()) {
+		text = text.charAt(0).toUpperCase() + text.slice(1);
+	}
+
+	return {
+		originalText: req.selectedText,
+		transformedText: text,
+		action: req.action,
+		explanation:
+			req.action === 'canon'
+				? warnings.join(' ')
+				: `Applied local ${req.action} craft rules (${fixed} optimization(s)).`,
+		canonWarnings: warnings.length > 0 ? warnings : undefined,
+		antiSlopFixed: fixed
+	};
+}
+
+export async function inlineTransformProse(
+	cfg: AIConfig,
+	req: InlineTransformRequest
+): Promise<InlineTransformResult> {
+	// If local provider or no connection, use deterministic heuristics
+	if (cfg.provider === 'local') {
+		return localInlineTransform(req);
+	}
+
+	const actionDescriptions: Record<InlineActionType, string> = {
+		sensory:
+			'Strip filter verbs (saw, felt, heard, noticed). Eliminate clichés (tapestry, mosaic, palpable). Replace with concrete sensory texture grounded in tactile reality.',
+		dialogue:
+			'Sharpen dialogue friction and subtext. Ensure dialogue contractions match author voice. Cut expository tags and melodrama.',
+		canon:
+			'Verify claims against world bible entries and locked decisions. Rephrase strictly to align with established canon laws without adding new facts.',
+		rhythm:
+			'Vary sentence cadence into alternating rhythm (punchy 4-word hits followed by rolling 20-word clauses). Avoid uniform length stretches.',
+		custom: req.customPrompt || 'Improve clarity, pacing, and sensory immediacy.'
+	};
+
+	const systemPrompt = `You are the master literary prose assistant in Story OS.
+CORE DIRECTIVE: The author owns the story. REPHRASE ONLY.
+Do not invent new plot events, new characters, or off-canon actions.
+Preserve the author's tone and exact scene context.
+CRITICAL FORMATTING: Return ONLY the revised replacement prose passage. No commentary, no preamble, no quotes around the output.`;
+
+	const userPrompt = `ORIGINAL PASSAGE:
+"""
+${req.selectedText}
+"""
+
+TARGET ACTION: ${req.action.toUpperCase()}
+INSTRUCTION: ${actionDescriptions[req.action]}
+${req.customPrompt ? `AUTHOR INSTRUCTION: "${req.customPrompt}"` : ''}
+
+WORLD BIBLE CONTEXT:
+${bibleContext(req.bible)}
+
+LOCKED DECISIONS:
+${decisionsContext(req.decisions)}
+
+REVISED PASSAGE (Return only the text):`;
+
+	let rawOutput = '';
+
+	if (cfg.provider === 'ollama') {
+		try {
+			rawOutput = await ollamaChat(cfg.model, systemPrompt, userPrompt);
+		} catch {
+			/* fallback below */
+		}
+	} else if (cfg.apiKey && cfg.provider === 'openai') {
+		try {
+			const res = await fetch('https://api.openai.com/v1/chat/completions', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${cfg.apiKey}`
+				},
+				body: JSON.stringify({
+					model: cfg.model || 'gpt-4o-mini',
+					messages: [
+						{ role: 'system', content: systemPrompt },
+						{ role: 'user', content: userPrompt }
+					],
+					temperature: 0.3
+				})
+			});
+			if (res.ok) {
+				const data = await res.json();
+				rawOutput = data.choices?.[0]?.message?.content ?? '';
+			}
+		} catch {
+			/* fallback below */
+		}
+	} else if (cfg.apiKey && cfg.provider === 'anthropic') {
+		try {
+			const res = await fetch('https://api.anthropic.com/v1/messages', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'x-api-key': cfg.apiKey,
+					'anthropic-version': '2023-06-01',
+					'anthropic-dangerous-direct-browser-access': 'true'
+				},
+				body: JSON.stringify({
+					model: cfg.model || 'claude-haiku-4-5',
+					max_tokens: 1500,
+					system: systemPrompt,
+					messages: [{ role: 'user', content: userPrompt }]
+				})
+			});
+			if (res.ok) {
+				const data = await res.json();
+				const block = data.content?.find((b: { type: string }) => b.type === 'text');
+				rawOutput = block?.text ?? '';
+			}
+		} catch {
+			/* fallback below */
+		}
+	}
+
+	const cleaned = rawOutput.trim().replace(/^["']|["']$/g, '');
+	if (!cleaned) {
+		return localInlineTransform(req);
+	}
+
+	const canonWarnings: string[] = [];
+	if (req.action === 'canon') {
+		const contradictions = checkContradictions(req.bible, cleaned);
+		for (const c of contradictions) {
+			canonWarnings.push(`Contradicts [${c.entryName}]: ${c.reason}`);
+		}
+	}
+
+	return {
+		originalText: req.selectedText,
+		transformedText: cleaned,
+		action: req.action,
+		explanation: `Elevated via ${cfg.provider === 'ollama' ? `Ollama (${cfg.model})` : cfg.provider}: ${req.action}`,
+		canonWarnings: canonWarnings.length > 0 ? canonWarnings : undefined
+	};
+}
+

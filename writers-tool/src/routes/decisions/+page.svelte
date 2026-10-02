@@ -8,6 +8,7 @@
 		serializeDecisionsMarkdown,
 		type Decision
 	} from '$lib/world';
+	import { toasts } from '$lib/toasts';
 
 	let decisions: Decision[] = $state([]);
 	let filter: 'all' | 'locked' | 'draft' | 'superseded' = $state('all');
@@ -78,6 +79,7 @@
 		newDecision = '';
 		newAuthorWords = '';
 		newAffects = '';
+		toasts.success(`Locked decision: "${entry.topic}"`, '🛡️');
 	}
 
 	function toggleStatus(id: string) {
