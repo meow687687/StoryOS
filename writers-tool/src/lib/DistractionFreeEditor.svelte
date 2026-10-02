@@ -281,24 +281,24 @@
 </script>
 
 <div
-	class="relative flex flex-col rounded-xl skeuo-paper transition-all duration-200 {isFocusMode
-		? 'fixed inset-0 z-50 rounded-none border-none p-6 md:p-12 shadow-none'
-		: 'p-6'}"
+	class="relative flex flex-col rounded-2xl skeuo-paper-sheet transition-all duration-200 {isFocusMode
+		? 'fixed inset-0 z-50 rounded-none border-none p-8 md:p-16 shadow-none overflow-y-auto'
+		: 'p-6 sm:p-10 md:p-12 min-h-[620px]'}"
 >
 	<!-- Editor Toolbar / Stats Header -->
-	<div class="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-[var(--theme-border)] pb-2.5">
-		<div class="flex flex-wrap items-center gap-2.5 text-xs font-mono font-bold text-[var(--theme-text-muted)]">
-			<span class="rounded bg-[var(--theme-surface-subtle)] border border-[var(--theme-border)] px-2.5 py-0.5 text-[var(--theme-text)] shadow-[inset_0_1px_1px_rgba(0,0,0,0.15)]">
+	<div class="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--theme-border)] pb-3">
+		<div class="flex flex-wrap items-center gap-3 text-xs font-serif text-[var(--theme-text-muted)]">
+			<span class="rounded bg-[var(--theme-surface-subtle)] border border-[var(--theme-border)] px-2.5 py-0.5 font-sans font-semibold text-[var(--theme-text)] shadow-[inset_0_1px_1px_rgba(0,0,0,0.06)]">
 				{words} words
 			</span>
 			<span>·</span>
-			<span>{readingTimeMinutes} min read</span>
+			<span class="font-sans">{readingTimeMinutes} min read</span>
 			<span>·</span>
 
 			<!-- Session Goal Progress Meter -->
 			<button
 				type="button"
-				class="skeuo-badge flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-mono cursor-pointer hover:border-[var(--theme-accent)]"
+				class="skeuo-badge flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-sans font-semibold cursor-pointer hover:border-[var(--theme-accent)]"
 				onclick={() => {
 					const targets = [250, 500, 1000, 2000];
 					const nextIdx = (targets.indexOf(sessionTarget) + 1) % targets.length;
@@ -308,7 +308,7 @@
 			>
 				<span>🎯</span>
 				<span>{sessionWordsWritten}/{sessionTarget}w</span>
-				<div class="h-1.5 w-12 overflow-hidden rounded-full bg-[var(--theme-border)]">
+				<div class="h-1.5 w-14 overflow-hidden rounded-full bg-[var(--theme-border)]">
 					<div
 						class="h-full bg-emerald-500 transition-all duration-300"
 						style="width: {targetPercent}%"
@@ -317,14 +317,14 @@
 				<span class="opacity-80">{targetPercent}%</span>
 			</button>
 
-			<span class="hidden sm:inline font-sans text-xs font-normal">Type <kbd class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-1.5 py-0.5 font-mono text-[11px] font-bold text-[var(--theme-text)] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">@</kbd> to insert entity</span>
+			<span class="hidden sm:inline font-serif text-xs italic text-[var(--theme-text-faint)]">Press <kbd class="rounded border border-[var(--theme-border)] bg-[var(--theme-surface-subtle)] px-1.5 py-0.5 font-mono text-[10px] font-bold text-[var(--theme-text)] shadow-[0_1px_1px_rgba(0,0,0,0.1)]">@</kbd> to link world lore</span>
 		</div>
 
-		<div class="flex flex-wrap items-center gap-1.5">
+		<div class="flex flex-wrap items-center gap-1.5 font-serif text-xs">
 			<!-- Sound Synthesizer Toggle -->
 			<button
 				type="button"
-				class="skeuo-btn rounded-md px-2.5 py-1 text-xs font-bold text-[var(--theme-text)] {soundEnabled
+				class="skeuo-btn rounded-md px-2.5 py-1 text-xs font-semibold text-[var(--theme-text)] {soundEnabled
 					? 'bg-[var(--theme-surface-subtle)] text-[var(--theme-accent)]'
 					: 'opacity-75'}"
 				onclick={() => {
@@ -339,7 +339,7 @@
 			<!-- Typewriter Scrolling Toggle -->
 			<button
 				type="button"
-				class="skeuo-btn rounded-md px-2.5 py-1 text-xs font-bold transition-all {isTypewriterMode
+				class="skeuo-btn rounded-md px-2.5 py-1 text-xs font-semibold transition-all {isTypewriterMode
 					? 'skeuo-btn-primary border-black/20 text-[var(--theme-accent-fg)]'
 					: 'text-[var(--theme-text)]'}"
 				onclick={() => (isTypewriterMode = !isTypewriterMode)}
@@ -351,7 +351,7 @@
 			<!-- Focus Mode Toggle -->
 			<button
 				type="button"
-				class="skeuo-btn rounded-md px-3 py-1 text-xs font-bold text-[var(--theme-text)]"
+				class="skeuo-btn rounded-md px-3 py-1 text-xs font-semibold text-[var(--theme-text)]"
 				onclick={() => (isFocusMode = !isFocusMode)}
 				title={isFocusMode ? 'Exit focus mode (Esc)' : 'Enter distraction-free focus mode'}
 			>
@@ -361,7 +361,7 @@
 	</div>
 
 	<!-- Textarea with Autocomplete & Selection Tracking -->
-	<div class="relative min-w-0 flex-1">
+	<div class="relative min-w-0 flex-1 flex flex-col">
 		<textarea
 			bind:this={textareaEl}
 			bind:value={text}
@@ -370,8 +370,8 @@
 			onmouseup={handleSelectionCheck}
 			onkeyup={handleSelectionCheck}
 			placeholder="Begin drafting... Every character, secret, and rule connects here. Select any passage and press Cmd+K for Inline AI."
-			class="manuscript min-h-[380px] w-full resize-y bg-transparent text-[16px] leading-[1.8] text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-hidden"
-			style={isFocusMode ? 'height: calc(100vh - 220px);' : ''}
+			class="manuscript flex-1 min-h-[500px] w-full bg-transparent text-[18px] sm:text-[19px] leading-[1.9] text-[var(--theme-text)] placeholder:text-[var(--theme-text-faint)] focus:outline-none focus:ring-0 focus:border-none border-none outline-none resize-none"
+			style={isFocusMode ? 'min-height: calc(100vh - 220px);' : ''}
 		></textarea>
 
 		<!-- Floating Inline AI Bubble on Selection -->

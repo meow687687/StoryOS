@@ -413,22 +413,22 @@
 	}
 </script>
 
-<header class="max-w-6xl">
+<header class="w-full">
 	<div class="flex flex-wrap items-center justify-between gap-3">
 		<div>
 			<div class="flex items-center gap-3">
-				<h1 class="font-display text-4xl font-extrabold tracking-tight text-[var(--theme-text)]">
-					Manuscript Editor
+				<h1 class="letterpress-title text-2xl sm:text-3xl font-serif font-bold text-[var(--theme-text)]">
+					Manuscript Studio
 				</h1>
 				<button
 					type="button"
-					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
+					class="skeuo-btn px-2.5 py-0.5 text-xs font-serif font-semibold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Guide' : '💡 Tips & Shortcuts'}
 				</button>
 			</div>
-			<p class="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--theme-text-muted)]">
+			<p class="mt-1 flex flex-wrap items-center gap-2 font-serif text-xs text-[var(--theme-text-muted)]">
 				<span>{bible.length} bible entries</span>
 				<span>·</span>
 				<span>{decisions.filter((d) => d.status === 'locked').length} locked decisions</span>
