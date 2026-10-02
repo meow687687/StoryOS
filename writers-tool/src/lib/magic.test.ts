@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
 	auditMagicLoopholes,
+	buildRecipeFromBlocks,
 	commitMagicBlueprintToCanon,
+	computeTriangleOfPower,
+	convertVaelrionRecipeToBlueprint,
 	generateRandomSpark,
+	generateRandomVaelrionCombo,
 	MAGIC_ARCHETYPES,
 	SANDERSON_LAWS_GUIDE,
+	VAELRION_BUILDING_BLOCKS,
+	VAELRION_RECIPES,
 	type MagicBlueprint
 } from './magic';
 import type { Decision, WorldEntry } from './world';
@@ -218,3 +224,71 @@ describe('commitMagicBlueprintToCanon', () => {
 		expect(updatedBible[0].text).toContain('Cannot operate in direct fire');
 	});
 });
+
+describe('Vaelrion Combo Lab & Building Blocks', () => {
+	it('loads 30 curated Vaelrion recipes with complete schemas', () => {
+		expect.assertions(3);
+		expect(VAELRION_RECIPES).toHaveLength(30);
+		expect(VAELRION_RECIPES[0].name).toBe('Leyline + Geometry');
+		expect(VAELRION_RECIPES[0].sourceFuel).toContain('Ambient magical field');
+	});
+
+	it('loads 65 modular building blocks across all 6 categories', () => {
+		expect.assertions(7);
+		expect(VAELRION_BUILDING_BLOCKS.length).toBeGreaterThanOrEqual(60);
+		const categories = new Set(VAELRION_BUILDING_BLOCKS.map((b) => b.category));
+		expect(categories.has('Source / Fuel')).toBe(true);
+		expect(categories.has('Resonance / Modifier')).toBe(true);
+		expect(categories.has('Trigger')).toBe(true);
+		expect(categories.has('Effect Family')).toBe(true);
+		expect(categories.has('Cost')).toBe(true);
+		expect(categories.has('Limitation')).toBe(true);
+	});
+
+	it('converts a VaelrionRecipe into a valid MagicBlueprint', () => {
+		expect.assertions(6);
+		const recipe = VAELRION_RECIPES[1]; // Weather + Emotional Resonance
+		const bp = convertVaelrionRecipeToBlueprint(recipe);
+
+		expect(bp.name).toBe('Weather + Emotional Resonance');
+		expect(bp.source).toBe(recipe.sourceFuel);
+		expect(bp.cost).toBe(recipe.costConsequence);
+		expect(bp.limitations).toBe(recipe.coreLimitation);
+		expect(bp.failureMode).toBe(recipe.failureMode);
+		expect(bp.vaelrionRecipeId).toBe(recipe.id);
+	});
+
+	it('builds a custom recipe from building blocks and generates random combos', () => {
+		expect.assertions(4);
+		const randomCombo = generateRandomVaelrionCombo();
+
+		expect(randomCombo.id).toBeTruthy();
+		expect(randomCombo.name).toContain('+');
+		expect(randomCombo.source).toBeTruthy();
+		expect(randomCombo.limitations.toLowerCase()).toContain('cannot');
+	});
+
+	it('evaluates Triangle of Power according to Sanderson 2nd Law', () => {
+		expect.assertions(4);
+		const strongLimitationBp: MagicBlueprint = {
+			id: 'test-triangle',
+			name: 'Rigid Thermal Binding',
+			summary: 'Localized heat transfer.',
+			hardness: 5,
+			source: 'Thermal ambient',
+			vector: 'Copper rods',
+			cost: 'Severe frostbite, hypothermia, permanent vein necrosis',
+			limitations: 'Cannot create matter; cannot cross running water; never works without direct touch; fails if ambient temperature drops below freezing',
+			fallout: 'Armies use thick wool blankets.',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		};
+
+		const score = computeTriangleOfPower(strongLimitationBp);
+		expect(score.limitationRating).toBeGreaterThanOrEqual(5);
+		expect(score.costRating).toBeGreaterThanOrEqual(4);
+		expect(score.balanceState).toBe('STRONG_LIMITATIONS');
+		expect(score.verdict).toContain('Sanderson Ideal');
+	});
+});
+

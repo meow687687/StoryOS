@@ -1,9 +1,35 @@
 import type { Decision, WorldEntry } from './world';
+import {
+	VAELRION_BUILDING_BLOCKS,
+	VAELRION_RECIPES,
+	VAELRION_RESEARCH_NOTES,
+	type VaelrionBuildingBlock,
+	type VaelrionRecipe,
+	type VaelrionResearchNote
+} from './vaelrionData';
+
+export {
+	VAELRION_BUILDING_BLOCKS,
+	VAELRION_RECIPES,
+	VAELRION_RESEARCH_NOTES,
+	type VaelrionBuildingBlock,
+	type VaelrionRecipe,
+	type VaelrionResearchNote
+};
 
 export interface MagicPillar {
 	title: string;
 	description: string;
 	examples: string[];
+}
+
+export interface TriangleOfPowerScore {
+	powerRating: number; // 1-10
+	costRating: number; // 1-10
+	limitationRating: number; // 1-10
+	balanceState: 'STRONG_LIMITATIONS' | 'BALANCED' | 'OVERPOWERED_RISK' | 'CRIPPLING_COST';
+	verdict: string;
+	recommendation: string;
 }
 
 export interface MagicBlueprint {
@@ -17,6 +43,10 @@ export interface MagicBlueprint {
 	limitations: string; // Pillar 4: Iron "Cannot" laws (strict constraints)
 	fallout: string; // Pillar 5: Societal, Economic & Military consequences
 	archetypeId?: string;
+	vaelrionRecipeId?: string;
+	failureMode?: string;
+	progressionPath?: string;
+	bestStoryUse?: string;
 	notes?: string;
 	createdAt: string;
 	updatedAt: string;
@@ -320,7 +350,7 @@ export const SPARK_FALLOUTS = [
 
 export function generateRandomSpark(): MagicBlueprint {
 	const rand = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-	const id = 'spark-' + Date.now().toString(36).slice(-6);
+	const id = 'spark-' + Date.now().toString(36).slice(-4) + Math.random().toString(36).slice(2, 6);
 
 	const adjectives = ['Ashen', 'Umbral', 'Harmonic', 'Somatic', 'Crystalline', 'Obsidian', 'Verdant', 'Gilded'];
 	const nouns = ['Sympathy', 'Resonance', 'Transmutation', 'Weave', 'Tithe', 'Circuit', 'Oaths', 'Catalyst'];
@@ -507,3 +537,148 @@ ${bp.fallout}
 		updatedDecisions
 	};
 }
+
+// ============================================================================
+// Vaelrion Combo Lab & Triangle of Power Engine
+// ============================================================================
+
+export function convertVaelrionRecipeToBlueprint(recipe: VaelrionRecipe): MagicBlueprint {
+	const now = new Date().toISOString();
+	// Derive a sensible hardness (default to 4 for structured hard systems)
+	const hardness = recipe.coreLimitation && recipe.coreLimitation.length > 20 ? 4 : 3;
+
+	const vectorParts: string[] = [];
+	if (recipe.trigger) vectorParts.push(`Trigger: ${recipe.trigger}`);
+	if (recipe.intentControl) vectorParts.push(`Control: ${recipe.intentControl}`);
+	if (recipe.accessEligibility) vectorParts.push(`Access: ${recipe.accessEligibility}`);
+	if (recipe.secondaryResonance) vectorParts.push(`Resonance: ${recipe.secondaryResonance}`);
+
+	const falloutParts: string[] = [];
+	if (recipe.worldIntegration) falloutParts.push(`World Integration: ${recipe.worldIntegration}`);
+	if (recipe.progressionPath) falloutParts.push(`Progression: ${recipe.progressionPath}`);
+	if (recipe.abuseRiskWarning) falloutParts.push(`Design Risk: ${recipe.abuseRiskWarning}`);
+
+	return {
+		id: `vaelrion-${recipe.id || Date.now().toString(36)}`,
+		name: recipe.name,
+		summary: `${recipe.sourceFuel} paired with ${recipe.secondaryResonance || 'strict intent'}. Effects: ${recipe.effectFamily}.`,
+		hardness,
+		source: recipe.sourceFuel,
+		vector: vectorParts.join(' | '),
+		cost: recipe.costConsequence || 'Energy drain and physical strain.',
+		limitations: recipe.coreLimitation || 'Cannot violate natural conservation.',
+		fallout: falloutParts.join('\n\n'),
+		vaelrionRecipeId: recipe.id,
+		failureMode: recipe.failureMode,
+		progressionPath: recipe.progressionPath,
+		bestStoryUse: recipe.bestStoryUse,
+		notes: `Research Basis: ${recipe.researchBasis || 'Sanderson & World Anvil'} (${recipe.referenceUrl || 'N/A'})`,
+		createdAt: now,
+		updatedAt: now
+	};
+}
+
+export function computeTriangleOfPower(bp: MagicBlueprint): TriangleOfPowerScore {
+	const text = `${bp.name} ${bp.source} ${bp.vector} ${bp.cost} ${bp.limitations} ${bp.fallout} ${bp.summary}`.toLowerCase();
+
+	// 1. Power / Scope Rating (1-10)
+	let powerRating = 4;
+	if (text.includes('portal') || text.includes('teleport') || text.includes('resurrect') || text.includes('god') || text.includes('destroy')) powerRating += 3;
+	if (text.includes('blast') || text.includes('shockwave') || text.includes('transform') || text.includes('mind') || text.includes('command')) powerRating += 2;
+	if (text.includes('ward') || text.includes('sensing') || text.includes('small') || text.includes('narrow') || text.includes('localized')) powerRating -= 1;
+	powerRating = Math.max(1, Math.min(10, powerRating));
+
+	// 2. Cost / Price Rating (1-10)
+	let costRating = 3;
+	if (text.includes('permanent') || text.includes('lifespan') || text.includes('amnesia') || text.includes('death') || text.includes('rebound')) costRating += 4;
+	if (text.includes('blood') || text.includes('frostbite') || text.includes('injury') || text.includes('fatigue') || text.includes('organ')) costRating += 2;
+	if (text.includes('burn') || text.includes('exhaust') || text.includes('depletion')) costRating += 1;
+	if (text.includes('free') || text.includes('easy') || text.includes('effortless')) costRating -= 3;
+	costRating = Math.max(1, Math.min(10, costRating));
+
+	// 3. Limitation / Boundary Rating (1-10)
+	let limitationRating = 3;
+	const cannotMatches = (text.match(/cannot|never|only|must not|fails if|requires/g) || []).length;
+	limitationRating += Math.min(5, cannotMatches * 1.5);
+	if (text.includes('range') || text.includes('line of sight') || text.includes('closed') || text.includes('touch')) limitationRating += 1;
+	limitationRating = Math.round(Math.max(1, Math.min(10, limitationRating)));
+
+	// Balance Evaluation according to Sanderson's Second Law (Limitations > Powers)
+	let balanceState: TriangleOfPowerScore['balanceState'] = 'BALANCED';
+	let verdict = 'Balanced System: Powers and checks are evenly weighted.';
+	let recommendation = 'Maintain the established boundaries during climactic set pieces.';
+
+	if (limitationRating >= powerRating + 1 && costRating >= 4) {
+		balanceState = 'STRONG_LIMITATIONS';
+		verdict = 'Sanderson Ideal (Limitations > Powers): Deep narrative tension and creative problem solving.';
+		recommendation = 'Highlight clever character circumventions of the rules rather than overpowering enemies.';
+	} else if (powerRating > limitationRating + 2 && costRating < 5) {
+		balanceState = 'OVERPOWERED_RISK';
+		verdict = 'Overpowered Alert: Abilities outstrip costs and limitations.';
+		recommendation = 'Introduce strict "CANNOT" laws or increase personal toll to prevent tension deflation.';
+	} else if (costRating >= 8 && powerRating <= 4) {
+		balanceState = 'CRIPPLING_COST';
+		verdict = 'Excessive Penalty: The cost is so catastrophic that characters can almost never justify using it.';
+		recommendation = 'Add tiered costs: minor casting causes fatigue, extreme casting triggers permanent consequences.';
+	}
+
+	return {
+		powerRating,
+		costRating,
+		limitationRating,
+		balanceState,
+		verdict,
+		recommendation
+	};
+}
+
+export function buildRecipeFromBlocks(
+	source: VaelrionBuildingBlock,
+	resonance: VaelrionBuildingBlock,
+	trigger: VaelrionBuildingBlock,
+	effect: VaelrionBuildingBlock,
+	cost: VaelrionBuildingBlock,
+	limitation: VaelrionBuildingBlock
+): MagicBlueprint {
+	const now = new Date().toISOString();
+	const name = `${source.name.split('/')[0].trim()} + ${resonance.name.split('/')[0].trim()}`;
+	const id = 'combo-' + Date.now().toString(36).slice(-4) + Math.random().toString(36).slice(2, 6);
+
+	return {
+		id,
+		name,
+		summary: `${source.name} modified by ${resonance.name}. Manifests as ${effect.name.toLowerCase()} effects.`,
+		hardness: 4,
+		source: `${source.name}: ${source.meaning}. (Strengths: ${source.strengths})`,
+		vector: `Trigger: ${trigger.name} (${trigger.meaning}) | Modulated by: ${resonance.name} (${resonance.meaning})`,
+		cost: `${cost.name}: ${cost.meaning}. Risk: ${cost.risks}`,
+		limitations: `Iron Rule: ${limitation.name} constraints apply. ${limitation.meaning}. Cannot bypass ${limitation.name.toLowerCase()} boundaries.`,
+		fallout: `Societal Impact: World built around ${source.name.toLowerCase()} availability. Military employs specialized counters against ${effect.name.toLowerCase()}.`,
+		failureMode: `Backfire: ${cost.risks || 'Unstable rebound disrupting caster equilibrium'}.`,
+		progressionPath: `Masters refine ${trigger.name.toLowerCase()} and minimize ${cost.name.toLowerCase()} exposure.`,
+		bestStoryUse: `High-stakes problem solving where overcoming ${limitation.name.toLowerCase()} creates dramatic tension.`,
+		createdAt: now,
+		updatedAt: now
+	};
+}
+
+export function generateRandomVaelrionCombo(): MagicBlueprint {
+	const rand = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+	const sources = VAELRION_BUILDING_BLOCKS.filter((b) => b.category === 'Source / Fuel');
+	const resonances = VAELRION_BUILDING_BLOCKS.filter((b) => b.category === 'Resonance / Modifier');
+	const triggers = VAELRION_BUILDING_BLOCKS.filter((b) => b.category === 'Trigger');
+	const effects = VAELRION_BUILDING_BLOCKS.filter((b) => b.category === 'Effect Family');
+	const costs = VAELRION_BUILDING_BLOCKS.filter((b) => b.category === 'Cost');
+	const limitations = VAELRION_BUILDING_BLOCKS.filter((b) => b.category === 'Limitation');
+
+	return buildRecipeFromBlocks(
+		rand(sources),
+		rand(resonances),
+		rand(triggers),
+		rand(effects),
+		rand(costs),
+		rand(limitations)
+	);
+}
+
