@@ -1,18 +1,33 @@
 import {
+	calculateContractionRate,
+	calculateSentenceRhythms,
 	canonOnly,
 	checkContradictions,
+	clusterFeedback,
 	computeCharacterState,
 	countWords,
 	detectAccidentalSpoilers,
 	detectKind,
 	detectKnowledgeLeaks,
+	exportProjectBundleJson,
 	extractRules,
+	extractVoiceMetrics,
 	findEntityMentions,
+	importProjectBundleJson,
 	linkedEntities,
 	parseDecisionsMarkdown,
 	parseDump,
+	parseFeedbackMarkdown,
+	parseVoiceMarkdown,
+	scanAntiSlop,
 	serializeDecisionsMarkdown,
+	serializeFeedbackMarkdown,
+	serializeVoiceMarkdown,
 	verifyTravelFeasibility,
+	SAMPLE_FEEDBACK_ITEMS,
+	SAMPLE_VOICE_PROFILE,
+	type BetaFeedbackItem,
+	type VoiceProfile,
 	type WorldEntry
 } from './world';
 import { describe, expect, it } from 'vitest';
@@ -356,5 +371,158 @@ describe('countWords (zero-allocation word counter)', () => {
 		expect(countWords('The quick brown fox')).toBe(4);
 		expect(countWords('   Leading   and   trailing   ')).toBe(3);
 		expect(countWords('Chapter 1\n\nThe embers in the hearth hissed.')).toBe(8);
+	});
+});
+
+describe('Novel Skills: Anti-Slop Scanner (scanAntiSlop)', () => {
+	it('detects em-dash spam when frequency exceeds 1 per 300 words', () => {
+		expect.assertions(2);
+		const text = 'The door creaked—it was cold—he drew his blade—and stepped forward into the dark.';
+		const violations = scanAntiSlop(text);
+		const emDashRule = violations.find((v) => v.ruleId === 1);
+		expect(emDashRule).toBeDefined();
+		expect(emDashRule?.ruleName).toBe('Em-dash spam');
+	});
+
+	it('detects "Not X but Y" formula', () => {
+		expect.assertions(2);
+		const text = 'It was not a bird, it was a predator.';
+		const violations = scanAntiSlop(text);
+		const rule = violations.find((v) => v.ruleId === 2);
+		expect(rule).toBeDefined();
+		expect(rule?.explanation).toContain('Banned rhetorical formula');
+	});
+
+	it('detects purple triads of participles or adjectives', () => {
+		expect.assertions(1);
+		const text = 'The beast advanced, bleeding, snarling, and limping across the threshold.';
+		const violations = scanAntiSlop(text);
+		const rule = violations.find((v) => v.ruleId === 3);
+		expect(rule).toBeDefined();
+	});
+
+	it('detects moralizing / thesis endings at the end of paragraphs', () => {
+		expect.assertions(2);
+		const text = 'Kael wrapped his cloak tighter.\n\nAnd that was what it meant to survive in Emberhold.';
+		const violations = scanAntiSlop(text);
+		const rule = violations.find((v) => v.ruleId === 4);
+		expect(rule).toBeDefined();
+		expect(rule?.ruleName).toBe('Moralizing / thesis ending');
+	});
+
+	it('flags banned AI adjectives and clichés', () => {
+		expect.assertions(3);
+		const text = 'The city was a tapestry of shadows and a labyrinth of old stones, a testament to antiquity.';
+		const violations = scanAntiSlop(text);
+		const tapestry = violations.find((v) => v.snippet.includes('tapestry'));
+		const labyrinth = violations.find((v) => v.snippet.includes('labyrinth'));
+		const testament = violations.find((v) => v.snippet.includes('testament'));
+		expect(tapestry).toBeDefined();
+		expect(labyrinth).toBeDefined();
+		expect(testament).toBeDefined();
+	});
+
+	it('flags hollow intensifiers', () => {
+		expect.assertions(2);
+		const text = 'He was deeply terrified and quite literally frozen with fear.';
+		const violations = scanAntiSlop(text);
+		const deeply = violations.find((v) => v.snippet.includes('deeply'));
+		const quiteLit = violations.find((v) => v.snippet.includes('quite literally'));
+		expect(deeply).toBeDefined();
+		expect(quiteLit).toBeDefined();
+	});
+
+	it('flags filter-verb pileup in a single paragraph', () => {
+		expect.assertions(2);
+		const text = 'Kael saw the shadow. He felt the cold iron. Then he heard the bell and realized the guard was dead.';
+		const violations = scanAntiSlop(text);
+		const rule = violations.find((v) => v.ruleId === 9);
+		expect(rule).toBeDefined();
+		expect(rule?.ruleName).toBe('Filter-verb pileup');
+	});
+
+	it('returns 0 violations for clean, concrete author prose', () => {
+		expect.assertions(1);
+		const text = 'Kael unclasped the copper buckle. The leather strap fell across the cedar planking with a dull slap. Frost glazed the sill.';
+		const violations = scanAntiSlop(text);
+		expect(violations).toHaveLength(0);
+	});
+});
+
+describe('Novel Skills: Sentence Rhythm & Contraction Calculators', () => {
+	it('calculates sentence length distribution and detects uniform cadence stretches', () => {
+		expect.assertions(3);
+		// 4 sentences all exactly 5 words -> uniform stretch
+		const repetitiveText = 'The cold wind blew hard. The black crow took flight. The iron gates fell shut. The guard yelled out loud.';
+		const rhythms = calculateSentenceRhythms(repetitiveText);
+		expect(rhythms.lengths).toHaveLength(4);
+		expect(rhythms.avg).toBe(5);
+		expect(rhythms.uniformStretches.length).toBeGreaterThan(0);
+	});
+
+	it('calculates contraction rates accurately', () => {
+		expect.assertions(3);
+		const text = "Don't touch that lock. It's trapped. We cannot survive another trigger. I won't risk it.";
+		// Contractions: Don't, It's, won't = 3
+		// Uncontracted: cannot = 1
+		// Total: 4 -> rate = 75%
+		const stats = calculateContractionRate(text);
+		expect(stats.contractions).toBe(3);
+		expect(stats.uncontractedPairs).toBe(1);
+		expect(stats.rate).toBe(75);
+	});
+
+	it('extracts voice metrics from author writing sample', () => {
+		expect.assertions(3);
+		const text = "He wouldn't look at the dead man. The frost had already taken the fingers. Two horses stamped in the snow outside.";
+		const metrics = extractVoiceMetrics(text);
+		expect(metrics.avgSentenceLength).toBeGreaterThan(0);
+		expect(metrics.contractionRate).toBeDefined();
+		expect(metrics.evidenceQuotes?.length).toBeGreaterThan(0);
+	});
+});
+
+describe('Novel Skills: Voice Profile Markdown Serialization', () => {
+	it('serializes and parses VoiceProfile with fidelity', () => {
+		expect.assertions(4);
+		const md = serializeVoiceMarkdown(SAMPLE_VOICE_PROFILE);
+		expect(md).toContain('# Voice:');
+		expect(md).toContain('1. Diction:');
+
+		const parsed = parseVoiceMarkdown(md);
+		expect(parsed.diction).toBe(SAMPLE_VOICE_PROFILE.diction);
+		expect(parsed.formality).toBe(SAMPLE_VOICE_PROFILE.formality);
+	});
+});
+
+describe('Novel Skills: Beta Feedback Triage & Clustering', () => {
+	it('clusters feedback by location and class, ranking multi-reader items higher', () => {
+		expect.assertions(3);
+		const clusters = clusterFeedback(SAMPLE_FEEDBACK_ITEMS);
+		expect(clusters.length).toBeGreaterThan(0);
+		// Chapter 1, para 3 character feedback has 2 readers (Alex & Clara)
+		const multiReaderCluster = clusters.find((c) => c.items.length >= 2);
+		expect(multiReaderCluster).toBeDefined();
+		expect(multiReaderCluster?.totalWeight).toBe(4);
+	});
+
+	it('serializes and parses feedback markdown faithfully', () => {
+		expect.assertions(3);
+		const md = serializeFeedbackMarkdown(SAMPLE_FEEDBACK_ITEMS);
+		expect(md).toContain('# Beta Reader Feedback Triage');
+		expect(md).toContain('Beta-Reader-Alex');
+
+		const parsed = parseFeedbackMarkdown(md);
+		expect(parsed.length).toBeGreaterThanOrEqual(1);
+	});
+});
+
+describe('Novel Skills: Project Bundle Export and Import', () => {
+	it('exports and imports StoryOS complete bundle JSON with roundtrip integrity', () => {
+		expect.assertions(2);
+		const json = exportProjectBundleJson();
+		expect(typeof json).toBe('string');
+		const result = importProjectBundleJson(json);
+		expect(result.success).toBe(true);
 	});
 });

@@ -3,11 +3,15 @@
 	import {
 		aiDraftHelp,
 		aiInterrogate,
+		aiElevateProse,
+		aiAuditVoiceContinuity,
 		DEFAULT_OLLAMA_MODEL,
 		loadAIConfig,
 		ollamaStatus,
 		saveAIConfig,
-		type AIConfig
+		type AIConfig,
+		type ProseElevationResult,
+		type VoiceAuditResult
 	} from '$lib/ai';
 	import DistractionFreeEditor from '$lib/DistractionFreeEditor.svelte';
 	import EntityDossierModal from '$lib/EntityDossierModal.svelte';
@@ -22,9 +26,12 @@
 		loadDecisions,
 		loadEvents,
 		loadMysteries,
+		loadVoiceProfile,
 		saveChapters,
 		saveDecisions,
 		saveEvents,
+		scanAntiSlop,
+		type AntiSlopViolation,
 		type Chapter,
 		type Contradiction,
 		type Decision,
@@ -32,6 +39,7 @@
 		type MysteryNode,
 		type AccidentalSpoilerWarning,
 		type StoryEvent,
+		type VoiceProfile,
 		type WorldEntry
 	} from '$lib/world';
 
@@ -40,6 +48,7 @@
 	let decisions: Decision[] = $state([]);
 	let events: StoryEvent[] = $state([]);
 	let mysteries: MysteryNode[] = $state([]);
+	let voiceProfile = $state<VoiceProfile | null>(null);
 	let activeId = $state<string | null>(null);
 	let readerMode = $state(false);
 	let cfg: AIConfig = $state({ provider: 'ollama', apiKey: '', model: DEFAULT_OLLAMA_MODEL });
@@ -51,9 +60,14 @@
 	// Analysis Reports
 	let interrogationReport = $state('');
 	let continuityReport = $state('');
+	let elevationResult = $state<ProseElevationResult | null>(null);
+	let auditResult = $state<VoiceAuditResult | null>(null);
 	let busy = $state(false);
-	let activeTab: 'interrogate' | 'continuity' = $state('interrogate');
+	let activeTab: 'interrogate' | 'continuity' | 'elevator' | 'gate' = $state('interrogate');
 	let error = $state('');
+	let appliedNotification = $state(false);
+	let diffMode = $state<'side_by_side' | 'elevated'>('side_by_side');
+	let exerciseAnswerInputs = $state<Record<string, string>>({});
 
 	// Fast Record Decision from Interrogation
 	let quickDecisionTopic = $state('');
@@ -70,6 +84,7 @@
 	let linked = $state<WorldEntry[]>([]);
 	let knowledgeLeaks = $state<KnowledgeLeakWarning[]>([]);
 	let accidentalSpoilers = $state<AccidentalSpoilerWarning[]>([]);
+	let antiSlopViolations = $state<AntiSlopViolation[]>([]);
 
 	let analysisTimer: ReturnType<typeof setTimeout> | null = null;
 	let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -103,12 +118,14 @@
 			linked = [];
 			knowledgeLeaks = [];
 			accidentalSpoilers = [];
+			antiSlopViolations = [];
 			return;
 		}
 		contradictions = checkContradictions(bible, active.text);
 		linked = linkedEntities(bible, active.text);
 		knowledgeLeaks = detectKnowledgeLeaks(events, activeOrder, active.pov || '', active.text, bible);
 		accidentalSpoilers = readerMode ? detectAccidentalSpoilers(mysteries, activeOrder, active.text) : [];
+		antiSlopViolations = scanAntiSlop(active.text);
 	}
 
 	function scheduleAnalysis() {
@@ -163,6 +180,7 @@
 		decisions = loadDecisions();
 		events = loadEvents();
 		mysteries = loadMysteries();
+		voiceProfile = loadVoiceProfile();
 		cfg = loadAIConfig();
 
 		if (!chapters.length) {
@@ -255,6 +273,78 @@
 		} finally {
 			busy = false;
 		}
+	}
+
+	async function runProseElevator() {
+		if (!active || !active.text.trim()) return;
+		busy = true;
+		error = '';
+		activeTab = 'elevator';
+		try {
+			elevationResult = await aiElevateProse(cfg, voiceProfile, bible, decisions, active.text);
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Prose elevation failed';
+		} finally {
+			busy = false;
+		}
+	}
+
+	function applyElevationDiff() {
+		if (!active || !elevationResult?.elevatedText) return;
+		active.text = elevationResult.elevatedText;
+		touch();
+		appliedNotification = true;
+		setTimeout(() => {
+			appliedNotification = false;
+		}, 3000);
+	}
+
+	async function runVoiceContinuityGate() {
+		if (!active || !active.text.trim()) return;
+		busy = true;
+		error = '';
+		activeTab = 'gate';
+		try {
+			auditResult = await aiAuditVoiceContinuity(cfg, voiceProfile, bible, active.text);
+			if (auditResult.status === 'ACCEPTED') {
+				active.auditStatus = 'accepted';
+				active.auditTimestamp = new Date().toISOString();
+				active.auditNotes = ['Certified clean: 0 canon blocks, 0 anti-slop violations.'];
+				saveChapters(chapters);
+			} else {
+				active.auditStatus = 'revision_needed';
+				active.auditNotes = auditResult.blocks.map((b) => b.resolutionPrompt);
+				saveChapters(chapters);
+			}
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Audit failed';
+		} finally {
+			busy = false;
+		}
+	}
+
+	function commitCraftAnswer(flagIndex: number, flag: { quote: string; lesson: string; exercise: string }) {
+		const answer = exerciseAnswerInputs[flagIndex];
+		if (!answer || !answer.trim()) return;
+
+		const nextId = `D${decisions.length + 1}`;
+		const entry: Decision = {
+			id: nextId,
+			date: new Date().toISOString().slice(0, 10),
+			topic: `Craft Lesson: Grounding for "${flag.quote}"`,
+			decision: answer.trim(),
+			authorWords: `"${answer.trim()}"`,
+			source: `Prose Elevator Micro-Lesson on ${active?.title ?? 'chapter'}`,
+			affects: active?.title ?? 'manuscript',
+			status: 'locked'
+		};
+		decisions = [entry, ...decisions];
+		saveDecisions(decisions);
+		exerciseAnswerInputs[flagIndex] = '';
+		appliedNotification = true;
+		setTimeout(() => {
+			appliedNotification = false;
+		}, 2500);
 	}
 
 	function commitQuickDecision() {
@@ -377,13 +467,40 @@
 				{busy && activeTab === 'interrogate' ? 'Challenging…' : 'Socratic Interrogation'}
 			</button>
 			<button
-				class="neo-btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold disabled:opacity-40"
+				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold disabled:opacity-40"
 				onclick={runContinuityCheck}
 				disabled={busy || !active?.text.trim()}
 				title="Run continuity & magic rule contradiction check"
 			>
 				<span>🛡️</span>
 				{busy && activeTab === 'continuity' ? 'Checking…' : 'Continuity Check'}
+			</button>
+			<button
+				class="neo-btn flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-amber-600 dark:text-amber-400"
+				onclick={runProseElevator}
+				disabled={busy || !active?.text.trim()}
+				title="Run Prose Elevator: Anti-slop check, sentence rhythm variation, and craft micro-lessons"
+			>
+				<span>🎙️</span>
+				{busy && activeTab === 'elevator' ? 'Elevating…' : 'Prose Elevator'}
+				{#if antiSlopViolations.length > 0}
+					<span class="rounded-xs bg-rose-500 px-1 py-0.2 text-[10px] text-white font-mono">
+						{antiSlopViolations.length}
+					</span>
+				{/if}
+			</button>
+			<button
+				class="neo-btn-primary flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold {active?.auditStatus === 'accepted' ? '!border-emerald-600 !bg-emerald-500 !text-black' : ''}"
+				onclick={runVoiceContinuityGate}
+				disabled={busy || !active?.text.trim()}
+				title="Run Voice & Continuity Gate: Audit chapter for official ACCEPTED certification"
+			>
+				<span>🛡️</span>
+				{#if active?.auditStatus === 'accepted'}
+					✓ ACCEPTED
+				{:else}
+					{busy && activeTab === 'gate' ? 'Auditing…' : 'Quality Gate'}
+				{/if}
 			</button>
 		</div>
 	</div>
@@ -428,6 +545,11 @@
 			{#if c.act}
 				<span class="font-mono text-[10px] opacity-80">[{c.act}]</span>
 			{/if}
+			{#if c.auditStatus === 'accepted'}
+				<span class="rounded-xs bg-emerald-500 px-1 py-0.2 font-mono text-[9px] font-black text-black">
+					✓ ACCEPTED
+				</span>
+			{/if}
 		</button>
 	{/each}
 	<button
@@ -443,13 +565,28 @@
 		<!-- Main Writing Column -->
 		<div class="min-w-0 space-y-4">
 			<!-- Title and Act Header -->
-			<div class="flex items-center gap-3">
+			<div class="flex flex-wrap items-center justify-between gap-3">
 				<input
 					bind:value={active.title}
 					oninput={touch}
 					placeholder="Chapter Title"
-					class="font-display w-full bg-transparent text-2xl font-bold text-[var(--theme-text)] focus:outline-hidden"
+					class="font-display flex-1 bg-transparent text-2xl font-bold text-[var(--theme-text)] focus:outline-hidden"
 				/>
+				<div class="flex items-center gap-2">
+					{#if active.auditStatus === 'accepted'}
+						<span
+							class="neo-badge border-2 border-emerald-600 bg-emerald-500 px-2 py-0.5 font-mono text-[10px] font-black text-black shadow-[2px_2px_0px_var(--theme-shadow-hard)]"
+						>
+							✓ ACCEPTED CERTIFIED
+						</span>
+					{:else if active.auditStatus === 'revision_needed'}
+						<span
+							class="neo-badge border-2 border-amber-600 bg-amber-400 px-2 py-0.5 font-mono text-[10px] font-black text-black shadow-[2px_2px_0px_var(--theme-shadow-hard)]"
+						>
+							REVISION NEEDED
+						</span>
+					{/if}
+				</div>
 			</div>
 
 			<!-- Distraction-Free Writing Canvas with Ambient Entity Links -->
@@ -460,14 +597,15 @@
 				onselectentity={(ent) => (selectedEntity = ent)}
 			/>
 
-			<!-- Interrogation & Analysis Panel -->
-			{#if interrogationReport || continuityReport || error}
+			<!-- Interrogation & Novel Skills Analysis Panel -->
+			{#if interrogationReport || continuityReport || elevationResult || auditResult || antiSlopViolations.length > 0 || error}
 				<section
 					class="mt-4 neo-box p-5"
 					aria-label="Editorial Debrief"
 				>
+					<!-- Tab Navigation Rail -->
 					<div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[var(--theme-border-strong)] pb-3">
-						<div class="flex items-center gap-2">
+						<div class="flex flex-wrap items-center gap-2">
 							<button
 								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider {activeTab ===
 								'interrogate'
@@ -485,7 +623,41 @@
 									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 								onclick={() => (activeTab = 'continuity')}
 							>
-								Continuity & Lore Checker
+								Continuity & Lore
+							</button>
+							<span class="text-[var(--theme-text-faint)] font-bold">|</span>
+							<button
+								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-1.5 {activeTab ===
+								'elevator'
+									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
+									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
+								onclick={() => (activeTab = 'elevator')}
+							>
+								<span>Prose Elevator & Anti-Slop</span>
+								{#if antiSlopViolations.length > 0}
+									<span class="rounded-xs bg-rose-500 px-1 py-0.2 font-mono text-[9px] text-white">
+										{antiSlopViolations.length}
+									</span>
+								{:else}
+									<span class="rounded-xs bg-emerald-500 px-1 py-0.2 font-mono text-[9px] text-black">
+										✓
+									</span>
+								{/if}
+							</button>
+							<span class="text-[var(--theme-text-faint)] font-bold">|</span>
+							<button
+								class="cursor-pointer text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-1.5 {activeTab ===
+								'gate'
+									? 'text-[var(--theme-accent)] underline decoration-2 underline-offset-4'
+									: 'text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
+								onclick={() => (activeTab = 'gate')}
+							>
+								<span>Quality Gate</span>
+								{#if active.auditStatus === 'accepted'}
+									<span class="rounded-xs bg-emerald-500 px-1 py-0.2 font-mono text-[9px] text-black">
+										PASSED
+									</span>
+								{/if}
 							</button>
 						</div>
 
@@ -504,6 +676,12 @@
 							</button>
 						</div>
 					</div>
+
+					{#if appliedNotification}
+						<div class="my-3 rounded-md border-2 border-emerald-600 bg-emerald-500/15 p-2 text-xs font-bold text-emerald-800 dark:text-emerald-200">
+							✓ Applied changes / decision locked into decisions.md!
+						</div>
+					{/if}
 
 					{#if showQuickDecisionForm}
 						<div class="my-3 neo-box-sm bg-[var(--theme-surface-subtle)] p-3">
@@ -554,11 +732,260 @@
 						<p class="mt-3 text-xs font-bold text-rose-500 font-mono">{error}</p>
 					{/if}
 
-					<div class="manuscript mt-3 text-sm leading-relaxed text-[var(--theme-text)] whitespace-pre-wrap">
-						{activeTab === 'interrogate'
-							? interrogationReport || 'Click "Socratic Interrogation" above to test motivations and plot causality.'
-							: continuityReport || 'Click "Continuity Check" above to scan for magic rule violations.'}
-					</div>
+					<!-- Tab 1: Socratic Interrogator -->
+					{#if activeTab === 'interrogate'}
+						<div class="manuscript mt-3 text-sm leading-relaxed text-[var(--theme-text)] whitespace-pre-wrap">
+							{interrogationReport || 'Click "Socratic Interrogation" above to test motivations, plot holes, and scene goals.'}
+						</div>
+
+					<!-- Tab 2: Continuity & Lore Checker -->
+					{:else if activeTab === 'continuity'}
+						<div class="manuscript mt-3 text-sm leading-relaxed text-[var(--theme-text)] whitespace-pre-wrap">
+							{continuityReport || 'Click "Continuity Check" above to scan for magic rule contradictions.'}
+						</div>
+
+					<!-- Tab 3: Prose Elevator & Anti-Slop -->
+					{:else if activeTab === 'elevator'}
+						<div class="mt-3 space-y-4">
+							<!-- Anti-Slop Scanner Status Bar -->
+							<div class="rounded-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-3 text-xs">
+								<div class="flex items-center justify-between">
+									<div class="flex items-center gap-2">
+										<span class="font-bold uppercase font-mono">Anti-Slop Linter (10 Iron Rules):</span>
+										{#if antiSlopViolations.length === 0}
+											<span class="neo-badge bg-emerald-500 text-black font-black text-[10px]">
+												0 VIOLATIONS (CLEAN)
+											</span>
+										{:else}
+											<span class="neo-badge bg-rose-500 text-white font-black text-[10px]">
+												{antiSlopViolations.length} VIOLATION{antiSlopViolations.length > 1 ? 'S' : ''} DETECTED
+											</span>
+										{/if}
+									</div>
+									<button
+										type="button"
+										class="neo-btn-primary px-3 py-1 text-xs font-bold"
+										disabled={busy}
+										onclick={runProseElevator}
+									>
+										{busy ? 'Elevating…' : '⚡ Run Literary Elevation Pass'}
+									</button>
+								</div>
+
+								{#if antiSlopViolations.length > 0}
+									<div class="mt-3 space-y-2 border-t border-[var(--theme-border-strong)] pt-2">
+										{#each antiSlopViolations as v}
+											<div class="rounded-md border border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-2">
+												<div class="flex items-center gap-2">
+													<span class="neo-badge text-[9px] uppercase {v.severity === 'error' ? 'bg-red-500 text-white' : 'bg-amber-500 text-black'}">
+														Rule #{v.ruleId}: {v.ruleName}
+													</span>
+													<span class="font-mono text-[11px] text-[var(--theme-text-muted)]">"{v.snippet}"</span>
+												</div>
+												<p class="mt-1 text-[11px] text-[var(--theme-text)]">{v.explanation}</p>
+												<p class="mt-0.5 font-bold text-[10px] text-[var(--theme-accent)]">Fix: {v.fix}</p>
+											</div>
+										{/each}
+									</div>
+								{/if}
+							</div>
+
+							<!-- Elevation Results & Craft Micro-Lessons -->
+							{#if elevationResult}
+								<div class="space-y-4">
+									<!-- Change Log -->
+									<div class="rounded-lg border border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-3 text-xs">
+										<h4 class="font-bold uppercase font-mono text-[var(--theme-accent)]">Pass 1 & 2 Change Log:</h4>
+										<ul class="mt-1.5 space-y-1 text-[11px] list-disc list-inside">
+											{#each elevationResult.changeLog as log}
+												<li>{log}</li>
+											{/each}
+										</ul>
+									</div>
+
+									<!-- Craft Flags with Micro-Lessons -->
+									{#if elevationResult.craftFlags.length > 0}
+										<div class="space-y-2">
+											<h4 class="font-bold uppercase font-mono text-xs text-amber-600 dark:text-amber-400">
+												Craft Micro-Lessons & Exercises ({elevationResult.craftFlags.length})
+											</h4>
+											{#each elevationResult.craftFlags as flag, idx}
+												<div class="rounded-lg border-2 border-amber-500 bg-amber-500/10 p-3 text-xs space-y-2">
+													<div class="flex items-center gap-2">
+														<span class="neo-badge bg-amber-500 text-black font-black text-[9px]">
+															[{flag.type} — "{flag.quote}"]
+														</span>
+													</div>
+													<p class="text-[11px] text-[var(--theme-text)]">
+														<strong>Craft Lesson:</strong> {flag.lesson}
+													</p>
+													<div class="rounded-md border border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-2">
+														<label for={`craft-exercise-${idx}`} class="block font-bold text-[11px] text-[var(--theme-accent)]">
+															Exercise: {flag.exercise}
+														</label>
+														<div class="mt-1.5 flex gap-2">
+															<input
+																id={`craft-exercise-${idx}`}
+																type="text"
+																bind:value={exerciseAnswerInputs[idx]}
+																placeholder="Your concrete detail (e.g. her fingers twitched around the pommel)"
+																class="neo-input flex-1 p-1.5 text-xs"
+															/>
+															<button
+																type="button"
+																class="neo-btn-primary px-2.5 py-1 text-xs font-bold"
+																onclick={() => commitCraftAnswer(idx, flag)}
+															>
+																🔒 Lock as Decision
+															</button>
+														</div>
+													</div>
+												</div>
+											{/each}
+										</div>
+									{/if}
+
+									<!-- Elevation Text Diff Comparison -->
+									<div class="rounded-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-4 space-y-3">
+										<div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+											<div class="flex items-center gap-2 font-mono text-xs font-bold">
+												<span>Display Mode:</span>
+												<button
+													type="button"
+													class="px-2 py-0.5 rounded-xs border {diffMode === 'side_by_side' ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-fg)]' : 'bg-[var(--theme-surface-subtle)]'}"
+													onclick={() => (diffMode = 'side_by_side')}
+												>
+													Side-by-Side Diff
+												</button>
+												<button
+													type="button"
+													class="px-2 py-0.5 rounded-xs border {diffMode === 'elevated' ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-fg)]' : 'bg-[var(--theme-surface-subtle)]'}"
+													onclick={() => (diffMode = 'elevated')}
+												>
+													Elevated Text Only
+												</button>
+											</div>
+
+											<button
+												type="button"
+												class="neo-btn-primary px-3 py-1.5 text-xs font-bold"
+												onclick={applyElevationDiff}
+											>
+												✓ Apply Elevated Prose to Chapter Draft
+											</button>
+										</div>
+
+										{#if diffMode === 'side_by_side'}
+											<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+												<div class="space-y-1">
+													<span class="font-bold text-[var(--theme-text-muted)] uppercase">Original Draft:</span>
+													<div class="max-h-80 overflow-auto p-3 rounded-md bg-[var(--theme-surface-subtle)] whitespace-pre-wrap leading-relaxed">
+														{active.text}
+													</div>
+												</div>
+												<div class="space-y-1">
+													<span class="font-bold text-[var(--theme-accent)] uppercase">Elevated (Rhythm Varied, 0 Slop):</span>
+													<div class="max-h-80 overflow-auto p-3 rounded-md bg-[var(--theme-surface-subtle)] border border-[var(--theme-accent)] whitespace-pre-wrap leading-relaxed">
+														{elevationResult.elevatedText}
+													</div>
+												</div>
+											</div>
+										{:else}
+											<div class="max-h-80 overflow-auto p-3 rounded-md bg-[var(--theme-surface-subtle)] font-mono text-xs whitespace-pre-wrap leading-relaxed">
+												{elevationResult.elevatedText}
+											</div>
+										{/if}
+									</div>
+								</div>
+							{/if}
+						</div>
+
+					<!-- Tab 4: Voice & Continuity Quality Gate -->
+					{:else if activeTab === 'gate'}
+						<div class="mt-3 space-y-4">
+							<div class="flex items-center justify-between border-b pb-2">
+								<div>
+									<h4 class="font-display text-sm font-bold uppercase">Voice & Continuity Final Quality Gate</h4>
+									<p class="text-xs text-[var(--theme-text-muted)]">
+										Audits chapter against all 10 anti-slop rules, canon bible laws, and author voice fingerprints.
+									</p>
+								</div>
+								<button
+									type="button"
+									class="neo-btn-primary px-4 py-1.5 text-xs font-bold"
+									disabled={busy}
+									onclick={runVoiceContinuityGate}
+								>
+									{busy ? 'Auditing…' : '🛡️ Audit Chapter for Acceptance'}
+								</button>
+							</div>
+
+							{#if auditResult}
+								<!-- Status Banner -->
+								{#if auditResult.status === 'ACCEPTED'}
+									<div class="neo-box border-4 border-emerald-600 bg-emerald-500/20 p-5 space-y-2">
+										<div class="flex items-center gap-2">
+											<span class="text-2xl">🏆</span>
+											<h3 class="font-display text-lg font-black text-emerald-800 dark:text-emerald-200 uppercase tracking-tight">
+												CHAPTER STATUS: ACCEPTED — CANON CERTIFIED
+											</h3>
+										</div>
+										<p class="text-xs font-bold text-emerald-900 dark:text-emerald-100">
+											{auditResult.summary}
+										</p>
+									</div>
+								{:else if auditResult.status === 'CONTINUITY_BLOCK'}
+									<div class="neo-box border-4 border-rose-600 bg-rose-500/20 p-5 space-y-3">
+										<div class="flex items-center gap-2">
+											<span class="text-2xl">⛔</span>
+											<h3 class="font-display text-lg font-black text-rose-800 dark:text-rose-200 uppercase tracking-tight">
+												CONTINUITY BLOCK — CHAPTER REJECTED
+											</h3>
+										</div>
+										<p class="text-xs font-bold text-rose-900 dark:text-rose-100">
+											{auditResult.summary}
+										</p>
+
+										<div class="space-y-2 pt-2 border-t border-rose-500/30">
+											{#each auditResult.blocks as b}
+												<div class="rounded-md border border-rose-600 bg-[var(--theme-surface)] p-2.5 text-xs space-y-1">
+													<div class="font-bold text-rose-600">{b.chapterQuote}</div>
+													<div class="text-[11px] opacity-80">{b.bibleQuote}</div>
+													<div class="font-bold text-[10px] text-[var(--theme-accent)]">Fix: {b.resolutionPrompt}</div>
+												</div>
+											{/each}
+										</div>
+									</div>
+								{:else}
+									<div class="neo-box border-4 border-amber-600 bg-amber-500/20 p-4">
+										<span class="font-bold text-amber-800 dark:text-amber-200 uppercase font-mono">
+											⚠️ Revisions Recommended ({auditResult.antiSlopViolations.length} craft warning(s))
+										</span>
+									</div>
+								{/if}
+
+								<!-- 5-Point Quality Checklist -->
+								<div class="rounded-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+									<h4 class="font-mono text-xs font-bold uppercase text-[var(--theme-text-muted)]">
+										Official Audit Checklist:
+									</h4>
+									<div class="space-y-1.5 text-xs font-mono">
+										{#each auditResult.checklist as check}
+											<div class="flex items-center gap-2">
+												{#if check.passed}
+													<span class="text-emerald-500 font-bold">✓</span>
+													<span class="text-[var(--theme-text)]">{check.item}</span>
+												{:else}
+													<span class="text-rose-500 font-bold">✕</span>
+													<span class="text-rose-500 font-bold">{check.item}</span>
+												{/if}
+											</div>
+										{/each}
+									</div>
+								</div>
+							{/if}
+						</div>
+					{/if}
 				</section>
 			{/if}
 		</div>
@@ -575,14 +1002,36 @@
 			>
 				<div class="flex items-center justify-between">
 					<h3 class="text-xs font-bold font-mono tracking-wider text-[var(--theme-text-muted)] uppercase">
-						Continuity Radar ({contradictions.length + knowledgeLeaks.length + accidentalSpoilers.length})
+						Continuity Radar ({contradictions.length + knowledgeLeaks.length + accidentalSpoilers.length + antiSlopViolations.length})
 					</h3>
 					<span
-						class="h-2.5 w-2.5 rounded-xs border border-[var(--theme-border-strong)] {contradictions.length || knowledgeLeaks.length || accidentalSpoilers.length
+						class="h-2.5 w-2.5 rounded-xs border border-[var(--theme-border-strong)] {contradictions.length || knowledgeLeaks.length || accidentalSpoilers.length || antiSlopViolations.length
 							? 'bg-rose-500 animate-pulse'
 							: 'bg-emerald-500'}"
 					></span>
 				</div>
+
+				<!-- Anti-Slop Alerts -->
+				{#if antiSlopViolations.length > 0}
+					<div class="mt-3 space-y-1.5">
+						<span class="text-[11px] font-bold font-mono text-amber-600 dark:text-amber-400 uppercase tracking-wide">
+							🎙️ Anti-Slop Alerts ({antiSlopViolations.length})
+						</span>
+						<ul class="space-y-1.5 text-xs">
+							{#each antiSlopViolations.slice(0, 3) as v}
+								<li class="rounded-xs border border-amber-500 bg-amber-500/10 p-2 text-[var(--theme-text)] leading-tight">
+									<div class="font-bold text-[10px] text-amber-700 dark:text-amber-300">Rule #{v.ruleId}: {v.ruleName}</div>
+									<div class="mt-0.5 font-mono text-[10px] opacity-80">"{v.snippet}"</div>
+								</li>
+							{/each}
+							{#if antiSlopViolations.length > 3}
+								<li class="text-[10px] font-mono text-[var(--theme-text-muted)] text-right">
+									+ {antiSlopViolations.length - 3} more (open Prose Elevator tab)
+								</li>
+							{/if}
+						</ul>
+					</div>
+				{/if}
 
 				<!-- Accidental Spoilers (Reader Perspective Mode) -->
 				{#if accidentalSpoilers.length > 0}
@@ -629,9 +1078,9 @@
 					</div>
 				{/if}
 
-				{#if !contradictions.length && !knowledgeLeaks.length && !accidentalSpoilers.length}
+				{#if !contradictions.length && !knowledgeLeaks.length && !accidentalSpoilers.length && !antiSlopViolations.length}
 					<p class="mt-2 text-xs leading-relaxed text-[var(--theme-text-muted)] font-mono">
-						No canon contradictions, knowledge leaks, or accidental spoilers detected.
+						No canon contradictions, knowledge leaks, accidental spoilers, or anti-slop violations detected.
 					</p>
 				{/if}
 

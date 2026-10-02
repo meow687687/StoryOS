@@ -3,8 +3,40 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte';
 	import { page } from '$app/state';
+	import {
+		exportProjectBundleJson,
+		importProjectBundleJson,
+		downloadFile
+	} from '$lib/world';
 
 	let { children } = $props();
+
+	let showBundleModal = $state(false);
+	let importJsonText = $state('');
+	let bundleStatusMsg = $state<string | null>(null);
+
+	function handleExportBundle() {
+		const json = exportProjectBundleJson();
+		const dateStr = new Date().toISOString().slice(0, 10);
+		downloadFile(`story-os-workspace-${dateStr}.json`, json, 'application/json');
+		bundleStatusMsg = 'Bundle downloaded successfully!';
+		setTimeout(() => {
+			bundleStatusMsg = null;
+		}, 3000);
+	}
+
+	function handleImportBundle() {
+		if (!importJsonText.trim()) return;
+		const result = importProjectBundleJson(importJsonText);
+		if (result.success) {
+			bundleStatusMsg = `Successfully imported ${result.importedCount} story artifacts!`;
+			setTimeout(() => {
+				window.location.reload();
+			}, 1000);
+		} else {
+			bundleStatusMsg = `Import failed: ${result.errors?.join(', ')}`;
+		}
+	}
 
 	const navItems = [
 		{
@@ -12,6 +44,18 @@
 			label: 'Editor',
 			icon: 'pen',
 			pathMatch: (path: string) => path.startsWith('/chapters')
+		},
+		{
+			href: '/voice',
+			label: 'Voice Lab',
+			icon: 'mic',
+			pathMatch: (path: string) => path.startsWith('/voice')
+		},
+		{
+			href: '/feedback',
+			label: 'Beta Triage',
+			icon: 'chat',
+			pathMatch: (path: string) => path.startsWith('/feedback')
 		},
 		{
 			href: '/timeline',
@@ -92,6 +136,10 @@
 				>
 					{#if item.icon === 'pen'}
 						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4 4 4L8 20l-5 1 1-5L16 4Z"/></svg>
+					{:else if item.icon === 'mic'}
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+					{:else if item.icon === 'chat'}
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
 					{:else if item.icon === 'clock'}
 						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
 					{:else if item.icon === 'help'}
@@ -110,12 +158,104 @@
 			{/each}
 		</nav>
 
-		<!-- Right Tooling: Theme Switcher -->
+		<!-- Right Tooling: Agent Bundle & Theme Switcher -->
 		<div class="flex items-center gap-2">
+			<button
+				type="button"
+				class="neo-btn flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold"
+				onclick={() => (showBundleModal = true)}
+				title="Export or Import complete Story OS workspace bundle"
+			>
+				<span>📦</span>
+				<span class="hidden sm:inline">Agent Bundle</span>
+			</button>
 			<ThemeSwitcher />
 		</div>
 	</div>
 </header>
+
+<!-- Agent Bundle Export / Import Modal -->
+{#if showBundleModal}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+		<div class="neo-box w-full max-w-xl space-y-4 bg-[var(--theme-surface)] p-6 shadow-[8px_8px_0px_var(--theme-shadow-hard)]">
+			<div class="flex items-center justify-between border-b pb-3">
+				<div>
+					<h3 class="font-display text-lg font-bold uppercase">📦 Story OS Project Bundle</h3>
+					<p class="text-xs text-[var(--theme-text-muted)]">
+						Export or import the complete portable agent workspace (bible, decisions, voice, feedback, chapters, timeline, maps).
+					</p>
+				</div>
+				<button
+					type="button"
+					class="text-sm font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
+					onclick={() => (showBundleModal = false)}
+				>
+					×
+				</button>
+			</div>
+
+			{#if bundleStatusMsg}
+				<div class="rounded-md border-2 border-emerald-600 bg-emerald-500/15 p-2.5 text-xs font-bold text-emerald-800 dark:text-emerald-200">
+					{bundleStatusMsg}
+				</div>
+			{/if}
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+				<div class="neo-box bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+					<h4 class="font-mono text-xs font-bold uppercase">Export Workspace</h4>
+					<p class="text-[11px] text-[var(--theme-text-muted)] leading-relaxed">
+						Download a JSON bundle with full state to transfer between devices or use with CLI agents (Claude Code, Cursor, OpenCode).
+					</p>
+					<button
+						type="button"
+						class="neo-btn-primary w-full py-2 text-xs font-bold"
+						onclick={handleExportBundle}
+					>
+						💾 Download Bundle JSON
+					</button>
+				</div>
+
+				<div class="neo-box bg-[var(--theme-surface-subtle)] p-4 space-y-2">
+					<h4 class="font-mono text-xs font-bold uppercase">Import Workspace</h4>
+					<p class="text-[11px] text-[var(--theme-text-muted)] leading-relaxed">
+						Paste a previously exported bundle JSON below to restore or merge your complete story state.
+					</p>
+					<button
+						type="button"
+						class="neo-btn w-full py-2 text-xs font-bold"
+						onclick={handleImportBundle}
+						disabled={!importJsonText.trim()}
+					>
+						📥 Restore From JSON
+					</button>
+				</div>
+			</div>
+
+			<div>
+				<label for="bundle-json-paste" class="block font-mono text-[11px] font-bold uppercase text-[var(--theme-text-muted)]">
+					Paste Bundle JSON:
+				</label>
+				<textarea
+					id="bundle-json-paste"
+					bind:value={importJsonText}
+					rows="6"
+					placeholder="Paste JSON bundle content here..."
+					class="neo-input mt-1 w-full p-2.5 font-mono text-xs"
+				></textarea>
+			</div>
+
+			<div class="flex justify-end pt-2">
+				<button
+					type="button"
+					class="neo-btn px-4 py-2 text-xs font-bold"
+					onclick={() => (showBundleModal = false)}
+				>
+					Close
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <main class="mx-auto max-w-7xl px-4 py-8">
 	{@render children()}

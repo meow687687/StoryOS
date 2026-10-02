@@ -312,6 +312,9 @@ export interface Chapter {
 	rulesPinned?: string[];
 	threads?: string[];
 	status?: CanonStatus;
+	auditStatus?: 'accepted' | 'revision_needed' | 'unreviewed';
+	auditNotes?: string[];
+	auditTimestamp?: string;
 }
 
 export function loadBible(): WorldEntry[] {
@@ -1146,6 +1149,8 @@ export function loadSampleStory(): void {
 	saveMapPins(SAMPLE_PINS);
 	saveJourneys(SAMPLE_JOURNEYS);
 	saveStoryBeats(SAMPLE_BEATS);
+	saveVoiceProfile(SAMPLE_VOICE_PROFILE);
+	saveFeedbackItems(SAMPLE_FEEDBACK_ITEMS);
 }
 
 export function clearAllStoryData(): void {
@@ -1158,8 +1163,919 @@ export function clearAllStoryData(): void {
 	localStorage.removeItem(MAP_PINS_KEY);
 	localStorage.removeItem(JOURNEYS_KEY);
 	localStorage.removeItem(STORY_BEATS_KEY);
+	localStorage.removeItem(VOICE_KEY);
+	localStorage.removeItem(FEEDBACK_KEY);
 }
 
+// ============================================================================
+// NOVEL SKILLS SUITE: Voice Lab, Anti-Slop, Craft Lessons, Beta Triage & Bundle
+// ============================================================================
 
+export const VOICE_KEY = 'writers-tool.voice.v1';
+export const FEEDBACK_KEY = 'writers-tool.feedback.v1';
 
+export interface VoiceProfile {
+	id: string;
+	authorName: string;
+	sampleTitle: string;
+	sampleText: string;
+	diction: string;
+	sentenceHabit: string;
+	avgSentenceLength: number;
+	sentenceLengthDistribution: { short: number; medium: number; long: number };
+	contractionRate: number; // percentage 0-100
+	formality: 'casual' | 'neutral' | 'formal';
+	signatureMove: string;
+	lessonDepth: 'new_writer' | 'experienced';
+	dontTouchList: string[];
+	evidenceQuotes: string[];
+	updatedAt: string;
+}
 
+export interface AntiSlopViolation {
+	ruleId: number;
+	ruleName: string;
+	snippet: string;
+	explanation: string;
+	fix: string;
+	index?: number;
+	severity: 'error' | 'warning' | 'info';
+}
+
+export interface CraftLesson {
+	id: string;
+	title: string;
+	category:
+		| 'telling_vs_showing'
+		| 'filter_verbs'
+		| 'dialogue_tags'
+		| 'repetition'
+		| 'abstract_emotion'
+		| 'vague_setting'
+		| 'unclear_antecedents';
+	shortSummary: string;
+	explanation: string;
+	exampleBad: string;
+	exampleGood: string;
+	exercisePrompt: string;
+}
+
+export type FeedbackClass = 'confusion' | 'pacing' | 'character' | 'stakes' | 'prose' | 'taste';
+export type FeedbackVerdict = 'open' | 'accepted' | 'rejected' | 'modified';
+
+export interface BetaFeedbackItem {
+	id: string;
+	readerName: string;
+	chapterId: string;
+	chapterTitle?: string;
+	paragraphIndex?: number;
+	quote: string;
+	feedback: string;
+	candidateClass: FeedbackClass;
+	weight: number;
+	verdict: FeedbackVerdict;
+	verdictNotes?: string;
+	linkedDecisionId?: string;
+	createdAt: string;
+}
+
+export interface FeedbackCluster {
+	chapterId: string;
+	chapterTitle?: string;
+	paragraphIndex?: number;
+	candidateClass: FeedbackClass;
+	items: BetaFeedbackItem[];
+	totalWeight: number;
+	hasConflict: boolean;
+	conflictDetails?: string;
+}
+
+export interface SentenceRhythmStats {
+	lengths: number[];
+	avg: number;
+	stdDev: number;
+	distribution: { short: number; medium: number; long: number }; // short <= 8, med 9-24, long >= 25
+	uniformStretches: { startIndex: number; length: number; sentenceLengths: number[] }[];
+}
+
+export interface ContractionStats {
+	rate: number; // percentage (0-100)
+	contractions: number;
+	uncontractedPairs: number;
+	examples: string[];
+}
+
+// --- Craft Micro-Lessons Library ---
+export const CRAFT_LESSONS: CraftLesson[] = [
+	{
+		id: 'telling_vs_showing',
+		title: 'Telling vs Showing',
+		category: 'telling_vs_showing',
+		shortSummary: 'Show one camera-catchable thing.',
+		explanation:
+			'Name the abstraction, then replace it with one concrete thing a camera could catch — a hand, a sound, or a stopped motion.',
+		exampleBad: 'She was furious with the council.',
+		exampleGood: 'Her knuckles clicked against the oak table as she stood.',
+		exercisePrompt: 'Reply with one sentence: what do the character’s hands or breathing do right now?'
+	},
+	{
+		id: 'filter_verbs',
+		title: 'Filter Verbs',
+		category: 'filter_verbs',
+		shortSummary: 'Drop the lens; keep the object.',
+		explanation:
+			'Remove filtering verbs (saw, felt, heard, noticed) so the reader experiences the event directly instead of watching the character experience it.',
+		exampleBad: 'He heard the wolves howling in the pine woods.',
+		exampleGood: 'Wolves howled in the pine woods.',
+		exercisePrompt: 'Cut the sensory filter verb and describe the sound or sight as immediate reality.'
+	},
+	{
+		id: 'dialogue_tags',
+		title: 'Dialogue Tags',
+		category: 'dialogue_tags',
+		shortSummary: 'Said + beat beats adverb.',
+		explanation:
+			'Adverbs in dialogue tags ("he said angrily") signal missing subtext. Use a clean "said" or pair dialogue with a physical action beat.',
+		exampleBad: '"Put the lantern down," he ordered threateningly.',
+		exampleGood: '"Put the lantern down." He reached for the hilt at his hip.',
+		exercisePrompt: 'Replace the adverb with a physical micro-action occurring during or after speech.'
+	},
+	{
+		id: 'repetition',
+		title: 'Word Repetition',
+		category: 'repetition',
+		shortSummary: 'One good detail, once.',
+		explanation:
+			'Repeating the same substantive adjective or noun within a paragraph weakens both occurrences. Keep only the sharpest instance.',
+		exampleBad: 'The cold iron door led into a cold stone tunnel.',
+		exampleGood: 'The iron door led into a freezing stone tunnel.',
+		exercisePrompt: 'Cut the duplicated descriptor or upgrade the second occurrence to a more precise word.'
+	},
+	{
+		id: 'abstract_emotion',
+		title: 'Abstract Emotion',
+		category: 'abstract_emotion',
+		shortSummary: 'Locate it in the body or room.',
+		explanation:
+			'Name where the writer feels the emotion: hands, throat, jaw, ribs, or the sudden silence of the room.',
+		exampleBad: 'Grief washed over him when he saw the ruins.',
+		exampleGood: 'He swallowed hard against the tight knot in his throat.',
+		exercisePrompt: 'Where does the physical sensation of this emotion hit in the character’s body?'
+	},
+	{
+		id: 'vague_setting',
+		title: 'Vague Setting',
+		category: 'vague_setting',
+		shortSummary: 'One true detail anchors a room.',
+		explanation:
+			'A scene set in a "dark chamber" floats in limbo. One authentic physical texture or smell grounds the entire location.',
+		exampleBad: 'They sat in an eerie old room.',
+		exampleGood: 'Damp saltpeter smelled sharp beneath the peeling plaster.',
+		exercisePrompt: 'Give one specific sensory detail (smell, texture, or temperature) unique to this room.'
+	},
+	{
+		id: 'unclear_antecedents',
+		title: 'Unclear Antecedents',
+		category: 'unclear_antecedents',
+		shortSummary: 'Name the noun.',
+		explanation:
+			'Pronoun soup ("He told him that he should leave") forces the reader to stop and decode. Clarify names and objects explicitly.',
+		exampleBad: 'Kael gave the dagger to Vane because he feared he would lose it.',
+		exampleGood: 'Kael passed the dagger to Vane, fearing the scout would drop it.',
+		exercisePrompt: 'Replace the ambiguous pronoun with the character’s name or distinct role.'
+	}
+];
+
+// --- 10 Iron Anti-Slop Rules Scanner ---
+export function scanAntiSlop(text: string): AntiSlopViolation[] {
+	if (!text || !text.trim()) return [];
+	const violations: AntiSlopViolation[] = [];
+	const words = text.trim().split(/\s+/).filter(Boolean);
+	const totalWords = words.length;
+
+	// Rule 1: Em-dash spam — max 1 em-dash per 300 words
+	const emDashMatches = text.match(/—|--/g) || [];
+	const allowedEmDashes = Math.max(1, Math.floor(totalWords / 300));
+	if (emDashMatches.length > allowedEmDashes && emDashMatches.length >= 2) {
+		violations.push({
+			ruleId: 1,
+			ruleName: 'Em-dash spam',
+			snippet: `Found ${emDashMatches.length} em-dashes across ${totalWords} words (allowed: ${allowedEmDashes})`,
+			explanation: 'Em-dash frequency exceeds 1 per 300 words. Overuse destroys sentence cadence.',
+			fix: 'Convert em-dashes to commas, colons, or clean separate sentences.',
+			severity: 'warning'
+		});
+	}
+
+	// Rule 2: "Not X but Y" / "It's not... it's..." pattern ban
+	const notXButYRegex =
+		/\b(?:it(?:'s|\s+was|\s+is)?\s+not\s+[^,.?!;]+(?:,|\s+but|\s+it(?:'s|\s+was|\s+is))\s+[^.?!;]+|not\s+([a-zA-Z0-9']+),\s*but\s+([a-zA-Z0-9']+))\b/gi;
+	let match: RegExpExecArray | null;
+	while ((match = notXButYRegex.exec(text)) !== null) {
+		violations.push({
+			ruleId: 2,
+			ruleName: '"Not X but Y" formula',
+			snippet: match[0],
+			explanation: 'Banned rhetorical formula. State the thing directly without negating first.',
+			fix: 'State the reality directly instead of declaring what it is not.',
+			index: match.index,
+			severity: 'error'
+		});
+		if (violations.length > 20) break;
+	}
+
+	// Rule 3: Purple triads (three-item lyrical lists)
+	const purpleTriadRegex =
+		/\b([a-zA-Z]+(?:ing|ed)?),\s+([a-zA-Z]+(?:ing|ed)?),?\s+(?:and\s+)([a-zA-Z]+(?:ing|ed)?)\b/gi;
+	while ((match = purpleTriadRegex.exec(text)) !== null) {
+		const [, w1, w2, w3] = match;
+		// Filter out simple coordinate nouns like "apples, oranges, and pears"
+		const isParticiple = w1.endsWith('ing') || w1.endsWith('ed');
+		const isLong = w1.length > 4 && w2.length > 4 && w3.length > 4;
+		if (isParticiple || isLong) {
+			violations.push({
+				ruleId: 3,
+				ruleName: 'Purple triad',
+				snippet: match[0],
+				explanation: 'Three-item lyrical list detected ("the dust, the dark, the debt"). Max two.',
+				fix: 'Cut one item or split into two concrete physical actions.',
+				index: match.index,
+				severity: 'warning'
+			});
+		}
+		if (violations.length > 20) break;
+	}
+
+	// Rule 4: Moralizing / thesis endings
+	const paragraphs = text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+	const moralizingEndingPatterns = [
+		/(?:and\s+)?that\s+was\s+(?:what|why|how|when)\b/i,
+		/\b(?:he|she|they|i)\s+realized\s+(?:that\s+)?what\s+it\s+(?:truly\s+)?meant\b/i,
+		/\bin\s+the\s+end,\s+(?:he|she|they|it)\b/i,
+		/\bit\s+was\s+a\s+lesson\b/i,
+		/\bafter\s+all,\s+it\s+was\b/i,
+		/\band\s+in\s+that\s+moment,\s+(?:he|she|they)\b/i
+	];
+	paragraphs.forEach((para, pIdx) => {
+		const sentences = para.split(/(?<=[.!?])\s+/).filter(Boolean);
+		if (sentences.length > 0) {
+			const lastSentence = sentences[sentences.length - 1];
+			for (const pat of moralizingEndingPatterns) {
+				if (pat.test(lastSentence)) {
+					violations.push({
+						ruleId: 4,
+						ruleName: 'Moralizing / thesis ending',
+						snippet: `Para ${pIdx + 1}: "${lastSentence}"`,
+						explanation:
+							'No thesis or moralizing wrap-up sentences at paragraph/chapter end ("And that was what it meant to...").',
+						fix: 'End the paragraph on a sensory image or concrete physical action from the draft.',
+						severity: 'error'
+					});
+					break;
+				}
+			}
+		}
+	});
+
+	// Rule 5: Uniform rhythm — 3+ consecutive sentences within ±4 words of each other
+	const rhythmStats = calculateSentenceRhythms(text);
+	for (const stretch of rhythmStats.uniformStretches) {
+		violations.push({
+			ruleId: 5,
+			ruleName: 'Uniform sentence rhythm',
+			snippet: `Sentences ${stretch.startIndex + 1}–${stretch.startIndex + stretch.length} (lengths: ${stretch.sentenceLengths.join(', ')} words)`,
+			explanation:
+				'3+ consecutive sentences are within ±4 words of each other, creating a monotonous droning cadence.',
+			fix: 'Alternate short punches (≤8 words), medium sentences (10–20 words), and long rolls (25+ words).',
+			severity: 'warning'
+		});
+	}
+
+	// Rule 6: AI adjectives & cliché words
+	const aiClichéWords = [
+		'tapestry',
+		'mosaic',
+		'symphony',
+		'dance of',
+		'labyrinth',
+		'echo of',
+		'whisper of',
+		'testament to',
+		'palpable',
+		'ineffable',
+		'liminal',
+		'crescendo',
+		'kaleidoscope',
+		'beacon of',
+		'shiver ran down',
+		'breath he didn\'t know he was holding',
+		'breath she didn\'t know she was holding'
+	];
+	const lower = text.toLowerCase();
+	for (const cliché of aiClichéWords) {
+		const idx = lower.indexOf(cliché);
+		if (idx !== -1) {
+			violations.push({
+				ruleId: 6,
+				ruleName: 'AI adjective / cliché',
+				snippet: text.slice(Math.max(0, idx - 10), Math.min(text.length, idx + cliché.length + 15)),
+				explanation: `"${cliché}" is an overused decorative AI cliché.`,
+				fix: 'Ground the scene in a concrete world detail or cut entirely.',
+				index: idx,
+				severity: 'error'
+			});
+		}
+	}
+
+	// Rule 7: Hollow intensifiers
+	const intensifiers = ['very', 'deeply', 'truly', 'utterly', 'quite literally', 'incredibly', 'profoundly'];
+	for (const int of intensifiers) {
+		const intRegex = new RegExp(`\\b${int}\\b`, 'gi');
+		while ((match = intRegex.exec(text)) !== null) {
+			violations.push({
+				ruleId: 7,
+				ruleName: 'Hollow intensifier',
+				snippet: text.slice(Math.max(0, match.index - 10), Math.min(text.length, match.index + int.length + 15)),
+				explanation: `Hollow intensifier "${match[0]}" dilutes narrative punch.`,
+				fix: 'Remove the intensifier or choose a stronger, more specific base verb or noun.',
+				index: match.index,
+				severity: 'warning'
+			});
+			if (violations.length > 25) break;
+		}
+	}
+
+	// Rule 8: Dialogue sameness (long unbroken speeches in quotes with 0 contractions)
+	const quoteRegex = /"([^"]{120,})"/g;
+	while ((match = quoteRegex.exec(text)) !== null) {
+		const speech = match[1];
+		const hasContractions = /'(?:t|s|re|ve|m|ll|d)\b/i.test(speech);
+		const hasFormalTokens = /\b(?:do not|cannot|will not|is not|are not|have not)\b/i.test(speech);
+		if (!hasContractions && hasFormalTokens) {
+			violations.push({
+				ruleId: 8,
+				ruleName: 'Dialogue rigidity / sameness',
+				snippet: `"${speech.slice(0, 60)}..."`,
+				explanation: 'Speech block contains zero contractions, creating an artificial, wooden cadence.',
+				fix: 'Loosen character dialogue with natural contractions and speech rhythm unless explicitly formal nobility.',
+				index: match.index,
+				severity: 'warning'
+			});
+		}
+	}
+
+	// Rule 9: Filter-verb pileup (max 1 per page of saw/felt/heard/knew/realized/wondered)
+	const filterVerbsRegex = /\b(?:saw|felt|heard|knew|realized|wondered|noticed|watched)\b/gi;
+	paragraphs.forEach((para, pIdx) => {
+		const paraMatches = para.match(filterVerbsRegex);
+		if (paraMatches && paraMatches.length >= 3) {
+			violations.push({
+				ruleId: 9,
+				ruleName: 'Filter-verb pileup',
+				snippet: `Para ${pIdx + 1} contains ${paraMatches.length} filter verbs (${paraMatches.join(', ')})`,
+				explanation: 'Filter verbs create distance between reader and action ("she saw the door open").',
+				fix: 'Drop the lens, keep the object ("the door opened").',
+				severity: 'warning'
+			});
+		}
+	});
+
+	// Rule 10: Symmetry tic (mirrored clauses)
+	const symmetryRegex = /\bAs\s+[^,.?!]+,\s+[^.?!]+(?:\.|\;)\s+As\s+[^,.?!]+,\s+[^.?!]+/i;
+	if ((match = symmetryRegex.exec(text)) !== null) {
+		violations.push({
+			ruleId: 10,
+			ruleName: 'Symmetry tic',
+			snippet: match[0].slice(0, 80) + '...',
+			explanation: 'Mirrored syntactic structure back-to-back ("As X, Y. As A, B.").',
+			fix: 'Vary the clause structure so consecutive sentences do not mirror each other.',
+			index: match.index,
+			severity: 'warning'
+		});
+	}
+
+	return violations;
+}
+
+// --- Sentence Rhythm Calculator ---
+export function calculateSentenceRhythms(text: string): SentenceRhythmStats {
+	if (!text || !text.trim()) {
+		return {
+			lengths: [],
+			avg: 0,
+			stdDev: 0,
+			distribution: { short: 0, medium: 0, long: 0 },
+			uniformStretches: []
+		};
+	}
+
+	// Split by terminal punctuation followed by space or newline
+	const rawSentences = text
+		.replace(/([.!?])\s+/g, '$1|')
+		.split('|')
+		.map((s) => s.trim())
+		.filter((s) => s.length > 2);
+
+	const lengths = rawSentences.map((s) => s.split(/\s+/).filter(Boolean).length);
+	if (lengths.length === 0) {
+		return {
+			lengths: [],
+			avg: 0,
+			stdDev: 0,
+			distribution: { short: 0, medium: 0, long: 0 },
+			uniformStretches: []
+		};
+	}
+
+	const sum = lengths.reduce((acc, n) => acc + n, 0);
+	const avg = Math.round((sum / lengths.length) * 10) / 10;
+	const variance = lengths.reduce((acc, n) => acc + Math.pow(n - avg, 2), 0) / lengths.length;
+	const stdDev = Math.round(Math.sqrt(variance) * 10) / 10;
+
+	const distribution = { short: 0, medium: 0, long: 0 };
+	lengths.forEach((len) => {
+		if (len <= 8) distribution.short++;
+		else if (len <= 24) distribution.medium++;
+		else distribution.long++;
+	});
+
+	// Find stretches of 3+ consecutive sentences within ±4 words
+	const uniformStretches: { startIndex: number; length: number; sentenceLengths: number[] }[] = [];
+	let currentRun: number[] = [lengths[0]];
+	let startIndex = 0;
+
+	for (let i = 1; i < lengths.length; i++) {
+		const diff = Math.abs(lengths[i] - currentRun[0]);
+		if (diff <= 4) {
+			currentRun.push(lengths[i]);
+		} else {
+			if (currentRun.length >= 3) {
+				uniformStretches.push({ startIndex, length: currentRun.length, sentenceLengths: [...currentRun] });
+			}
+			currentRun = [lengths[i]];
+			startIndex = i;
+		}
+	}
+	if (currentRun.length >= 3) {
+		uniformStretches.push({ startIndex, length: currentRun.length, sentenceLengths: [...currentRun] });
+	}
+
+	return { lengths, avg, stdDev, distribution, uniformStretches };
+}
+
+// --- Contraction Rate Calculator ---
+export function calculateContractionRate(text: string): ContractionStats {
+	if (!text || !text.trim()) {
+		return { rate: 0, contractions: 0, uncontractedPairs: 0, examples: [] };
+	}
+
+	const contractionRegex = /\b[a-zA-Z]+'(?:t|s|re|ve|m|ll|d)\b/gi;
+	const contractionsFound = text.match(contractionRegex) || [];
+
+	const uncontractedRegex =
+		/\b(?:do not|does not|did not|cannot|could not|would not|should not|is not|are not|was not|were not|have not|has not|had not|will not|it is|there is|that is|i am|we are|they are)\b/gi;
+	const uncontractedFound = text.match(uncontractedRegex) || [];
+
+	const total = contractionsFound.length + uncontractedFound.length;
+	const rate = total === 0 ? 50 : Math.round((contractionsFound.length / total) * 100);
+
+	const uniqueExamples = Array.from(new Set(contractionsFound.slice(0, 5)));
+
+	return {
+		rate,
+		contractions: contractionsFound.length,
+		uncontractedPairs: uncontractedFound.length,
+		examples: uniqueExamples
+	};
+}
+
+// --- Voice Metric Extractor ---
+export function extractVoiceMetrics(text: string): Partial<VoiceProfile> {
+	const rhythms = calculateSentenceRhythms(text);
+	const contractions = calculateContractionRate(text);
+
+	let formality: 'casual' | 'neutral' | 'formal' = 'neutral';
+	if (contractions.rate > 65 && rhythms.avg < 14) {
+		formality = 'casual';
+	} else if (contractions.rate < 25 && rhythms.avg > 18) {
+		formality = 'formal';
+	}
+
+	let sentenceHabit = 'Balanced variation between descriptive phrases and concise beats.';
+	if (rhythms.distribution.short > rhythms.distribution.medium + rhythms.distribution.long) {
+		sentenceHabit = 'Short punches and staccato cadences. High velocity.';
+	} else if (rhythms.distribution.long > rhythms.distribution.short) {
+		sentenceHabit = 'Long descriptive rolls and layered subordinate clauses.';
+	}
+
+	let diction = 'Concrete sensory vocabulary with direct Anglo-Saxon phrasing.';
+	const lower = text.toLowerCase();
+	if (lower.includes('ancient') || lower.includes('shadow') || lower.includes('whisper')) {
+		diction = 'Atmospheric, somber, with emphasis on tactile weight and silence.';
+	}
+
+	return {
+		sampleText: text,
+		diction,
+		sentenceHabit,
+		avgSentenceLength: rhythms.avg,
+		sentenceLengthDistribution: rhythms.distribution,
+		contractionRate: contractions.rate,
+		formality,
+		signatureMove: 'Anchors action scenes in immediate physical objects and sound textures.',
+		lessonDepth: 'experienced',
+		dontTouchList: ['sentence fragments in tension scenes', 'tactile monosyllables'],
+		evidenceQuotes: text
+			.split(/(?<=[.!?])\s+/)
+			.filter((s) => s.length > 25)
+			.slice(0, 3)
+	};
+}
+
+// --- Voice Profile Storage ---
+export function loadVoiceProfile(): VoiceProfile | null {
+	try {
+		if (typeof localStorage === 'undefined') return null;
+		const raw = localStorage.getItem(VOICE_KEY);
+		if (raw) return JSON.parse(raw) as VoiceProfile;
+	} catch {
+		/* ignore */
+	}
+	return null;
+}
+
+export function saveVoiceProfile(profile: VoiceProfile): void {
+	try {
+		if (typeof localStorage === 'undefined') return;
+		localStorage.setItem(VOICE_KEY, JSON.stringify(profile));
+	} catch {
+		/* ignore */
+	}
+}
+
+// --- Beta Feedback Storage & Clustering ---
+export function loadFeedbackItems(): BetaFeedbackItem[] {
+	try {
+		if (typeof localStorage === 'undefined') return [];
+		const raw = localStorage.getItem(FEEDBACK_KEY);
+		if (raw) return JSON.parse(raw) as BetaFeedbackItem[];
+	} catch {
+		/* ignore */
+	}
+	return [];
+}
+
+export function saveFeedbackItems(items: BetaFeedbackItem[]): void {
+	try {
+		if (typeof localStorage === 'undefined') return;
+		localStorage.setItem(FEEDBACK_KEY, JSON.stringify(items));
+	} catch {
+		/* ignore */
+	}
+}
+
+export function clusterFeedback(items: BetaFeedbackItem[]): FeedbackCluster[] {
+	if (!items || items.length === 0) return [];
+	const groups: Record<string, BetaFeedbackItem[]> = {};
+
+	for (const item of items) {
+		const key = `${item.chapterId}::${item.paragraphIndex ?? 'all'}::${item.candidateClass}`;
+		if (!groups[key]) groups[key] = [];
+		groups[key].push(item);
+	}
+
+	const clusters: FeedbackCluster[] = [];
+	for (const group of Object.values(groups)) {
+		const first = group[0];
+		const totalWeight = group.reduce((sum, it) => sum + it.weight, 0);
+
+		// Detect contradictory opinions (e.g. "too fast" vs "too slow")
+		let hasConflict = false;
+		let conflictDetails: string | undefined;
+		if (first.candidateClass === 'pacing' && group.length > 1) {
+			const fastCount = group.filter((g) => /fast|rush/i.test(g.feedback)).length;
+			const slowCount = group.filter((g) => /slow|drag|bored/i.test(g.feedback)).length;
+			if (fastCount > 0 && slowCount > 0) {
+				hasConflict = true;
+				conflictDetails = `Conflicting notes: ${fastCount} reader(s) felt rushed while ${slowCount} reader(s) felt it dragged.`;
+			}
+		}
+
+		clusters.push({
+			chapterId: first.chapterId,
+			chapterTitle: first.chapterTitle,
+			paragraphIndex: first.paragraphIndex,
+			candidateClass: first.candidateClass,
+			items: group,
+			totalWeight,
+			hasConflict,
+			conflictDetails
+		});
+	}
+
+	// Rank clusters: multi-reader blocking classes first, taste last
+	const classPriority: Record<FeedbackClass, number> = {
+		confusion: 6,
+		character: 5,
+		stakes: 4,
+		pacing: 3,
+		prose: 2,
+		taste: 1
+	};
+
+	clusters.sort((a, b) => {
+		if (a.candidateClass === 'taste' && b.candidateClass !== 'taste') return 1;
+		if (b.candidateClass === 'taste' && a.candidateClass !== 'taste') return -1;
+		if (b.items.length !== a.items.length) return b.items.length - a.items.length;
+		return classPriority[b.candidateClass] - classPriority[a.candidateClass];
+	});
+
+	return clusters;
+}
+
+// --- Markdown Serializers & Parsers ---
+export function serializeVoiceMarkdown(profile: VoiceProfile): string {
+	return `# Voice: ${profile.sampleTitle || 'Project Voice'}
+## Fingerprints
+1. Diction: ${profile.diction}
+2. Sentence habit: ${profile.sentenceHabit} (avg: ${profile.avgSentenceLength} words)
+3. Dialogue tic: contraction rate ~${profile.contractionRate}%
+4. Formality: ${profile.formality}
+5. Signature move: ${profile.signatureMove}
+
+## Calibration
+- Lesson depth: ${profile.lessonDepth === 'new_writer' ? 'new writer (explain terms)' : 'experienced (terse craft notes)'}
+- Don't-touch list: ${profile.dontTouchList.join(', ')}
+
+## Evidence Quotes
+${profile.evidenceQuotes.map((q) => `> "${q}"`).join('\n')}
+`;
+}
+
+export function parseVoiceMarkdown(md: string): Partial<VoiceProfile> {
+	const profile: Partial<VoiceProfile> = {
+		dontTouchList: [],
+		evidenceQuotes: []
+	};
+
+	const lines = md.split('\n');
+	for (const line of lines) {
+		const trimmed = line.trim();
+		if (trimmed.startsWith('1. Diction:')) profile.diction = trimmed.replace('1. Diction:', '').trim();
+		else if (trimmed.startsWith('2. Sentence habit:')) profile.sentenceHabit = trimmed.replace('2. Sentence habit:', '').trim();
+		else if (trimmed.startsWith('4. Formality:')) {
+			const form = trimmed.replace('4. Formality:', '').trim().toLowerCase();
+			if (form.includes('casual')) profile.formality = 'casual';
+			else if (form.includes('formal')) profile.formality = 'formal';
+			else profile.formality = 'neutral';
+		} else if (trimmed.startsWith('5. Signature move:')) profile.signatureMove = trimmed.replace('5. Signature move:', '').trim();
+		else if (trimmed.startsWith("- Don't-touch list:")) {
+			profile.dontTouchList = trimmed
+				.replace("- Don't-touch list:", '')
+				.split(',')
+				.map((s) => s.trim())
+				.filter(Boolean);
+		} else if (trimmed.startsWith('> "')) {
+			profile.evidenceQuotes?.push(trimmed.replace(/^>\s*"|"\s*$/g, ''));
+		}
+	}
+
+	return profile;
+}
+
+export function serializeFeedbackMarkdown(items: BetaFeedbackItem[]): string {
+	const clusters = clusterFeedback(items);
+	let md = '# Beta Reader Feedback Triage\n\n';
+
+	clusters.forEach((c, idx) => {
+		const location = c.paragraphIndex !== undefined ? `ch: ${c.chapterId}, para: ${c.paragraphIndex}` : `ch: ${c.chapterId}`;
+		const readers = Array.from(new Set(c.items.map((i) => i.readerName))).join(', ');
+		md += `### F${idx + 1} — ${readers} — ${location}\n`;
+		md += `- Class: ${c.candidateClass} (${c.items.length} reader${c.items.length > 1 ? 's' : ''} → weight ${c.totalWeight})\n`;
+		if (c.hasConflict && c.conflictDetails) {
+			md += `- Conflict: ${c.conflictDetails}\n`;
+		}
+		c.items.forEach((item) => {
+			md += `  - [${item.readerName}] "${item.quote}": ${item.feedback} (Status: ${item.verdict})\n`;
+			if (item.verdictNotes) md += `    Verdict Notes: ${item.verdictNotes}\n`;
+		});
+		md += '\n';
+	});
+
+	return md;
+}
+
+export function parseFeedbackMarkdown(md: string): BetaFeedbackItem[] {
+	const items: BetaFeedbackItem[] = [];
+	const sections = md.split(/(?=###\s+F\d+)/);
+
+	for (const sec of sections) {
+		if (!sec.trim().startsWith('###')) continue;
+		const headerMatch = sec.match(/###\s+F\d+\s+—\s+([^—]+)\s+—\s+(?:ch:\s*([^,\n]+)(?:,\s*para:\s*(\d+))?)/i);
+		const classMatch = sec.match(/- Class:\s*([a-z]+)/i);
+
+		const candidateClass: FeedbackClass =
+			classMatch && ['confusion', 'pacing', 'character', 'stakes', 'prose', 'taste'].includes(classMatch[1].toLowerCase())
+				? (classMatch[1].toLowerCase() as FeedbackClass)
+				: 'confusion';
+
+		const chapterId = headerMatch?.[2]?.trim() ?? 'c1';
+		const paragraphIndex = headerMatch?.[3] ? parseInt(headerMatch[3], 10) : undefined;
+
+		const observationLines = sec.match(/\s*-\s*\[([^\]]+)\]\s*"([^"]+)":\s*([^\n]+)/g) || [];
+		for (const obs of observationLines) {
+			const m = obs.match(/\s*-\s*\[([^\]]+)\]\s*"([^"]+)":\s*([^(]+)(?:\(Status:\s*([a-z]+)\))?/i);
+			if (m) {
+				const readerName = m[1].trim();
+				const quote = m[2].trim();
+				const feedback = m[3].trim();
+				const verdict = (m[4]?.trim() as FeedbackVerdict) || 'open';
+				items.push({
+					id: 'f_' + Math.random().toString(36).slice(2, 9),
+					readerName,
+					chapterId,
+					paragraphIndex,
+					quote,
+					feedback,
+					candidateClass,
+					weight: 1,
+					verdict,
+					createdAt: new Date().toISOString()
+				});
+			}
+		}
+	}
+
+	return items;
+}
+
+// --- Project Bundle Exporter & Importer (JSON agent-compatible) ---
+export interface StoryOSProjectBundle {
+	version: string;
+	exportedAt: string;
+	bible: WorldEntry[];
+	chapters: Chapter[];
+	decisions: Decision[];
+	events: StoryEvent[];
+	mysteries: MysteryNode[];
+	mapPins: MapPin[];
+	journeys: JourneyWaypoint[];
+	storyBeats: StoryBeat[];
+	voiceProfile: VoiceProfile | null;
+	feedbackItems: BetaFeedbackItem[];
+}
+
+export function exportProjectBundleJson(): string {
+	const bundle: StoryOSProjectBundle = {
+		version: '1.0.0',
+		exportedAt: new Date().toISOString(),
+		bible: loadBible(),
+		chapters: loadChapters(),
+		decisions: loadDecisions(),
+		events: loadEvents(),
+		mysteries: loadMysteries(),
+		mapPins: loadMapPins(),
+		journeys: loadJourneys(),
+		storyBeats: loadStoryBeats(),
+		voiceProfile: loadVoiceProfile(),
+		feedbackItems: loadFeedbackItems()
+	};
+	return JSON.stringify(bundle, null, 2);
+}
+
+export function importProjectBundleJson(
+	jsonStr: string
+): { success: boolean; importedCount: number; errors?: string[] } {
+	try {
+		const bundle = JSON.parse(jsonStr) as Partial<StoryOSProjectBundle>;
+		if (!bundle || typeof bundle !== 'object') {
+			return { success: false, importedCount: 0, errors: ['Invalid JSON format'] };
+		}
+
+		let importedCount = 0;
+		if (Array.isArray(bundle.bible)) {
+			saveBible(bundle.bible);
+			importedCount += bundle.bible.length;
+		}
+		if (Array.isArray(bundle.chapters)) {
+			saveChapters(bundle.chapters);
+			importedCount += bundle.chapters.length;
+		}
+		if (Array.isArray(bundle.decisions)) {
+			saveDecisions(bundle.decisions);
+			importedCount += bundle.decisions.length;
+		}
+		if (Array.isArray(bundle.events)) {
+			saveEvents(bundle.events);
+			importedCount += bundle.events.length;
+		}
+		if (Array.isArray(bundle.mysteries)) {
+			saveMysteries(bundle.mysteries);
+			importedCount += bundle.mysteries.length;
+		}
+		if (Array.isArray(bundle.mapPins)) {
+			saveMapPins(bundle.mapPins);
+			importedCount += bundle.mapPins.length;
+		}
+		if (Array.isArray(bundle.journeys)) {
+			saveJourneys(bundle.journeys);
+			importedCount += bundle.journeys.length;
+		}
+		if (Array.isArray(bundle.storyBeats)) {
+			saveStoryBeats(bundle.storyBeats);
+			importedCount += bundle.storyBeats.length;
+		}
+		if (bundle.voiceProfile) {
+			saveVoiceProfile(bundle.voiceProfile);
+			importedCount++;
+		}
+		if (Array.isArray(bundle.feedbackItems)) {
+			saveFeedbackItems(bundle.feedbackItems);
+			importedCount += bundle.feedbackItems.length;
+		}
+
+		return { success: true, importedCount };
+	} catch (err) {
+		return { success: false, importedCount: 0, errors: [(err as Error).message] };
+	}
+}
+
+// Browser file download utility
+export function downloadFile(filename: string, content: string, mimeType = 'text/plain'): void {
+	if (typeof window === 'undefined' || typeof document === 'undefined') return;
+	const blob = new Blob([content], { type: mimeType });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+	URL.revokeObjectURL(url);
+}
+
+// --- Sample Voice Profile & Feedback ---
+export const SAMPLE_VOICE_PROFILE: VoiceProfile = {
+	id: 'voice-sample-1',
+	authorName: 'Sumeet',
+	sampleTitle: 'The Ashen Vow — Voice Profile',
+	sampleText:
+		'The courier died before the candle guttered. Frost edged the window glass, thick as grease. Kael did not touch the body; he knew how belladonna smells on skin.',
+	diction: 'Tactile, monosyllabic, heavy on metal, cold stone, and breath.',
+	sentenceHabit: 'Staccato punches in action scenes; 6 to 14 words average.',
+	avgSentenceLength: 11.2,
+	sentenceLengthDistribution: { short: 4, medium: 2, long: 0 },
+	contractionRate: 72,
+	formality: 'casual',
+	signatureMove: 'Ends beats on an unsaid gesture or stopping motion.',
+	lessonDepth: 'experienced',
+	dontTouchList: ['fragments in tension beats', 'archaic verbs for weapons'],
+	evidenceQuotes: [
+		'Frost edged the window glass, thick as grease.',
+		'Kael did not touch the body; he knew how belladonna smells on skin.'
+	],
+	updatedAt: new Date().toISOString()
+};
+
+export const SAMPLE_FEEDBACK_ITEMS: BetaFeedbackItem[] = [
+	{
+		id: 'fb-1',
+		readerName: 'Beta-Reader-Alex',
+		chapterId: 'c1',
+		chapterTitle: 'Chapter 1: The Ashen Vow',
+		paragraphIndex: 3,
+		quote: 'Kael took the silver coin without hesitation.',
+		feedback: 'Felt abrupt. Why does an assassin trust a coin from a dying courier?',
+		candidateClass: 'character',
+		weight: 2,
+		verdict: 'open',
+		createdAt: '2026-10-01T10:00:00Z'
+	},
+	{
+		id: 'fb-2',
+		readerName: 'Beta-Reader-Clara',
+		chapterId: 'c1',
+		chapterTitle: 'Chapter 1: The Ashen Vow',
+		paragraphIndex: 3,
+		quote: 'He turned toward the gate.',
+		feedback: 'The trust beat here felt rushed.',
+		candidateClass: 'character',
+		weight: 2,
+		verdict: 'open',
+		createdAt: '2026-10-01T10:30:00Z'
+	},
+	{
+		id: 'fb-3',
+		readerName: 'Beta-Reader-Morgan',
+		chapterId: 'c2',
+		chapterTitle: 'Chapter 2: The Whispering Spire',
+		paragraphIndex: 5,
+		quote: 'I personally prefer more magical descriptions.',
+		feedback: 'Would like to see shimmering violet sparks here.',
+		candidateClass: 'taste',
+		weight: 1,
+		verdict: 'rejected',
+		verdictNotes: 'Author intent: Low-magic realism in the lowlands.',
+		createdAt: '2026-10-01T11:00:00Z'
+	}
+];
