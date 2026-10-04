@@ -124,7 +124,7 @@
 				</h1>
 				<button
 					type="button"
-					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
+					class="quiet-ghost px-2.5 py-0.5 text-[11px] font-mono font-bold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Tips' : '💡 Decisions Tips'}
@@ -137,18 +137,18 @@
 		<div class="flex items-center gap-2">
 			<a
 				href="/guide"
-				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
+				class="quiet-ghost !px-3 !py-1.5 text-xs font-bold"
 			>
 				📖 Manual
 			</a>
 			<button
-				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
+				class="quiet-ghost !px-3 !py-1.5 text-xs font-bold"
 				onclick={() => (showImportModal = true)}
 			>
 				Import Markdown
 			</button>
 			<button
-				class="neo-btn-primary !px-3 !py-1.5 text-xs font-bold"
+				class="quiet-primary !px-3 !py-1.5 text-xs font-bold"
 				onclick={copyMarkdown}
 			>
 				Export decisions.md
@@ -157,7 +157,7 @@
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
+		<div class="mt-4 quiet-card bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
 			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
 				<span class="font-mono text-xs uppercase tracking-wider">Decisions Ledger Tips & Provenance</span>
 				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Full Documentation →</a>
@@ -182,7 +182,7 @@
 
 <!-- New Decision Form -->
 <section
-	class="mt-6 max-w-4xl neo-box p-5"
+	class="mt-6 max-w-4xl quiet-card p-5"
 	aria-label="Record Decision"
 >
 	<h2 class="font-display text-base font-bold tracking-tight text-[var(--theme-text)]">Record Author Decision</h2>
@@ -195,7 +195,7 @@
 				id="dec-topic"
 				bind:value={newTopic}
 				placeholder="e.g. Magic cost scale"
-				class="neo-input mt-1 w-full text-xs"
+				class="quiet-field mt-1 w-full text-xs"
 			/>
 		</div>
 		<div>
@@ -206,7 +206,7 @@
 				id="dec-affects"
 				bind:value={newAffects}
 				placeholder="e.g. bible:magic:fire-pact, ch03"
-				class="neo-input mt-1 w-full text-xs font-mono"
+				class="quiet-field mt-1 w-full text-xs font-mono"
 			/>
 		</div>
 		<div class="sm:col-span-2">
@@ -217,7 +217,7 @@
 				id="dec-text"
 				bind:value={newDecision}
 				placeholder="e.g. Magic costs memory fragments per use; mass-burn destroys personality."
-				class="neo-input mt-1 w-full text-xs"
+				class="quiet-field mt-1 w-full text-xs"
 			/>
 		</div>
 		<div class="sm:col-span-2">
@@ -228,12 +228,12 @@
 				id="dec-author"
 				bind:value={newAuthorWords}
 				placeholder='e.g. "Memory fragments, never blood"'
-				class="neo-input mt-1 w-full text-xs font-serif"
+				class="quiet-field mt-1 w-full text-xs font-serif"
 			/>
 		</div>
 	</div>
 	<button
-		class="neo-btn-primary mt-4 flex items-center gap-1.5 px-4 py-2 text-xs font-bold disabled:opacity-40"
+		class="quiet-primary mt-4 flex items-center gap-1.5 px-4 py-2 text-xs font-bold disabled:opacity-40"
 		onclick={addDecision}
 		disabled={!newTopic.trim() || !newDecision.trim()}
 	>
@@ -247,8 +247,8 @@
 		{#each ['all', 'locked', 'draft', 'superseded'] as st}
 			<button
 				class="{filter === st
-					? 'neo-btn-primary !px-3 !py-1 text-xs font-bold uppercase font-mono'
-					: 'neo-btn !px-3 !py-1 text-xs font-bold uppercase font-mono text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
+					? 'quiet-primary !px-3 !py-1 text-xs font-bold uppercase font-mono'
+					: 'quiet-ghost !px-3 !py-1 text-xs font-bold uppercase font-mono text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 				onclick={() => (filter = st as typeof filter)}
 			>
 				{st}
@@ -264,7 +264,7 @@
 
 {#if decisions.length === 0}
 	<!-- Empty State -->
-	<div class="mt-8 max-w-4xl neo-box-sm !border-dashed p-12 text-center">
+	<div class="mt-8 max-w-4xl quiet-card !border-dashed p-12 text-center">
 		<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-2xl shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 			⚖️
 		</div>
@@ -276,7 +276,7 @@
 		</p>
 		<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 			<button
-				class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
+				class="quiet-primary !px-4 !py-2 text-xs font-bold"
 				onclick={() => {
 					newTopic = 'Magic Price Scale';
 					newDecision = 'Magic costs small memory fragments per cast.';
@@ -286,7 +286,7 @@
 				📝 Fill Example Decision
 			</button>
 			<button
-				class="neo-btn !px-4 !py-2 text-xs font-bold"
+				class="quiet-ghost !px-4 !py-2 text-xs font-bold"
 				onclick={handleLoadSample}
 			>
 				✨ Load Sample Story (The Ashen Vow)
@@ -298,19 +298,19 @@
 	<div class="mt-4 max-w-4xl space-y-3">
 		{#each filteredDecisions as item (item.id)}
 			<article
-				class="neo-box p-5 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+				class="quiet-card p-5 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
 			>
 				<div class="flex items-start justify-between gap-3">
 					<div>
 						<div class="flex items-center gap-2">
-							<span class="neo-badge font-mono text-xs font-bold text-[var(--theme-accent)]">{item.id}</span>
+							<span class="quiet-label font-mono text-xs font-bold text-[var(--theme-accent)]">{item.id}</span>
 							<span class="font-mono text-xs text-[var(--theme-text-muted)]">{item.date}</span>
 							<button
 								class="cursor-pointer"
 								onclick={() => toggleStatus(item.id)}
 								title="Click to toggle status (locked ➔ draft ➔ superseded)"
 							>
-								<span class="neo-badge font-mono text-[10px] font-bold uppercase {item.status === 'locked' ? '!bg-emerald-500/10 !text-emerald-700 dark:!text-emerald-300 !border-emerald-500' : item.status === 'draft' ? '!bg-amber-500/10 !text-amber-700 dark:!text-amber-300 !border-amber-500' : ''}">
+								<span class="quiet-label font-mono text-[10px] font-bold uppercase {item.status === 'locked' ? '!bg-emerald-500/10 !text-emerald-700 dark:!text-emerald-300 !border-emerald-500' : item.status === 'draft' ? '!bg-amber-500/10 !text-amber-700 dark:!text-amber-300 !border-amber-500' : ''}">
 									{item.status}
 								</span>
 							</button>
@@ -318,7 +318,7 @@
 						<h3 class="font-display mt-2 text-lg font-bold tracking-tight text-[var(--theme-text)]">{item.topic}</h3>
 					</div>
 					<button
-						class="neo-btn flex h-6 w-6 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
+						class="quiet-ghost flex h-6 w-6 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
 						onclick={() => removeDecision(item.id)}
 						aria-label="Remove decision"
 					>
@@ -356,7 +356,7 @@
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
 		role="dialog"
 	>
-		<div class="w-full max-w-lg neo-box-lg border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-6">
+		<div class="w-full max-w-lg quiet-card border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] p-6">
 			<h2 class="font-display text-xl font-bold tracking-tight text-[var(--theme-text)]">Import decisions.md</h2>
 			<p class="mt-1 font-mono text-xs text-[var(--theme-text-muted)]">
 				Paste the contents of your <code>decisions.md</code> file below.
@@ -365,17 +365,17 @@
 				bind:value={importText}
 				rows={10}
 				placeholder={DEMO_DECISIONS_SAMPLE}
-				class="neo-input mt-3 w-full p-3 font-mono text-xs text-[var(--theme-text)]"
+				class="quiet-field mt-3 w-full p-3 font-mono text-xs text-[var(--theme-text)]"
 			></textarea>
 			<div class="mt-4 flex justify-end gap-2 border-t-2 border-[var(--theme-border-strong)] pt-4">
 				<button
-					class="neo-btn !px-3 !py-1.5 text-xs font-bold"
+					class="quiet-ghost !px-3 !py-1.5 text-xs font-bold"
 					onclick={() => (showImportModal = false)}
 				>
 					Cancel
 				</button>
 				<button
-					class="neo-btn-primary !px-4 !py-1.5 text-xs font-bold"
+					class="quiet-primary !px-4 !py-1.5 text-xs font-bold"
 					onclick={doImport}
 				>
 					Import Decisions

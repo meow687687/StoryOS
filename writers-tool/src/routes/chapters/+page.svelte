@@ -593,6 +593,9 @@
 			<!-- Distraction-Free Writing Canvas with Ambient Entity Links -->
 			<DistractionFreeEditor
 				bind:text={active.text}
+				chapterTitle={active.title}
+				chapterNumber={activeOrder}
+				chapterId={active.id}
 				{bible}
 				{decisions}
 				voice={voiceProfile}

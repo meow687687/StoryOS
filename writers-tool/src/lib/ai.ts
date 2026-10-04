@@ -3,6 +3,8 @@ import {
 	GHOSTWRITER_SYSTEM,
 	INTERROGATOR_SYSTEM,
 	LIBRARIAN_SYSTEM,
+	LOCK_DRAFTER_SYSTEM,
+	CRAFT_NOTE_SYSTEM,
 	editorUser,
 	ghostwriterUser,
 	interrogatorUser,
@@ -262,15 +264,17 @@ export async function aiInterrogate(
 	entries: WorldEntry[],
 	decisions: Decision[],
 	chapterText: string,
-	goal?: string
+	goal?: string,
+	systemSuffix?: string
 ): Promise<string> {
 	if (!chapterText.trim()) return 'No draft text to interrogate yet. Write a scene to begin.';
+	const system = systemSuffix ? `${INTERROGATOR_SYSTEM}\n\n${systemSuffix}` : INTERROGATOR_SYSTEM;
 
 	if (cfg.provider === 'ollama') {
 		try {
 			return await ollamaChat(
 				cfg.model || DEFAULT_OLLAMA_MODEL,
-				INTERROGATOR_SYSTEM,
+				system,
 				interrogatorUser(bibleContext(entries), decisionsContext(decisions), chapterText, goal)
 			);
 		} catch {
@@ -294,7 +298,7 @@ export async function aiInterrogate(
 			body: JSON.stringify({
 				model: cfg.model || 'gpt-4o-mini',
 				messages: [
-					{ role: 'system', content: INTERROGATOR_SYSTEM },
+					{ role: 'system', content: system },
 					{ role: 'user', content: user }
 				],
 				temperature: 0.5
@@ -317,7 +321,7 @@ export async function aiInterrogate(
 		body: JSON.stringify({
 			model: cfg.model || 'claude-haiku-4-5',
 			max_tokens: 1000,
-			system: INTERROGATOR_SYSTEM,
+			system,
 			messages: [{ role: 'user', content: user }]
 		})
 	});
@@ -325,6 +329,116 @@ export async function aiInterrogate(
 	const data = await res.json();
 	const block = data.content?.find((b: { type: string }) => b.type === 'text');
 	return block?.text ?? '(empty response)';
+}
+
+/** Lock drafter: turns recent transcript + brief into canon-ready draft text.
+ *  Returns raw text — the caller parses it with parseLockCards(). Empty means try later. */
+export async function aiDraftLock(
+	cfg: AIConfig,
+	brief: string,
+	transcript: string
+): Promise<string> {
+	const prompt = `${brief}\n\nRECENT TRANSCRIPT:\n${transcript}`;
+	if (cfg.provider === 'ollama') {
+		try {
+			return await ollamaChat(cfg.model || DEFAULT_OLLAMA_MODEL, LOCK_DRAFTER_SYSTEM, prompt);
+		} catch {
+			return 'Nothing converged yet.';
+		}
+	}
+	if (!cfg.apiKey) return 'Nothing converged yet.';
+	if (cfg.provider === 'openai') {
+		const res = await fetch('https://api.openai.com/v1/chat/completions', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.apiKey}` },
+			body: JSON.stringify({
+				model: cfg.model || 'gpt-4o-mini',
+				messages: [
+					{ role: 'system', content: LOCK_DRAFTER_SYSTEM },
+					{ role: 'user', content: prompt }
+				],
+				temperature: 0.3
+			})
+		});
+		if (!res.ok) throw new Error(`OpenAI error ${res.status}`);
+		const data = await res.json();
+		return data.choices?.[0]?.message?.content ?? '';
+	}
+	// anthropic
+	const res = await fetch('https://api.anthropic.com/v1/messages', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'x-api-key': cfg.apiKey,
+			'anthropic-version': '2023-06-01',
+			'anthropic-dangerous-direct-browser-access': 'true'
+		},
+		body: JSON.stringify({
+			model: cfg.model || 'claude-haiku-4-5',
+			max_tokens: 800,
+			system: LOCK_DRAFTER_SYSTEM,
+			messages: [{ role: 'user', content: prompt }]
+		})
+	});
+	if (!res.ok) throw new Error(`Anthropic error ${res.status}`);
+	const data = await res.json();
+	const block = data.content?.find((b: { type: string }) => b.type === 'text');
+	return block?.text ?? '';
+}
+
+/** Craft note: strength + one sharpening through the archetype lens. Raw text out. */
+export async function aiCraftNote(
+	cfg: AIConfig,
+	lens: string,
+	transcript: string
+): Promise<string> {
+	const prompt = `LENS: ${lens}\n\nSITTING TRANSCRIPT:\n${transcript}`;
+	const fallback = '';
+	if (cfg.provider === 'ollama') {
+		try {
+			return await ollamaChat(cfg.model || DEFAULT_OLLAMA_MODEL, CRAFT_NOTE_SYSTEM, prompt);
+		} catch {
+			return fallback;
+		}
+	}
+	if (!cfg.apiKey) return fallback;
+	if (cfg.provider === 'openai') {
+		const res = await fetch('https://api.openai.com/v1/chat/completions', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${cfg.apiKey}` },
+			body: JSON.stringify({
+				model: cfg.model || 'gpt-4o-mini',
+				messages: [
+					{ role: 'system', content: CRAFT_NOTE_SYSTEM },
+					{ role: 'user', content: prompt }
+				],
+				temperature: 0.5
+			})
+		});
+		if (!res.ok) throw new Error(`OpenAI error ${res.status}`);
+		const data = await res.json();
+		return data.choices?.[0]?.message?.content ?? '';
+	}
+	// anthropic
+	const res = await fetch('https://api.anthropic.com/v1/messages', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'x-api-key': cfg.apiKey,
+			'anthropic-version': '2023-06-01',
+			'anthropic-dangerous-direct-browser-access': 'true'
+		},
+		body: JSON.stringify({
+			model: cfg.model || 'claude-haiku-4-5',
+			max_tokens: 300,
+			system: CRAFT_NOTE_SYSTEM,
+			messages: [{ role: 'user', content: prompt }]
+		})
+	});
+	if (!res.ok) throw new Error(`Anthropic error ${res.status}`);
+	const data = await res.json();
+	const block = data.content?.find((b: { type: string }) => b.type === 'text');
+	return block?.text ?? '';
 }
 
 export async function aiExpand(

@@ -45,52 +45,12 @@
 
 	const commandActions: PaletteItem[] = [
 		{
-			id: 'act-editor',
+			id: 'act-partner',
 			category: 'Action',
-			title: 'Open Manuscript Editor',
-			subtitle: 'Write, draft scenes, and consult lore HUD',
-			icon: '✍️',
-			action: () => goto('/chapters')
-		},
-		{
-			id: 'act-magic',
-			category: 'Action',
-			title: 'Open Magic System Studio',
-			subtitle: 'Design hard magic rules, test loopholes & Sanderson laws',
-			icon: '✨',
-			action: () => goto('/magic')
-		},
-		{
-			id: 'act-voice',
-			category: 'Action',
-			title: 'Open Voice Lab',
-			subtitle: 'Calibrate rhythm cadence, contractions & voice.md',
-			icon: '🎙️',
-			action: () => goto('/voice')
-		},
-		{
-			id: 'act-feedback',
-			category: 'Action',
-			title: 'Open Beta Triage',
-			subtitle: 'Cluster reader notes and commit verdicts to decisions',
+			title: 'Open Shaping Partner',
+			subtitle: 'Dump, discuss, and shape with your editor',
 			icon: '💬',
-			action: () => goto('/feedback')
-		},
-		{
-			id: 'act-timeline',
-			category: 'Action',
-			title: 'Open Timeline Ledger',
-			subtitle: 'Chronological events, secrets & disclosures',
-			icon: '⏳',
-			action: () => goto('/timeline')
-		},
-		{
-			id: 'act-mysteries',
-			category: 'Action',
-			title: 'Open Mystery Corkboard',
-			subtitle: 'Clues, red herrings, and payoff arcs',
-			icon: '📌',
-			action: () => goto('/mysteries')
+			action: () => goto('/partner')
 		},
 		{
 			id: 'act-bible',
@@ -107,14 +67,6 @@
 			subtitle: 'Locked author canon decisions (decisions.md)',
 			icon: '🛡️',
 			action: () => goto('/decisions')
-		},
-		{
-			id: 'act-guide',
-			category: 'Action',
-			title: 'Open System Guide',
-			subtitle: 'Architecture guide, novel skills, and craft philosophy',
-			icon: '💡',
-			action: () => goto('/guide')
 		}
 	];
 

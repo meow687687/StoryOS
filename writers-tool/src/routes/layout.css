@@ -609,3 +609,136 @@ body {
 		animation-duration: 0.01ms !important;
 	}
 }
+
+/* ==========================================================================
+   Quiet Desk (iA Writer direction): chrome recedes, typography leads.
+   Flat surfaces, hairline rules, accent used sparingly. Theme vars untouched.
+   ========================================================================== */
+
+/* Micro uppercase label — the only "shouting" allowed, in a whisper. */
+.quiet-label {
+	font-family: var(--font-mono);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--theme-text-faint);
+}
+
+/* Flat card: one hairline, no shadow, no bevel. */
+.quiet-card {
+	background: var(--theme-surface);
+	border: 1px solid var(--theme-border);
+	border-radius: 10px;
+}
+
+/* Slim rail nav item: icon + tiny label, no pills, no tabs. */
+.quiet-rail-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding: 0.6rem 0.25rem;
+	border-radius: 0.5rem;
+	color: var(--theme-text-muted);
+	transition: color 0.12s ease;
+	user-select: none;
+}
+
+.quiet-rail-item:hover {
+	color: var(--theme-text);
+}
+
+.quiet-rail-item.active {
+	color: var(--theme-accent);
+}
+
+.quiet-rail-item .quiet-rail-label {
+	font-family: var(--font-ui);
+	font-size: 9.5px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+}
+
+/* Borderless writer input: the page is the input. */
+.quiet-area {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	color: var(--theme-text);
+	resize: none;
+}
+
+.quiet-area:focus {
+	outline: none;
+	border: none;
+	box-shadow: none;
+}
+
+.quiet-area::placeholder {
+	color: var(--theme-text-faint);
+}
+
+/* Hairline divider with a centered whisper label (sittings, sections). */
+.quiet-divider {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.quiet-divider::before,
+.quiet-divider::after {
+	content: '';
+	height: 1px;
+	flex: 1;
+	background: var(--theme-border);
+}
+
+/* Quiet primary action: flat accent, no gradient, no bevel. */
+.quiet-primary {
+	background: var(--theme-accent);
+	color: var(--theme-accent-fg);
+	border-radius: 8px;
+	transition: opacity 0.12s ease;
+}
+
+.quiet-primary:hover:not(:disabled) {
+	opacity: 0.88;
+}
+
+.quiet-primary:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+/* Quiet ghost action: text only. */
+.quiet-ghost {
+	color: var(--theme-text-muted);
+	border-radius: 8px;
+	transition: color 0.12s ease;
+}
+
+.quiet-ghost:hover:not(:disabled) {
+	color: var(--theme-text);
+}
+
+/* Quiet text field: bottom hairline only. */
+.quiet-field {
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid var(--theme-border);
+	border-radius: 0;
+	padding: 0.5rem 0.125rem;
+	color: var(--theme-text);
+	width: 100%;
+}
+
+.quiet-field:focus {
+	outline: none;
+	border-bottom-color: var(--theme-accent);
+}
+
+.quiet-field::placeholder {
+	color: var(--theme-text-faint);
+}

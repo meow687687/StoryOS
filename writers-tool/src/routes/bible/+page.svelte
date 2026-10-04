@@ -140,7 +140,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 				</h1>
 				<button
 					type="button"
-					class="neo-btn px-2.5 py-0.5 text-[11px] font-mono font-bold"
+					class="quiet-ghost px-2.5 py-0.5 text-[11px] font-mono font-bold"
 					onclick={() => (showHelpTips = !showHelpTips)}
 				>
 					{showHelpTips ? '✕ Close Tips' : '💡 World Bible Tips'}
@@ -156,7 +156,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 		<div class="flex items-center gap-2">
 			<a
 				href="/guide"
-				class="neo-btn !px-3 !py-1.5 text-xs font-bold"
+				class="quiet-ghost !px-3 !py-1.5 text-xs font-bold"
 			>
 				📖 Manual
 			</a>
@@ -164,7 +164,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 	</div>
 
 	{#if showHelpTips}
-		<div class="mt-4 neo-box-sm bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
+		<div class="mt-4 quiet-card bg-[var(--theme-surface-subtle)] p-4 text-xs text-[var(--theme-text-muted)] animate-in fade-in duration-200">
 			<div class="flex items-center justify-between font-bold text-[var(--theme-text)]">
 				<span class="font-mono text-xs uppercase tracking-wider">World Bible & Canon Tips</span>
 				<a href="/guide" class="text-[var(--theme-accent)] underline font-bold hover:opacity-80">Full Documentation →</a>
@@ -188,7 +188,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 </header>
 
 <!-- Lore Dump Section -->
-<div class="mt-6 max-w-4xl neo-box p-5">
+<div class="mt-6 max-w-4xl quiet-card p-5">
 	<div class="flex items-center justify-between">
 		<label for="dump" class="font-mono text-xs font-bold uppercase tracking-wider text-[var(--theme-text)]">
 			Paste Lore / Brainstorm Dump
@@ -197,7 +197,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 			<span class="font-mono text-[var(--theme-text-muted)] font-bold text-[11px] uppercase">Import as:</span>
 			<select
 				bind:value={dumpStatus}
-				class="neo-input !py-1 text-xs font-mono font-bold"
+				class="quiet-field !py-1 text-xs font-mono font-bold"
 			>
 				<option value="canon">Canon 🛡️ (Active Law)</option>
 				<option value="draft">Draft 📝 (Work-in-progress)</option>
@@ -211,12 +211,12 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 		bind:value={dump}
 		rows={5}
 		placeholder={sample}
-		class="manuscript neo-input mt-3 w-full p-3 text-[15px] text-[var(--theme-text)]"
+		class="manuscript quiet-field mt-3 w-full p-3 text-[15px] text-[var(--theme-text)]"
 	></textarea>
 
 	<div class="mt-4 flex flex-wrap items-center gap-2">
 		<button
-			class="neo-btn-primary min-h-[38px] px-4 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-40"
+			class="quiet-primary min-h-[38px] px-4 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-40"
 			onclick={organize}
 			disabled={!dump.trim() || aiBusy}
 		>
@@ -224,7 +224,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 				({blockCount}){/if}
 		</button>
 		<button
-			class="neo-btn min-h-[38px] flex items-center gap-2 px-4 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-50"
+			class="quiet-ghost min-h-[38px] flex items-center gap-2 px-4 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-50"
 			onclick={organizeAI}
 			disabled={!dump.trim() || aiBusy}
 			title={ollamaRunning
@@ -240,13 +240,13 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 			{aiBusy ? 'Librarian working…' : 'Organize with AI'}
 		</button>
 		<button
-			class="neo-btn min-h-[38px] px-3 text-xs font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
+			class="quiet-ghost min-h-[38px] px-3 text-xs font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
 			onclick={() => (dump = sample)}
 		>
 			Fill sample
 		</button>
 		<button
-			class="neo-btn min-h-[38px] px-3 text-xs font-bold text-[var(--theme-text-muted)] hover:text-rose-500 disabled:opacity-40"
+			class="quiet-ghost min-h-[38px] px-3 text-xs font-bold text-[var(--theme-text-muted)] hover:text-rose-500 disabled:opacity-40"
 			onclick={clear}
 			disabled={!bible.length}
 		>
@@ -262,8 +262,8 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 		{#each ['all', 'canon', 'draft', 'idea', 'rejected'] as st}
 			<button
 				class="{filterStatus === st
-					? 'neo-btn-primary !px-3 !py-1 text-xs font-bold uppercase font-mono'
-					: 'neo-btn !px-3 !py-1 text-xs font-bold uppercase font-mono text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
+					? 'quiet-primary !px-3 !py-1 text-xs font-bold uppercase font-mono'
+					: 'quiet-ghost !px-3 !py-1 text-xs font-bold uppercase font-mono text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]'}"
 				onclick={() => (filterStatus = st as typeof filterStatus)}
 			>
 				{st}
@@ -282,7 +282,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 		<select
 			id="filter-kind"
 			bind:value={filterKind}
-			class="neo-input !py-1 text-xs font-mono font-bold"
+			class="quiet-field !py-1 text-xs font-mono font-bold"
 		>
 			<option value="all">All Categories</option>
 			{#each kinds as k}
@@ -293,7 +293,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 </div>
 
 {#if !bible.length}
-	<div class="mt-8 neo-box-sm !border-dashed p-12 text-center">
+	<div class="mt-8 quiet-card !border-dashed p-12 text-center">
 		<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xs border-2 border-[var(--theme-border-strong)] bg-[var(--theme-surface)] text-2xl shadow-[2px_2px_0px_var(--theme-shadow-hard)]">
 			📖
 		</div>
@@ -305,13 +305,13 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 		</p>
 		<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 			<button
-				class="neo-btn-primary !px-4 !py-2 text-xs font-bold"
+				class="quiet-primary !px-4 !py-2 text-xs font-bold"
 				onclick={() => (dump = sample)}
 			>
 				📝 Fill Sample Dump
 			</button>
 			<button
-				class="neo-btn !px-4 !py-2 text-xs font-bold"
+				class="quiet-ghost !px-4 !py-2 text-xs font-bold"
 				onclick={handleLoadSample}
 			>
 				✨ Load Sample Story (The Ashen Vow)
@@ -328,7 +328,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 			<section aria-label="{g.kind} entries">
 				<div class="mb-3 flex items-center gap-2">
 					<h2
-						class="neo-badge uppercase font-mono font-extrabold tracking-widest text-xs"
+						class="quiet-label uppercase font-mono font-extrabold tracking-widest text-xs"
 					>
 						{g.kind} ({g.items.length})
 					</h2>
@@ -336,7 +336,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 				<div class="grid gap-3 sm:grid-cols-2">
 					{#each g.items as e (e.id)}
 						<article
-							class="flex flex-col justify-between neo-box p-4 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
+							class="flex flex-col justify-between quiet-card p-4 transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5"
 						>
 							<div>
 								<div class="flex items-start justify-between gap-2">
@@ -352,7 +352,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 										</div>
 									</div>
 									<button
-										class="neo-btn flex h-6 w-6 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
+										class="quiet-ghost flex h-6 w-6 items-center justify-center p-0 text-[var(--theme-text-muted)] hover:text-rose-500 font-bold"
 										onclick={() => remove(e.id)}
 										aria-label="Remove {e.name}"
 									>
@@ -369,7 +369,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 							<div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t-2 border-[var(--theme-border-strong)] pt-3 text-[11px]">
 								<div class="flex items-center gap-1">
 									<button
-										class="neo-btn !px-2 !py-0.5 text-[11px] font-mono font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)]"
+										class="quiet-ghost !px-2 !py-0.5 text-[11px] font-mono font-bold text-[var(--theme-text-muted)] hover:text-[var(--theme-accent)]"
 										onclick={() => addAlias(e.id)}
 									>
 										+ alias
@@ -378,14 +378,14 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 								<div class="flex items-center gap-1.5 font-mono">
 									{#if (e.status ?? 'canon') !== 'canon'}
 										<button
-											class="neo-btn !px-2 !py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+											class="quiet-ghost !px-2 !py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
 											onclick={() => setStatus(e.id, 'canon')}
 										>
 											Promote to Canon
 										</button>
 									{:else}
 										<button
-											class="neo-btn !px-2 !py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400"
+											class="quiet-ghost !px-2 !py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400"
 											onclick={() => setStatus(e.id, 'draft')}
 										>
 											Demote to Draft
@@ -393,7 +393,7 @@ The governing faction of high mages maintaining the Ashen Borders.`;
 									{/if}
 									{#if (e.status ?? 'canon') !== 'rejected'}
 										<button
-											class="neo-btn !px-2 !py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400"
+											class="quiet-ghost !px-2 !py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400"
 											onclick={() => setStatus(e.id, 'rejected')}
 										>
 											Reject
